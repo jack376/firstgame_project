@@ -5,10 +5,10 @@
 #include "ResourceMgr.h"
 #include "GameObject.h"
 #include "SceneTitle.h"
-#include "Player.h"
+#include "Player2.h"
 #include "Button.h"
 
-SceneTitle::SceneTitle() : Scene(SceneId::Game)
+SceneTitle::SceneTitle() : Scene(SceneId::Title)
 {
 }
 

@@ -3,6 +3,8 @@
 
 class SpriteGo : public GameObject
 {
+protected:
+
 public:
 	sf::Sprite sprite;
 	std::string textureId;

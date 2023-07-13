@@ -17,35 +17,18 @@ void SceneGame::Init()
 {
 	Release();
 
-	auto size = FRAMEWORK.GetWindowSize();
+	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
+	sf::Vector2f centerPos = windowSize * 0.5f;
 
-	Player* player = (Player*)AddGo(new Player());
+	playerBody = (Player*)AddGo(new Player("graphics/potato_body_default.png", "PlayerBody"));
+	playerBody->sortLayer = 1;
+	playerBody->SetPosition(0.0f, 0.0f);
+	playerBody->SetOrigin(Origins::BC);
 
-	/*
-	Button* button = (Button*)AddGo(new Button("graphics/button.png", "Button"));
-	button->SetOrigin(Origins::TR);
-	button->sortLayer = 100;
-	button->SetPosition(size.x, 0.0f);
-	button->OnEnter = [button]()
-	{
-		sf::Texture* tex = RESOURCE_MGR.GetTexture("graphics/button2.png");
-		button->sprite.setTexture(*tex);
-
-		std::cout << "Enter" << std::endl;
-	};
-	button->OnExit = [button]()
-	{
-		sf::Texture* tex = RESOURCE_MGR.GetTexture(button->textureId);
-		button->sprite.setTexture(*tex);
-
-		std::cout << "Exit" << std::endl;
-	};
-	button->OnClick = [this]() 
-	{
-		std::cout << "Click" << std::endl;
-		SCENE_MGR.ChangeScene(SceneId::Title);
-	};
-	*/
+	background = (SpriteGo*)AddGo(new SpriteGo("graphics/bg.png", "Bg"));
+	background->sortLayer = 0;
+	background->SetPosition(0.0f, 0.0f);
+	background->SetOrigin(Origins::MC);
 
 	for (auto go : gameObjects)
 	{
@@ -62,20 +45,28 @@ void SceneGame::Release()
 	}
 }
 
+void SceneGame::Reset()
+{
+}
+
 void SceneGame::Enter()
 {
-	auto size = FRAMEWORK.GetWindowSize();
-	worldView.setSize(size);
-	worldView.setCenter({ 0, 0 });
-
-	uiView.setSize(size);
-	uiView.setCenter(size * 0.5f);
-
 	Scene::Enter();
+
+	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
+	sf::Vector2f centerPos = windowSize * 0.5f;
+
+	worldView.setSize(windowSize);
+	worldView.setCenter({ 0, 0 });
+	uiView.setSize(windowSize);
+	uiView.setCenter(windowSize * 0.5f);
 }
 
 void SceneGame::Exit()
 {
+	playerBody->Reset();
+	background->Reset();
+
 	Scene::Exit();
 }
 

@@ -5,6 +5,8 @@
 #include "DataTableMgr.h"
 #include "ResourceMgr.h"
 #include "Scene.h"
+#include "TextGo.h"
+#include <sstream>
 
 Framework::Framework(int w, int h, const std::string& t)
     : screenWidth(w), screenHeight(h), title(t)
@@ -14,6 +16,7 @@ Framework::Framework(int w, int h, const std::string& t)
 void Framework::Init(int width, int height, const std::string& title)
 {
 	window.create(sf::VideoMode(width, height), title);
+    window.setVerticalSyncEnabled(true);
 
     RESOURCE_MGR.Init();
     DATATABLE_MGR.LoadAll();
@@ -41,6 +44,15 @@ void Framework::Run()
     Init(screenWidth, screenHeight, title);
     clock.restart();
 
+    TextGo fpsViewer("fonts/NanumGothic.ttf", "fpsViewer");
+    sf::Font systemFont;
+    systemFont.loadFromFile("fonts/NanumGothic.ttf");
+    fpsViewer.SetFont(systemFont);
+    fpsViewer.SetCharacterSize(20);
+    fpsViewer.SetOrigin(Origins::TL);
+    fpsViewer.SetPosition(0.0f, 0.0f);
+    fpsViewer.SetActive(false);
+
     while (window.isOpen())
     {
         sf::Time deltaTime = clock.restart();
@@ -66,10 +78,26 @@ void Framework::Run()
 
         if (window.isOpen())
         {
+            if (INPUT_MGR.GetKeyDown(sf::Keyboard::Tilde))
+            {
+                fpsViewer.SetActive(!fpsViewer.GetActive());
+            }
+            if (fpsViewer.GetActive())
+            {
+                std::stringstream ss;
+                ss << 1.0f / dt;
+                fpsViewer.SetString(ss.str());
+            }
+
             Update(dt);
 
             window.clear();
             Draw();
+            if (fpsViewer.GetActive())
+            {
+                fpsViewer.Draw(window);
+            }
+
             window.display();
         }
     }

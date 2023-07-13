@@ -123,6 +123,7 @@ void ResourceMgr::Load(ResourceTypes t, const std::string path, bool isDefault =
 		{
 			auto texture = new sf::Texture();
 			texture->loadFromFile(path);
+			texture->setSmooth(true);
 			mapTexture.insert({ path, { texture, true } });
 		}
 	}

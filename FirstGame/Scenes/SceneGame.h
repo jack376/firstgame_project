@@ -1,9 +1,13 @@
 #pragma once
 #include "Scene.h"
 
+class Player;
+class SpriteGo;
 class SceneGame : public Scene
 {
 protected:
+	Player* playerBody;
+	SpriteGo* background;
 
 public:
 	SceneGame();
@@ -12,6 +16,7 @@ public:
 	virtual void Init() override;
 	virtual void Release() override;
 
+	void Reset();
 	virtual void Enter() override;
 	virtual void Exit() override;
 
