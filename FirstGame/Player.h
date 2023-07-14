@@ -6,16 +6,15 @@ class Player : public SpriteGo
 {
 protected:
 	AnimationController animation;
-	sf::Vector2f velocity;
+
 	sf::Vector2f direction;
 	sf::Vector2f bodyAnimation;
 
 	float bodyAnimationSpeed = 2.0f;
-	float targetSpeed = 2.0f;
-
 	float moveSpeed = 500.f;
-	bool filpX = false;
 	float flowTime = 0.0f;
+
+	bool filpX = false;
 
 public:
 	Player(const std::string& textureId = "", const std::string& n = "");
@@ -31,5 +30,5 @@ public:
 
 	void SetScale(float x, float y);
 
-	void BodyAnimation(float x, float y, float speed, float dt);
+	void BodyAnimation(float defaultScale, float scaleRange, float flowTimeBySpeed);
 };

@@ -7,6 +7,9 @@ class SceneGame : public Scene
 {
 protected:
 	Player* playerBody;
+	Player* playerLeftLegs;
+	Player* playerRightLegs;
+
 	SpriteGo* background;
 
 public:

@@ -20,7 +20,6 @@ void Player2::Init()
 
 	SetOrigin(Origins::MC);
 
-
 	clipInfos.push_back({ "Idle_Side", "Move_Side", false, Utils::Normalize({ -1.f, -1.f }) });
 	clipInfos.push_back({ "Idle_Up",   "Move_Up",   true,  { 0.f, -1.f} });
 	clipInfos.push_back({ "Idle_Side", "Move_Side", true,  Utils::Normalize({ 1.f, -1.f }) });
@@ -35,12 +34,12 @@ void Player2::Init()
 
 void Player2::Reset()
 {
-	animation.Play("Idle_Down");
-	SetOrigin(origin);
+	//animation.Play("Idle");
+	SetOrigin(75.0f, 110.0f);
 	SetPosition({ 0, 0 });
 	SetFlipX(false);
 
-	currentClipInfo = clipInfos[6];
+	currentClipInfo = clipInfos[2];
 }
 
 void Player2::Update(float dt)

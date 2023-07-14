@@ -6,12 +6,12 @@ protected:
     std::unordered_map<std::string, AnimationClip> clips;
 
     std::queue<std::string> queue;   // 애니메이션 ID queue 자료구조
-    float speed     = 1.0f;              // 애니메이션 속도 배율
+    float speed     = 1.0f;          // 애니메이션 속도 배율
     bool  isPlaying = false;
 
     AnimationClip* currentClip;
-    int   currentFrame = 0; // 몇 번째 프레임이 재생 중인지
-    int   totalFrame   = 0;
+    int   currentFrame = 0;
+    int   totalFrame   = 0;   
     float clipDuration = 0.0f;
     float accumTime    = 0.0f;
 

@@ -11,18 +11,11 @@ Player::Player(const std::string& textureId, const std::string& n)
 
 void Player::Init()
 {
-	/*
-    animation.AddClip(*RESOURCE_MGR.GetAnimationClip("animations/Idle.csv"));
-    animation.AddClip(*RESOURCE_MGR.GetAnimationClip("animations/Move.csv"));
-    animation.AddClip(*RESOURCE_MGR.GetAnimationClip("animations/Jump.csv"));
-
-    animation.SetTarget(&sprite);
-	*/
+	SpriteGo::Init();
 }
 
 void Player::Reset()
 {
-	//animation.Play("Idle");
 	SetOrigin(75.0f, 110.0f);
 	SetPosition({ 0, 0 });
 	SetFlipX(false);
@@ -32,15 +25,16 @@ void Player::Reset()
 
 void Player::Update(float dt)
 {
-	flowTime += dt;
+	flowTime += dt * bodyAnimationSpeed;
 	
 	direction.x = INPUT_MGR.GetAxis(Axis::Horizontal);
 	direction.y = INPUT_MGR.GetAxis(Axis::Vertical);
 
 	float magnitude = Utils::Magnitude(direction);
+
 	if (magnitude > 0.0f) // Move
 	{
-		bodyAnimationSpeed = 4.0f;
+		bodyAnimationSpeed = 3.0f;
 
 		if (direction.x < 0)
 		{
@@ -60,15 +54,12 @@ void Player::Update(float dt)
 	}
 	else // Idle
 	{
-		bodyAnimationSpeed = 2.0f;
+		bodyAnimationSpeed = 1.0f;
 	}
 
-	//float speedChangeRate = 0.01f;
-	//bodyAnimationSpeed = Utils::Lerp(bodyAnimationSpeed, targetSpeed, 0.1f);
+	BodyAnimation(1.0f, 0.2f, flowTime);
 
-	BodyAnimation(1.0f, 0.2f, bodyAnimationSpeed, flowTime);
-
-	std::cout << bodyAnimationSpeed << std::endl;
+	//std::cout << "TEST : " << bodyAnimationSpeed << std::endl;
 }
 
 void Player::Draw(sf::RenderWindow& window)
@@ -81,15 +72,15 @@ bool Player::GetFlipX() const
 	return filpX;
 }
 
-void Player::BodyAnimation(float scale, float range, float speed, float flowTime)
+void Player::BodyAnimation(float defaultScale, float scaleRange, float flowTimeBySpeed)
 {
-	bodyAnimation.x = -sin(flowTime * speed * _PI);
-	float scaleX = scale + ((bodyAnimation.x + 1.0f) / 2.0f) * range;
+	bodyAnimation.x = -sin(flowTimeBySpeed * 2.0f * _PI);
+	float scaleX = defaultScale + ((bodyAnimation.x + 1.0f) / 2.0f) * scaleRange;
 
 	scaleX = GetFlipX() ? -abs(scaleX) : abs(scaleX);
 
-	bodyAnimation.y = sin(flowTime * speed * _PI);
-	float scaleY = scale + ((bodyAnimation.y + 1.0f) / 2.0f) * range;
+	bodyAnimation.y = sin(flowTimeBySpeed * 2.0f * _PI);
+	float scaleY = defaultScale + ((bodyAnimation.y + 1.0f) / 2.0f) * scaleRange;
 
 	sprite.setScale(scaleX, scaleY);
 }

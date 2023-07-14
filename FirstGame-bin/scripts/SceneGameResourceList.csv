@@ -4,7 +4,6 @@
 0,graphics/button.png
 0,graphics/button2.png
 0,graphics/potato_body_default.png
-0,graphics/potato_legs_default.png
-0,graphics/potato_eyes_default .png
-0,graphics/potato_mouth_default.png
+0,graphics/potato_left_legs_default.png
+0,graphics/potato_right_legs_default.png
 0,graphics/bg.png
