@@ -5,7 +5,7 @@
 #include "ResourceMgr.h"
 #include "GameObject.h"
 #include "SceneGame.h"
-#include "Player.h"
+#include "Character.h"
 #include "Button.h"
 
 SceneGame::SceneGame() : Scene(SceneId::Game)
@@ -20,17 +20,10 @@ void SceneGame::Init()
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
 	sf::Vector2f centerPos = windowSize * 0.5f;
 
-	playerBody = (Player*)AddGo(new Player("graphics/potato_body_default.png", "PlayerBody"));
-	playerBody->sortLayer = 2;
-	playerBody->SetOrigin(Origins::BC);
+	player = (Character*)AddGo(new Character("Player"));
+	player->sortLayer = 2;
+	player->SetOrigin(Origins::BC);
 
-	playerLeftLegs = (Player*)AddGo(new Player("graphics/potato_left_legs_default.png", "PlayerLeftLegs"));
-	playerLeftLegs->sortLayer = 1;
-	playerLeftLegs->SetOrigin(Origins::BC);
-
-	playerRightLegs = (Player*)AddGo(new Player("graphics/potato_right_legs_default.png", "PlayerRightLegs"));
-	playerRightLegs->sortLayer = 1;
-	playerRightLegs->SetOrigin(Origins::BC);
 
 	background = (SpriteGo*)AddGo(new SpriteGo("graphics/bg.png", "Bg"));
 	background->sortLayer = 0;
@@ -71,7 +64,7 @@ void SceneGame::Enter()
 
 void SceneGame::Exit()
 {
-	playerBody->Reset();
+	player->Reset();
 	background->Reset();
 
 	Scene::Exit();

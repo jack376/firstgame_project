@@ -1,14 +1,12 @@
 #pragma once
 #include "Scene.h"
 
-class Player;
+class Character;
 class SpriteGo;
 class SceneGame : public Scene
 {
 protected:
-	Player* playerBody;
-	Player* playerLeftLegs;
-	Player* playerRightLegs;
+	Character* player;
 
 	SpriteGo* background;
 

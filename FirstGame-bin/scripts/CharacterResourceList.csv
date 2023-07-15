@@ -1,0 +1,4 @@
+"RESOURCE_TYPES (0: 텍스처, 1:폰트, 2:사운드, 3: 애니메이션)",RESOURCE_PATH
+0,graphics/potato_body_default.png
+0,graphics/potato_left_legs_default.png
+0,graphics/potato_right_legs_default.png
