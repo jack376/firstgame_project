@@ -1,18 +1,32 @@
 #pragma once
 #include "GameObject.h"
 
+class GameObject;
 class Character : public GameObject
 {
-protected:
-	sf::Sprite body;
-	sf::Texture bodyTexture;
-	sf::Vector2f bodyAnimation;
-	float bodyAnimationSpeed = 2.0f;
+public:
+	enum class StatusType
+	{
+		Idle,
+		Move,
+		Attack,
+	};
 
-	sf::Sprite legs;
-	sf::Texture legsTexture;
+protected:
+	StatusType status = StatusType::Idle;
+
+	float animationSpeed = 2.0f;
+
+	sf::Sprite body;
+	sf::Vector2f bodyAnimation;
+
+	sf::Sprite legL;
+	sf::Sprite legR;
 	sf::Vector2f legsAnimation;
-	float legsAnimationSpeed = 2.0f;
+	float legsWalkWidth = 15.0f;
+
+	//sf::Sprite equipGun;
+	//sf::Vector2f gunAnimation;
 
 	sf::Vector2f direction;
 
@@ -33,5 +47,10 @@ public:
 	bool GetFlipX() const;
 	void SetFlipX(bool filp);
 
+	sf::Vector2f GetPosition() const;
+	StatusType GetStatus() const;
+
 	void BodyAnimation(float defaultScale, float scaleRange, float flowTimeBySpeed);
+	void LegsAnimation(float walkWidth, float flowTimeBySpeed);
+	//void GunAnimation(float flowTimeBySpeed);
 };

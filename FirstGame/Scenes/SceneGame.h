@@ -2,11 +2,13 @@
 #include "Scene.h"
 
 class Character;
+class BaseGun;
 class SpriteGo;
 class SceneGame : public Scene
 {
 protected:
 	Character* player;
+	BaseGun* gun;
 
 	SpriteGo* background;
 

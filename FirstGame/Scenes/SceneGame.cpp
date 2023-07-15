@@ -7,6 +7,7 @@
 #include "SceneGame.h"
 #include "Character.h"
 #include "Button.h"
+#include "BaseGun.h"
 
 SceneGame::SceneGame() : Scene(SceneId::Game)
 {
@@ -20,15 +21,18 @@ void SceneGame::Init()
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
 	sf::Vector2f centerPos = windowSize * 0.5f;
 
-	player = (Character*)AddGo(new Character("Player"));
+	player = (Character*)AddGo(new Character("player"));
 	player->sortLayer = 2;
 	player->SetOrigin(Origins::BC);
 
+	gun = (BaseGun*)AddGo(new BaseGun(player, "graphics/gun.png", "gun"));
+	gun->sortLayer = 3;
+	gun->SetPosition(player->GetPosition());
+	gun->SetOrigin(Origins::MR);
 
 	background = (SpriteGo*)AddGo(new SpriteGo("graphics/bg.png", "Bg"));
 	background->sortLayer = 0;
 	background->SetOrigin(Origins::MC);
-
 
 	for (auto go : gameObjects)
 	{
@@ -47,6 +51,9 @@ void SceneGame::Release()
 
 void SceneGame::Reset()
 {
+	player->Reset();
+	gun->Reset();
+	background->Reset();
 }
 
 void SceneGame::Enter()
@@ -65,6 +72,7 @@ void SceneGame::Enter()
 void SceneGame::Exit()
 {
 	player->Reset();
+	gun->Reset();
 	background->Reset();
 
 	Scene::Exit();

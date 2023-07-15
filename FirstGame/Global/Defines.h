@@ -1,7 +1,6 @@
 #pragma once
 
 #define _USE_MATH_DEFINES
-#define _PI 3.14159265f
 
 enum class Languages
 {

@@ -1,2 +1,4 @@
 ProjectPlan.PNG
 FirstGame-bin/graphics/
+*.exe
+*.pdb
