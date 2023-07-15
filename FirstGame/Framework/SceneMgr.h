@@ -25,7 +25,7 @@ public:
 	void Draw(sf::RenderWindow& window);
 
 	void ChangeScene(SceneId id);
-	Scene* GetCurrScene() const;
+	Scene* GetCurrentScene() const;
 };
 
 #define SCENE_MGR (SceneMgr::Instance())

@@ -132,3 +132,9 @@ float Utils::Angle(const sf::Vector2f& dir)
 {
 	return (float)(atan2(dir.y, dir.x) * (180.f / M_PI));
 }
+
+float Utils::ToDegree(float radian)
+{
+	return radian * (180.f / M_PI);
+}
+

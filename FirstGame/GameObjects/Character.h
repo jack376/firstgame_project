@@ -47,10 +47,9 @@ public:
 	bool GetFlipX() const;
 	void SetFlipX(bool filp);
 
-	sf::Vector2f GetPosition() const;
+	sf::Vector2f GetOrigin() const;
 	StatusType GetStatus() const;
 
 	void BodyAnimation(float defaultScale, float scaleRange, float flowTimeBySpeed);
 	void LegsAnimation(float walkWidth, float flowTimeBySpeed);
-	//void GunAnimation(float flowTimeBySpeed);
 };

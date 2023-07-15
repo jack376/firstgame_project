@@ -66,7 +66,7 @@ void Framework::Run()
             switch (event.type)
             {
             case sf::Event::Closed:
-                SCENE_MGR.GetCurrScene()->Exit();
+                SCENE_MGR.GetCurrentScene()->Exit();
                 window.close();
                 break;
 

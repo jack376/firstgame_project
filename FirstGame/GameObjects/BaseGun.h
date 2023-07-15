@@ -1,30 +1,32 @@
 #pragma once
 #include "SpriteGo.h"
+#include "ObjectPool.h"
 
+class BaseBullet;
 class Character;
 class BaseGun : public SpriteGo
 {
 protected:
 	Character* player = nullptr;
+	BaseBullet* bullet = nullptr;
 
-	sf::Vector2f position;
+	sf::Vector2f look;
 	sf::Vector2f direction;
-	float fireRecoilAnimation;
-	float fireRecoilAnimationSpeed = 10.0f;
 
-	float range = 3.0f;
-	float cooldown = 1.0f;
-	float flowTime;
+	float fireRecoilAnimationSpeed = 15.0f;
+
+	float flowTime = 0.0f;
+
+	ObjectPool<BaseBullet> poolBaseBullets;
 
 public:
-	sf::Sprite sprite;
-	std::string textureId;
-
-	BaseGun(Character* player, const std::string& textureId, const std::string& n);
-	virtual ~BaseGun() override;
+	BaseGun(Character* player, const std::string& textureId = "", const std::string& n = "")
+		: SpriteGo(textureId, n), player(player) {}
+	virtual ~BaseGun() override {}
 
 	virtual void Init() override;
 	virtual void Release() override;
+
 	virtual void Reset() override;
 
 	virtual void Update(float dt) override;

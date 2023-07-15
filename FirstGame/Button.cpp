@@ -34,7 +34,7 @@ void Button::Update(float dt)
     SpriteGo::Update(dt);
 
     sf::Vector2f mousePos   = INPUT_MGR.GetMousePos();
-    sf::Vector2f uiMousePos = SCENE_MGR.GetCurrScene()->ScreenToUiPos(mousePos);
+    sf::Vector2f uiMousePos = SCENE_MGR.GetCurrentScene()->ScreenToUiPos(mousePos);
 
     bool prevHover = isHover;
     isHover = sprite.getGlobalBounds().contains(uiMousePos);

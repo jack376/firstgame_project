@@ -7,7 +7,6 @@
 Character::Character(const std::string& n = "")
 	: GameObject(n)
 {
-	RESOURCE_MGR.LoadFromCSV("scripts/CharacterResourceList.csv", false);
 }
 
 void Character::Init()
@@ -105,9 +104,9 @@ void Character::SetFlipX(bool filp)
 	body.setScale(scale);
 }
 
-sf::Vector2f Character::GetPosition() const
+sf::Vector2f Character::GetOrigin() const
 {
-	return position;
+	return body.getOrigin();
 }
 
 Character::StatusType Character::GetStatus() const
@@ -153,19 +152,3 @@ void Character::LegsAnimation(float walkWidth, float flowTimeBySpeed)
 		legL.setScale(1.0f, 1.0f);
 	}
 }
-
-/*
-void Character::GunAnimation(float flowTimeBySpeed)
-{
-	if (GetFlipX())
-	{
-		equipGun.setScale(-1.0f, 1.0f);
-		equipGun.setPosition(position);
-	}
-	else if (!GetFlipX())
-	{
-		equipGun.setScale(1.0f, 1.0f);
-		equipGun.setPosition(position);
-	}
-}
-*/

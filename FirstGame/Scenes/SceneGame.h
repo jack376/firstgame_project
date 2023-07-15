@@ -8,7 +8,7 @@ class SceneGame : public Scene
 {
 protected:
 	Character* player;
-	BaseGun* gun;
+	BaseGun* baseGun;
 
 	SpriteGo* background;
 

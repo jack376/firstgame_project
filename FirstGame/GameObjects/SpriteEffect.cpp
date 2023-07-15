@@ -32,7 +32,7 @@ void SpriteEffect::Update(float dt)
 	{
 		if (pool != nullptr)
 		{
-			SCENE_MGR.GetCurrScene()->RemoveGo(this);
+			SCENE_MGR.GetCurrentScene()->RemoveGo(this);
 			pool->Return(this);
 		}
 		else

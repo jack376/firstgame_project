@@ -8,13 +8,13 @@ protected:
 	std::list<T*> pool;
 	std::list<T*> useList;
 
-	void CreateObjs(int count = 100);
+	void CreateObjs(int count = 1000);
 
 public:
 	ObjectPool() = default;
 	~ObjectPool();
 
-	void Init(int cacheSize = 100);
+	void Init(int cacheSize = 1000);
 	void Release(); 
 	void Clear();	// pool로 전부 회수
 
