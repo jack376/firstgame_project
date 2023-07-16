@@ -31,7 +31,10 @@ void BaseGun::Reset()
 {
     SpriteGo::Reset();
 
+    fireRecoilEffect.setTexture(*RESOURCE_MGR.GetTexture("graphics/fire.png"));
+
     sprite.setOrigin(-20.0f, 40.0f);
+    fireRecoilEffect.setOrigin(-45.0f, 40.0f);
 
     for (auto bullet : poolBaseBullets.GetUseList())
     {
@@ -46,7 +49,7 @@ void BaseGun::Update(float dt)
 
     flowTime += dt;
     position = player->GetPosition();
-
+    
     sf::Vector2f mousePos = INPUT_MGR.GetMousePos();
     sf::Vector2f mouseWorldPos = SCENE_MGR.GetCurrentScene()->ScreenToWorldPos(mousePos);
     sf::Vector2f playerScreenPos = SCENE_MGR.GetCurrentScene()->WorldPosToScreen(position);
@@ -54,28 +57,48 @@ void BaseGun::Update(float dt)
     look = Utils::Normalize(mousePos - playerScreenPos);
     float angle = Utils::Angle(look);
 
-
+    /*
     if (player->GetFlipX())
     {
         if (angle > 90.0f) 
         {
             sprite.setScale(1.0f, -1.0f);
             sprite.setRotation(angle);
+            if (isFireRecoilEffect)
+            {
+                fireRecoilEffect.setPosition(position);
+                fireRecoilEffect.setRotation(angle);
+            }
         }
         else if (angle > 0.0f)
         {
             sprite.setScale(1.0f, 1.0f);
             sprite.setRotation(angle);
+            if (isFireRecoilEffect)
+            {
+                fireRecoilEffect.setPosition(position);
+                fireRecoilEffect.setRotation(angle);
+            }
         }
         else if (angle > -90.0f)
         {
             sprite.setScale(1.0f, 1.0f);
             sprite.setRotation(angle);
+            if (isFireRecoilEffect)
+            {
+                fireRecoilEffect.setPosition(position);
+                fireRecoilEffect.setRotation(angle);
+            }
         }
         else if (angle > -180.0f)
         {
             sprite.setScale(1.0f, -1.0f);
             sprite.setRotation(angle);
+            if (isFireRecoilEffect)
+            {
+                fireRecoilEffect.setPosition(position);
+                fireRecoilEffect.setRotation(angle);
+            }
         }
     }
     else if (!player->GetFlipX())
@@ -84,41 +107,79 @@ void BaseGun::Update(float dt)
         {
             sprite.setScale(1.0f, -1.0f);
             sprite.setRotation(angle);
+            if (isFireRecoilEffect)
+            {
+                fireRecoilEffect.setPosition(position);
+                fireRecoilEffect.setRotation(angle);
+            }
         }
         else if (angle > 0.0f)
         {
             sprite.setScale(1.0f, 1.0f);
             sprite.setRotation(angle);
+            if (isFireRecoilEffect)
+            {
+                fireRecoilEffect.setPosition(position);
+                fireRecoilEffect.setRotation(angle);
+            }
         }
         else if (angle > -90.0f)
         {
             sprite.setScale(1.0f, 1.0f);
             sprite.setRotation(angle);
+            if (isFireRecoilEffect)
+            {
+                fireRecoilEffect.setPosition(position);
+                fireRecoilEffect.setRotation(angle);
+            }
         }
         else if (angle > -180.0f)
         {
             sprite.setScale(1.0f, -1.0f);
             sprite.setRotation(angle);
+
+            if (isFireRecoilEffect)
+            {
+                fireRecoilEffect.setPosition(position);
+                fireRecoilEffect.setRotation(angle);
+            }
         }
     }
-    
+    */
+
+    if (player->GetFlipX())
+    {
+        if (angle > 90.0f || angle > 0.0f || angle > -90.0f || angle > -180.0f)
+        {
+            UpdateFlipAndRotation(true, angle);
+        }
+    }
+    else if (!player->GetFlipX())
+    {
+        if (angle > 90.0f || angle > 0.0f || angle > -90.0f || angle > -180.0f)
+        {
+            UpdateFlipAndRotation(false, angle);
+        }
+    }
+
     if (player->GetStatus() == Character::StatusType::Idle)
     {
         sprite.setPosition(position);
+        isFireRecoilEffect = false;
+        fireRecoilEffect.setColor(sf::Color::Transparent);
     }
     else if (player->GetStatus() == Character::StatusType::Move)
     {
         FireRecoilAnimation(fireRecoilAnimationSpeed, flowTime);
+        isFireRecoilEffect = true;
+        fireRecoilEffect.setColor(sf::Color(255, 255, 255, 200));
     }
-
-    //std::cout << "TEST : " << position.x << std::endl;
-
 
     if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Left))
     {
         BaseBullet* bullet = poolBaseBullets.Get();
-        bullet->sortLayer = 2;
         bullet->Fire(GetPosition(), look, 2000.f);
+        bullet->sortLayer = 2;
 
         Scene* scene = SCENE_MGR.GetCurrentScene();
         SceneGame* inGame = dynamic_cast<SceneGame*>(scene);
@@ -132,7 +193,8 @@ void BaseGun::Update(float dt)
 
 void BaseGun::Draw(sf::RenderWindow& window)
 {
-    SpriteGo::Draw(window);
+    window.draw(sprite);
+    window.draw(fireRecoilEffect, sf::BlendAdd);
 }
 
 void BaseGun::FireRecoilAnimation(float amount, float flowTimeBySpeed)
@@ -143,6 +205,19 @@ void BaseGun::FireRecoilAnimation(float amount, float flowTimeBySpeed)
     fireRecoil = player->GetFlipX() ? -abs(fireRecoil) : abs(fireRecoil);
 
     sprite.setPosition(position.x -= fireRecoil, position.y);
+    fireRecoilEffect.setPosition(position.x -= fireRecoil, position.y);
+}
 
-    //std::cout << "TEST : " << fireRecoil << std::endl;
+void BaseGun::UpdateFlipAndRotation(bool flip, float angle)
+{
+    float scaleValue = (angle > 90.0f || angle < -90.0f) ? -1.0f : 1.0f;
+
+    sprite.setScale(1.0f, scaleValue);
+    sprite.setRotation(angle);
+
+    if (isFireRecoilEffect)
+    {
+        fireRecoilEffect.setPosition(position);
+        fireRecoilEffect.setRotation(angle);
+    }
 }

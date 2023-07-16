@@ -7,15 +7,19 @@ class Character;
 class BaseGun : public SpriteGo
 {
 protected:
+	float flowTime = 0.0f;
+
 	Character* player = nullptr;
 	BaseBullet* bullet = nullptr;
-
+	
 	sf::Vector2f look;
 	sf::Vector2f direction;
 
 	float fireRecoilAnimationSpeed = 15.0f;
 
-	float flowTime = 0.0f;
+	sf::Sprite fireRecoilEffect;
+	bool isFireRecoilEffect = false;
+	float fireRecoilEffectDuration = 0.0f;
 
 	ObjectPool<BaseBullet> poolBaseBullets;
 
@@ -33,4 +37,5 @@ public:
 	virtual void Draw(sf::RenderWindow& window) override;
 
 	void FireRecoilAnimation(float amount, float flowTimeBySpeed);
+	void UpdateFlipAndRotation(bool flip, float angle);
 };

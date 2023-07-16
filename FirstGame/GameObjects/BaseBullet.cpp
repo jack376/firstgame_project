@@ -54,7 +54,8 @@ void BaseBullet::Update(float dt)
 		SetActive(false);
 		SCENE_MGR.GetCurrentScene()->RemoveGo(this);
 		bulletPool->Return(this);
-		std::cout << "TEST : " << bulletPool->GetUseList().size() << std::endl;
+		//std::cout << "TEST : " << bulletPool->GetUseList().size() << std::endl;
+		//std::cout << "TEST : " << bulletRange << std::endl;
 		return;
 	}
 
