@@ -3,7 +3,7 @@
 #include "BaseBullet.h"
 #include "ResourceMgr.h"
 #include "Utils.h"
-#include "Character.h"
+#include "Player.h"
 #include "inputMgr.h"
 #include "SceneMgr.h"
 #include "Scene.h"
@@ -179,7 +179,7 @@ void BaseGun::Update(float dt)
     {
         BaseBullet* bullet = poolBaseBullets.Get();
         bullet->Fire(GetPosition(), look, 2000.f);
-        bullet->sortLayer = 2;
+        bullet->sortLayer = 3;
 
         Scene* scene = SCENE_MGR.GetCurrentScene();
         SceneGame* inGame = dynamic_cast<SceneGame*>(scene);
@@ -214,7 +214,7 @@ void BaseGun::UpdateFlipAndRotation(bool flip, float angle)
 
     sprite.setScale(1.0f, scaleValue);
     sprite.setRotation(angle);
-
+    
     if (isFireRecoilEffect)
     {
         fireRecoilEffect.setPosition(position);

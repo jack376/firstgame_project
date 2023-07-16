@@ -11,7 +11,7 @@ protected:
 	sf::Vector2f direction;
 
 	float bulletSpeed  = 500.0f;
-	float bulletRange  = 1000.0f;
+	float bulletRange  = 500.0f;
 	int   bulletDamage = 25;
 
 public:

@@ -3,28 +3,26 @@
 #include "ObjectPool.h"
 
 class BaseBullet;
-class Character;
+class Player;
 class BaseGun : public SpriteGo
 {
 protected:
 	float flowTime = 0.0f;
 
-	Character* player = nullptr;
+	Player* player = nullptr;
 	BaseBullet* bullet = nullptr;
 	
 	sf::Vector2f look;
 	sf::Vector2f direction;
 
-	float fireRecoilAnimationSpeed = 15.0f;
-
 	sf::Sprite fireRecoilEffect;
 	bool isFireRecoilEffect = false;
 	float fireRecoilEffectDuration = 0.0f;
-
+	float fireRecoilAnimationSpeed = 12.0f;
 	ObjectPool<BaseBullet> poolBaseBullets;
 
 public:
-	BaseGun(Character* player, const std::string& textureId = "", const std::string& n = "")
+	BaseGun(Player* player, const std::string& textureId = "", const std::string& n = "")
 		: SpriteGo(textureId, n), player(player) {}
 	virtual ~BaseGun() override {}
 

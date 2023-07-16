@@ -2,6 +2,7 @@
 #include "GameObject.h"
 
 class GameObject;
+class Player;
 class Character : public GameObject
 {
 public:
@@ -15,15 +16,14 @@ public:
 protected:
 	StatusType status = StatusType::Idle;
 
-	float animationSpeed = 2.0f;
-
 	sf::Sprite body;
 	sf::Vector2f bodyAnimation;
 
 	sf::Sprite legL;
 	sf::Sprite legR;
 	sf::Vector2f legsAnimation;
-	float legsWalkWidth = 15.0f;
+
+	sf::Vector2f look;
 
 	//sf::Sprite equipGun;
 	//sf::Vector2f gunAnimation;
@@ -33,16 +33,26 @@ protected:
 	float moveSpeed = 500.f;
 	float flowTime = 0.0f;
 
+	float animationSpeed = 2.0f;
+	float legsWalkWidth = 15.0f;
+
+	sf::FloatRect wallBounds;
+
+
 	bool filpX = false;
 
 public:
-	Character(const std::string& n);
+	sf::Vector2f wallBoundsLT;
+	sf::Vector2f wallBoundsRB;
+
+
+	Character(const std::string& n = "") : GameObject(n) {}
 	virtual ~Character() override { Release(); }
 
-	virtual void Init() override;
-	virtual void Reset() override;
-	virtual void Update(float dt) override;
-	virtual void Draw(sf::RenderWindow& window) override;
+	virtual void Init() override = 0;
+	virtual void Reset() override = 0;
+	virtual void Update(float dt) override = 0;
+	virtual void Draw(sf::RenderWindow& window) override = 0;
 
 	bool GetFlipX() const;
 	void SetFlipX(bool filp);
@@ -52,4 +62,8 @@ public:
 
 	void BodyAnimation(float defaultScale, float scaleRange, float flowTimeBySpeed);
 	void LegsAnimation(float walkWidth, float flowTimeBySpeed);
+
+	void SetWallBounds(const sf::FloatRect& bounds);
+
+	sf::FloatRect GetWallBounds();
 };

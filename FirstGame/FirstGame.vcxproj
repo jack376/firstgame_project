@@ -175,6 +175,8 @@
     </ClCompile>
     <ClCompile Include="Framework\ResourceMgr.cpp" />
     <ClCompile Include="GameObjects\Character.cpp" />
+    <ClCompile Include="GameObjects\Monster.cpp" />
+    <ClCompile Include="GameObjects\Player.cpp" />
     <ClCompile Include="Player2.cpp" />
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Scenes\SceneGame.cpp" />
@@ -204,6 +206,8 @@
     <ClInclude Include="Framework\ResourceMgr.h" />
     <ClInclude Include="Global\Utils.h" />
     <ClInclude Include="GameObjects\Character.h" />
+    <ClInclude Include="GameObjects\Monster.h" />
+    <ClInclude Include="GameObjects\Player.h" />
     <ClInclude Include="Player2.h" />
     <ClInclude Include="Scenes\Scene.h" />
     <ClInclude Include="Scenes\SceneGame.h" />

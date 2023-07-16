@@ -39,7 +39,7 @@ void BaseBullet::Reset()
     SetPosition(0.0f, 0.0f);
     direction = { 0.0f, 0.0f };
     bulletSpeed = 500.0f;
-    bulletRange = 1000.0f;
+    bulletRange = 500.0f;
     bulletDamage = 25;
 }
 
