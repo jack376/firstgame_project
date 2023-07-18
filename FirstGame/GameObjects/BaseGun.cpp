@@ -17,9 +17,9 @@ void BaseGun::Init()
     poolBaseBullets.OnCreate = [this](BaseBullet* bullet) 
     {
         bullet->textureId = "graphics/bullet.png";
-        bullet->bulletPool = &poolBaseBullets;
+        bullet->pool = &poolBaseBullets;
     };
-    poolBaseBullets.Init();
+    poolBaseBullets.Init(1000);
 }
 
 void BaseGun::Release()
@@ -34,8 +34,9 @@ void BaseGun::Reset()
 
     fireRecoilEffect.setTexture(*RESOURCE_MGR.GetTexture("graphics/fire.png"));
 
-    sprite.setOrigin(-20.0f, 40.0f);
-    fireRecoilEffect.setOrigin(-45.0f, 45.0f);
+
+    SetOrigin(sprite.getTexture()->getSize().x / 2 + gunOrigin, sprite.getTexture()->getSize().y / 2);
+    fireRecoilEffect.setOrigin(sprite.getTexture()->getSize().x / 2, sprite.getTexture()->getSize().y / 2);
 
     for (auto bullet : poolBaseBullets.GetUseList())
     {
@@ -50,11 +51,12 @@ void BaseGun::Update(float dt)
 
     flowTime += dt;
     position = player->GetPosition();
+    gunMuzzle = position + look * gunLength;
 
     SceneGame* sceneGame = (SceneGame*)SCENE_MGR.GetCurrentScene();
     if (sceneGame != nullptr)
     {
-        Monster* nearMonster = sceneGame->GetClosestMonsterToPlayer();
+        Monster* nearMonster = sceneGame->GetNearMonsterSearch();
 
         if (nearMonster != nullptr)
         {
@@ -66,9 +68,9 @@ void BaseGun::Update(float dt)
         }
         else
         {
-            sf::Vector2f mousePos = INPUT_MGR.GetMousePos();
-            sf::Vector2f mouseWorldPos = SCENE_MGR.GetCurrentScene()->ScreenToWorldPos(mousePos);
-            sf::Vector2f playerScreenPos = SCENE_MGR.GetCurrentScene()->WorldPosToScreen(position);
+            sf::Vector2f mousePos        = INPUT_MGR.GetMousePos();
+            sf::Vector2f mouseWorldPos   = SCENE_MGR.GetCurrentScene()-> ScreenToWorldPos(mousePos);
+            sf::Vector2f playerScreenPos = SCENE_MGR.GetCurrentScene()-> WorldPosToScreen(position);
 
             look = Utils::Normalize(mousePos - playerScreenPos);
             float angle = Utils::Angle(look);
@@ -85,26 +87,22 @@ void BaseGun::Update(float dt)
     }
     else if (player->GetStatus() == Character::StatusType::Move)
     {
-        FireRecoilAnimation(fireRecoilAnimationSpeed, flowTime);
+        FireRecoilAnimation(look, fireRecoilAnimationSpeed, flowTime);
         isFireRecoilEffect = true;
         isFire = true;
-        fireRecoilEffect.setColor(sf::Color(255, 255, 255, 200));
+        fireRecoilEffect.setColor(sf::Color(255, 255, 255, 255));
     }
 
     //if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Left))
     if (isFire) // 수정 예정 800 범위 안에 들어올 시
     {
-        bulletCooldown -= dt;
-        if (bulletCooldown <= 0.0f)
+        bulletTotalCooldown -= dt;
+        if (bulletTotalCooldown <= 0.0f)
         {
             bullet = poolBaseBullets.Get();
             bullet->Init();
             bullet->Reset();
-
-            float gunLength = 90.0f;
-            sf::Vector2f gunPosition = position + look * gunLength;
-
-            bullet->Fire(gunPosition, look, 1000.f);
+            bullet->Fire(gunMuzzle, look, 1500.f);
             bullet->sortLayer = 3;
 
             Scene* scene = SCENE_MGR.GetCurrentScene();
@@ -114,7 +112,7 @@ void BaseGun::Update(float dt)
                 //bullet->SetZombieList(SceneGame->GetZombieList());
                 inGame->AddGo(bullet);
             }
-            bulletCooldown = 0.1f;
+            bulletTotalCooldown = bulletCurrentCooldown;
         }
     }
 }
@@ -125,15 +123,15 @@ void BaseGun::Draw(sf::RenderWindow& window)
     window.draw(fireRecoilEffect, sf::BlendAdd);
 }
 
-void BaseGun::FireRecoilAnimation(float amount, float flowTimeBySpeed)
+void BaseGun::FireRecoilAnimation(const sf::Vector2f direction, float playSpeed, float flowTime)
 {
-    float fireRecoilAnimation = sin((flowTimeBySpeed * amount) * 2.0f * M_PI);
+    float fireRecoilAnimation = sin((flowTime * playSpeed) * 2.0f * M_PI);
     float fireRecoil = 1.0f + ((fireRecoilAnimation + 1.0f) * 5.0f);
 
-    fireRecoil = player->GetFlipX() ? -abs(fireRecoil) : abs(fireRecoil);
+    sf::Vector2f dir = Utils::Normalize(direction) * fireRecoil;
 
-    sprite.setPosition(position.x -= fireRecoil, position.y);
-    fireRecoilEffect.setPosition(position.x -= fireRecoil, position.y);
+    sprite.setPosition(position.x -= dir.x, position.y -= dir.y);
+    fireRecoilEffect.setPosition(gunMuzzle.x -= dir.x, gunMuzzle.y -= dir.y);
 }
 
 void BaseGun::UpdateFlipAndRotation(bool flip, float angle)
@@ -143,7 +141,7 @@ void BaseGun::UpdateFlipAndRotation(bool flip, float angle)
     sprite.setScale(1.0f, scaleValue);
     sprite.setRotation(angle);
     
-    if (isFireRecoilEffect) // 아직 없어도 되지만 추후에 사용할 bool 변수
+    if (isFireRecoilEffect) // 추후에 사용할 bool 변수
     {
         fireRecoilEffect.setPosition(position);
         fireRecoilEffect.setRotation(angle);

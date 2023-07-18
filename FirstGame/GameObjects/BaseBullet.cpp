@@ -30,11 +30,7 @@ void BaseBullet::Reset()
     sprite.setRotation(0.0f);
     sprite.setPosition(0.0f, 0.0f);
 
-	//sprite.getTexture()->getSize().x - 50.0f
-
-	sortLayer = 2;
-
-	bulletDirection = { 0.0f, 0.0f };
+	bulletRange = 500.0f;
 }
 
 void BaseBullet::Update(float dt)
@@ -43,13 +39,15 @@ void BaseBullet::Update(float dt)
 
 	bulletRange -= bulletSpeed * dt;
 
-	if (bulletPool != nullptr && bulletRange < 0.0f)
+	if (bulletRange < 0.0f)
 	{
 		SetActive(false);
 		SCENE_MGR.GetCurrentScene()->RemoveGo(this);
-		bulletPool->Return(this);
+		pool->Return(this);
 		return;
 	}
+
+	//std::cout << "TEST : " << bulletRange << std::endl;
 
 	position += bulletDirection * bulletSpeed * dt;
 	sprite.setPosition(position);
@@ -59,26 +57,34 @@ void BaseBullet::Update(float dt)
 
 	bulletColliderDraw.setPosition(bulletCollider.left, bulletCollider.top);
 	bulletColliderDraw.setSize(sf::Vector2f(bulletCollider.width, bulletCollider.height));
-	bulletColliderDraw.setOutlineColor(sf::Color::Red);
-	bulletColliderDraw.setOutlineThickness(2.0f);
 	bulletColliderDraw.setFillColor(sf::Color::Transparent);
+
+	if (Variables::toggleColliderDraw) // TEST CODE
+	{
+		bulletColliderDraw.setOutlineColor(sf::Color::Red);
+		bulletColliderDraw.setOutlineThickness(2.0f);
+	}
 
 	SceneGame* sceneGame = (SceneGame*)SCENE_MGR.GetCurrentScene();
 	if (sceneGame != nullptr)
 	{
-		Monster* nearMonster = sceneGame->GetClosestMonsterToPlayer();
+		Monster* nearMonster = sceneGame->GetNearMonsterSearch();
 		if (nearMonster != nullptr)
 		{
-			if (sprite.getGlobalBounds().intersects(nearMonster->GetGlobalBounds()))
+			if (bulletCollider.intersects(nearMonster->GetMonsterCollider()))
 			{
-				std::cout << "TEST : " << "面倒 己傍" << std::endl;
-
-				//monster->OnHitBullet(bulletDamage);
-				//SetActive(false);
-				SCENE_MGR.GetCurrentScene()->RemoveGo(this);
-				bulletPool->Return(this);
-				//break;
-			}
+				bulletLife -= dt;
+				if (bulletLife <= 0.0f)
+				{
+					//std::cout << "TEST : " << "面倒 己傍" << std::endl;
+					//monster->OnHitBullet(bulletDamage);
+					SetActive(false);
+					SCENE_MGR.GetCurrentScene()->RemoveGo(this);
+					pool->Return(this);
+					bulletLife = 0.05f;
+					//break;
+				}
+			}		
 		}
 	}
 }

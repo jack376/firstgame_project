@@ -13,11 +13,9 @@ protected:
 	sf::FloatRect wallBounds;
 
 	sf::Vector2f currentPlayerPosition;
-
 	ObjectPool<Monster> monsterPool;
 
 	Player* player = nullptr;
-
 	int monsterCount = 0;
 
 public:
@@ -34,8 +32,6 @@ public:
 
 	VertexArrayGo* CreateTile(std::string textureId, sf::Vector2i size, sf::Vector2f tileSize, sf::Vector2f texSize);
 
-	//bool GunRangeSearch(float distance);
-
 	ObjectPool<Monster>& GetMonsterPool();
 	const std::list<Monster*>* GetMonsterList();
 
@@ -45,6 +41,6 @@ public:
 	void CreateMonsters(int count);
 	void SpawnMonsters(int count, sf::Vector2f center, float radius);
 
-	Monster* GetClosestMonsterToPlayer();
+	Monster* GetNearMonsterSearch();
 };
 

@@ -12,19 +12,6 @@
 #include "MonsterTable.h"
 #include "DataTableMgr.h"
 
-/*
-const std::string Monster::textureIds[3] = 
-{
-	"graphics/monster1.png",
-	"graphics/monster2.png",
-	"graphics/monster3.png",
-};
-const float Monster::speedStats[3]      = { 40.f, 70.f, 20.f };
-const int   Monster::hpStats[3]         = { 100, 75, 50 };
-const int   Monster::damageStats[3]     = { 10, 5, 7 };
-const float Monster::attackRateStats[3] = { 2.f, 0.5, 1.f };
-*/
-
 void Monster::Init()
 {
 }
@@ -33,29 +20,27 @@ void Monster::Reset()
 {
 	body.setTexture(*RESOURCE_MGR.GetTexture(textureId));
 
-	sf::Vector2f spriteCenter = sf::Vector2f(body.getTexture()->getSize().x / 2, body.getTexture()->getSize().y / 2);
-	body.setOrigin(spriteCenter);
+	monsterSpriteCenter.x = body.getTexture()->getSize().x / 2;
+	monsterSpriteCenter.y = body.getTexture()->getSize().y / 2;
+	body.setOrigin(monsterSpriteCenter);
 	body.setPosition(0, 0);
 
 	SetFlipX(false);
 
-	hp = maxHp;
+	currentHp = maxHp;
 	attackTimer = attackRate;
 }
 
 void Monster::Update(float dt)
 {
 	flowTime += dt * animationSpeed;
-
 	if (player == nullptr)
 	{
 		return;
 	}
 
 	float distance = Utils::Distance(player->GetPosition(), position);
-
 	direction = Utils::Normalize(player->GetPosition() - position);
-
 
 	if (direction.x < 0)
 	{
@@ -74,14 +59,24 @@ void Monster::Update(float dt)
 		body.setPosition(position);
 	}
 
-	float magnitude = Utils::Magnitude(direction);
+	monsterCollider.left = position.x - (body.getTexture()->getSize().x / 2);
+	monsterCollider.top  = position.y - (body.getTexture()->getSize().y / 2);
 
+	monsterColliderDraw.setPosition(monsterCollider.left, monsterCollider.top);
+	monsterColliderDraw.setSize(sf::Vector2f(monsterCollider.width, monsterCollider.height));
+	monsterColliderDraw.setFillColor(sf::Color::Transparent);
+
+	if (Variables::toggleColliderDraw)  // TEST CODE
+	{
+		monsterColliderDraw.setOutlineColor(sf::Color::Red);
+		monsterColliderDraw.setOutlineThickness(2.0f);
+	}
+
+	float magnitude = Utils::Magnitude(direction);
 	if (magnitude > 0.0f)
 	{
 		status = StatusType::Move;
-
 		animationSpeed = 2.0f;
-
 		if (magnitude > 1.f)
 		{
 			direction /= magnitude;
@@ -91,7 +86,6 @@ void Monster::Update(float dt)
 	else
 	{
 		status = StatusType::Idle;
-
 		animationSpeed = 1.0f;
 	}
 	BodyAnimation(1.0f, 0.2f, flowTime);
@@ -100,11 +94,12 @@ void Monster::Update(float dt)
 void Monster::Draw(sf::RenderWindow& window)
 {
 	window.draw(body);
+	window.draw(monsterColliderDraw);
 }
 
-sf::FloatRect Monster::GetGlobalBounds() const
+sf::FloatRect Monster::GetMonsterCollider() const
 {
-	return body.getGlobalBounds();
+	return monsterCollider;
 }
 
 void Monster::SetType(Types t)
@@ -120,14 +115,6 @@ void Monster::SetType(Types t)
 	maxHp       = info.maxHp;
 	damage      = info.damage;
 	attackRate  = info.attackRate;
-
-	/*
-	textureId  = textureIds[index];
-	speed      = speedStats[index];
-	maxHp      = hpStats[index];
-	damage     = damageStats[index];
-	attackRate = attackRateStats[index];
-	*/
 }
 
 Monster::Types Monster::GetType() const

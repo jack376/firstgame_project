@@ -142,11 +142,7 @@ void SceneGame::Update(float dt)
 
 	sf::Vector2f clampPlayerPosistion = Utils::Clamp(currentPlayerPosition, minValue, maxValue);
 
-	//TestFunc(800.0f);
-
 	worldView.setCenter(clampPlayerPosistion);
-
-
 }
 
 void SceneGame::Draw(sf::RenderWindow& window)
@@ -242,39 +238,6 @@ VertexArrayGo* SceneGame::CreateTile(std::string textureId, sf::Vector2i size, s
 	return tile;
 }
 
-/*
-bool SceneGame::GunRangeSearch(float inputDistance)
-{
-	BaseGun* baseGun = (BaseGun*)FindGo("BaseGun");
-
-	GetClosestMonsterToPlayer();
-
-	if (player == nullptr) 
-	{
-		return false;
-	}
-
-	sf::Vector2f difference = monster->GetPosition() - player->GetPosition();
-	float distance = std::sqrt(difference.x * difference.x + difference.y * difference.y);
-
-	if (distance <= inputDistance)
-	{
-		baseGun->SetFire(true);
-		std::cout << "TEST : " << "성공" << std::endl;
-		std::cout << "TEST : " << distance << std::endl;
-		return true;
-	}
-	else
-	{
-		std::cout << "TEST : " << "실패" << std::endl;
-		baseGun->SetFire(false);
-		return false;
-	}
-}
-*/
-
-
-
 void SceneGame::CreateMonsters(int count)
 {
 	monsterPool.OnCreate = [this](Monster* monster)
@@ -298,8 +261,7 @@ void SceneGame::SpawnMonsters(int count, sf::Vector2f center, float radius)
 
 		sf::Vector2f spawnPosition;
 
-		do
-		{
+		do {
 			spawnPosition = center + Utils::RandomInCircle(radius);
 		} while (Utils::Distance(center, spawnPosition) < 100.0f);
 
@@ -336,20 +298,20 @@ inline void SceneGame::ClearObjectPool(ObjectPool<T>& pool)
 	pool.Clear();
 }
 
-Monster* SceneGame::GetClosestMonsterToPlayer()
+Monster* SceneGame::GetNearMonsterSearch()
 {
 	const std::list<Monster*>* monsterList = GetMonsterList();
-	Monster* closestMonster = nullptr;
-	float closestDistance = std::numeric_limits<float>::max();
+	Monster* nearMonster = nullptr;
+	float nearDistance = std::numeric_limits<float>::max();
 
 	for (Monster* monster : *monsterList)
 	{
 		float distance = Utils::Distance(player->GetPosition(), monster->GetPosition());
-		if (distance < closestDistance)
+		if (distance < nearDistance)
 		{
-			closestDistance = distance;
-			closestMonster = monster;
+			nearDistance = distance;
+			nearMonster = monster;
 		}
 	}
-	return closestMonster;
+	return nearMonster;
 }

@@ -23,7 +23,13 @@ protected:
 	float fireRecoilEffectDuration = 0.0f;
 	float fireRecoilAnimationSpeed = 12.0f;
 
-	float bulletCooldown = 0.1f;
+	float bulletTotalCooldown = bulletCurrentCooldown;
+	float bulletCurrentCooldown = 0.1f;
+
+	float gunOrigin = -60.0f;
+	float gunLength = 90.0f;
+	sf::Vector2f gunMuzzle;
+
 
 public:
 	BaseGun(Player* player, const std::string& textureId = "", const std::string& n = "")
@@ -36,7 +42,7 @@ public:
 	virtual void Update(float dt) override;
 	virtual void Draw(sf::RenderWindow& window) override;
 
-	void FireRecoilAnimation(float amount, float flowTimeBySpeed);
+	void FireRecoilAnimation(const sf::Vector2f direction, float playSpeed, float flowTime);
 	void UpdateFlipAndRotation(bool flip, float angle);
 
 	void SetFire(bool test);

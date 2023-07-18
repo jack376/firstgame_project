@@ -16,7 +16,6 @@ class MonsterTable : public DataTable
 {
 protected:
     std::unordered_map<Monster::Types, MonsterInfo> table;
-    //std::vector<Monster::Types, MonsterInfo> table;
 
 public:
     MonsterTable() : DataTable(DataTable::Ids::Monster) {};

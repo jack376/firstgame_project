@@ -12,30 +12,23 @@ public:
 		Heavy  = 2,
 	};
 
-	/*
-	static const int totalTypes = 3;
-	static const std::string textureIds[3];
-	static const float speedStats[3];
-	static const int hpStats[3];
-	static const int damageStats[3];
-	static const float attackRateStats[3];
-	*/
-
 protected:
-	Types monsterType;
+	Player* player = nullptr;
 
+	Types monsterType;
 	std::string textureId;
 	float speed = 0.0f;
 	int maxHp = 0;
 	int damage = 0;
 	float attackRate = 0.0f;
 
-	int hp = 0;
+	int currentHp = 0;
 	float attackTimer = 0.0f;
 
-	Player* player;
+	sf::Vector2f monsterSpriteCenter;
 
-	//float monsterMoveSpeed = 50.f;
+	sf::FloatRect monsterCollider = sf::FloatRect(0.0f, 0.0f, 100.0f, 100.0f);
+	sf::RectangleShape monsterColliderDraw;
 
 public:
 	Monster(const std::string& n = "") : Character(n) {}
@@ -46,10 +39,12 @@ public:
 	void Update(float dt) override;
 	void Draw(sf::RenderWindow& window) override;
 
-	sf::FloatRect GetGlobalBounds() const;
+	sf::FloatRect GetMonsterCollider() const;
 
 	void SetType(Types t);
 	Types GetType() const;
 
 	void SetPlayer(Player* player);
+
+
 };
