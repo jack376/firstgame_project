@@ -2,17 +2,20 @@
 #include "SpriteGo.h"
 #include "ObjectPool.h"
 
+class Monster;
 class BaseGun;
 class BaseBullet : public SpriteGo
 {
 protected:
-	BaseGun* baseGun;
+	BaseGun* baseGun = nullptr;
+	Monster* targetMonster = nullptr;
 
-	sf::Vector2f direction;
-
-	float bulletSpeed  = 500.0f;
-	float bulletRange  = 500.0f;
-	int   bulletDamage = 25;
+	sf::Vector2f bulletDirection;
+	
+	float bulletSpeed    = 500.0f;
+	float bulletRange    = 500.0f;
+	float bulletCooldown = 0.5f;
+	int   bulletDamage   = 5;
 
 public:
 	ObjectPool<BaseBullet>* bulletPool = nullptr;
@@ -21,7 +24,9 @@ public:
 		: SpriteGo(textureId, n) {}
 	virtual ~BaseBullet() override {}
 
-	void Fire(const sf::Vector2f& pos, const sf::Vector2f& dir, float speed);
+	void Fire(const sf::Vector2f& position, const sf::Vector2f& direction, float speed);
+
+	void SetTargetMonster(Monster* monster);
 
 	virtual void Init() override;
 	virtual void Release() override;

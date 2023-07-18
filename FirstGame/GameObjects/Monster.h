@@ -6,11 +6,13 @@ class Monster : public Character
 {
 protected:
 	Player* player;
-	float monsterMoveSpeed = 100.f;
+	float monsterMoveSpeed = 50.f;
 
 public:
 	Monster(Player* player, const std::string& n = "") : Character(n), player(player) {}
 	virtual ~Monster() override { Release(); }
+
+	sf::FloatRect GetGlobalBounds() const;
 
 	void Init() override;
 	void Reset() override;

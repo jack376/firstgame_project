@@ -12,16 +12,18 @@ void Player::Init()
 void Player::Reset()
 {
 	body.setTexture(*RESOURCE_MGR.GetTexture("graphics/potato_body_default.png"));
-	body.setOrigin(75.0f, 102.0f);
-	body.setPosition(0, 0);
+	body.setOrigin(75.0f, 78.0f);
+	body.setPosition(0.0f, 0.0f);
 
 	legL.setTexture(*RESOURCE_MGR.GetTexture("graphics/potato_legs_default.png"));
 	legL.setOrigin(75.0f, 75.0f);
-	legL.setPosition(0, 0);
+	legL.setPosition(0.0f, 0.0f);
+	legL.setRotation(0.0f);
 
 	legR.setTexture(*RESOURCE_MGR.GetTexture("graphics/potato_legs_default.png"));
 	legR.setOrigin(75.0f, 75.0f);
-	legR.setPosition(0, 0);
+	legR.setPosition(0.0f, 0.0f);
+	legR.setRotation(0.0f);
 
 	SetFlipX(false);
 }
@@ -72,11 +74,13 @@ void Player::Update(float dt)
 
 		animationSpeed = 1.0f;
 
-		legR.setPosition(position.x + legsWalkWidth, position.y);
+		legR.setPosition(position.x + legsIdleWidth, position.y);
 		legR.setScale(-1.0f, 1.0f);
+		legR.setRotation(0.0f);
 
-		legL.setPosition(position.x - legsWalkWidth, position.y);
+		legL.setPosition(position.x - legsIdleWidth, position.y);
 		legL.setScale(1.0f, 1.0f);
+		legL.setRotation(0.0f);
 	}
 	BodyAnimation(1.0f, 0.2f, flowTime);
 }

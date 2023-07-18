@@ -46,25 +46,34 @@ void Character::BodyAnimation(float defaultScale, float scaleRange, float flowTi
 
 void Character::LegsAnimation(float walkWidth, float flowTimeBySpeed)
 {
-	legsAnimation.x = sin(flowTimeBySpeed * 1.0f * M_PI);
+	legsAnimation.x = sin(flowTimeBySpeed * 1.25f * M_PI);
 	float PositionX = (legsAnimation.x + 1.0f) * walkWidth;
+
+	float normalizedPosition = PositionX / walkWidth;
+	float rotation = -45.0f + normalizedPosition * 45.0f;
 
 	if (GetFlipX()) // ¿ÞÂÊ
 	{
-		legR.setPosition(PositionX + position.x - walkWidth, position.y);
+		legR.setPosition(position.x - walkWidth, position.y);
 		legR.setScale(1.0f, 1.0f);
+		legR.setRotation(rotation);
 
-		legL.setPosition(-PositionX + position.x + walkWidth, position.y);
-		legL.setScale(-1.0f, 1.0f);
+		legL.setPosition(position.x + walkWidth, position.y);
+		legL.setScale(1.0f, 1.0f);
+		legL.setRotation(-rotation);
 	}
 	else if (!GetFlipX()) // ¿À¸¥ÂÊ
 	{
-		legR.setPosition(PositionX + position.x - walkWidth, position.y);
+		legR.setPosition(position.x - walkWidth, position.y);
 		legR.setScale(-1.0f, 1.0f);
+		legR.setRotation(rotation);
 
-		legL.setPosition(-PositionX + position.x + walkWidth, position.y);
-		legL.setScale(1.0f, 1.0f);
+		legL.setPosition(position.x + walkWidth, position.y);
+		legL.setScale(-1.0f, 1.0f);
+		legL.setRotation(-rotation);
 	}
+
+	//std::cout << "TEST : " << PositionX << std::endl;
 }
 
 void Character::SetWallBounds(const sf::FloatRect& bounds)

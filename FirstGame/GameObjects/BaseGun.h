@@ -15,10 +15,12 @@ protected:
 	sf::Vector2f look;
 	sf::Vector2f direction;
 
+	bool isFire = false;
 	sf::Sprite fireRecoilEffect;
 	bool isFireRecoilEffect = false;
 	float fireRecoilEffectDuration = 0.0f;
 	float fireRecoilAnimationSpeed = 12.0f;
+
 	ObjectPool<BaseBullet> poolBaseBullets;
 
 public:
@@ -28,12 +30,12 @@ public:
 
 	virtual void Init() override;
 	virtual void Release() override;
-
 	virtual void Reset() override;
-
 	virtual void Update(float dt) override;
 	virtual void Draw(sf::RenderWindow& window) override;
 
 	void FireRecoilAnimation(float amount, float flowTimeBySpeed);
 	void UpdateFlipAndRotation(bool flip, float angle);
+
+	void SetFire(bool test);
 };

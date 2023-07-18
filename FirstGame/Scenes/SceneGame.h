@@ -8,14 +8,7 @@ class BaseGun;
 class SpriteGo;
 class SceneGame : public Scene
 {
-protected:
-	Player* player;
-	Monster* monster;
-	BaseGun* baseGun;
-
-	SpriteGo* background;
-	SpriteGo* backgroundOutline;
-	
+protected:	
 	sf::FloatRect wallBounds;
 
 	sf::Vector2f currentPlayerPosition;
@@ -35,5 +28,7 @@ public:
 	virtual void Draw(sf::RenderWindow& window) override;
 
 	VertexArrayGo* CreateTile(std::string textureId, sf::Vector2i size, sf::Vector2f tileSize, sf::Vector2f texSize);
+
+	bool TestFunc(float distance);
 };
 

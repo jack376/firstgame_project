@@ -34,7 +34,8 @@ protected:
 	float flowTime = 0.0f;
 
 	float animationSpeed = 2.0f;
-	float legsWalkWidth = 15.0f;
+	float legsIdleWidth = 15.0f;
+	float legsWalkWidth = 2.0f;
 
 	sf::FloatRect wallBounds;
 

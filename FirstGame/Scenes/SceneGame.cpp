@@ -24,21 +24,21 @@ void SceneGame::Init()
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
 	sf::Vector2f centerPos = windowSize * 0.5f;
 
-	player = (Player*)AddGo(new Player("Player"));
+	Player* player = (Player*)AddGo(new Player("Player"));
 	player->sortLayer = 1;
 
-	monster = (Monster*)AddGo(new Monster(player, "Monster"));
+	Monster* monster = (Monster*)AddGo(new Monster(player, "Monster"));
 	monster->sortLayer = 2;
 
-	baseGun = (BaseGun*)AddGo(new BaseGun(player, "graphics/gun.png", "BaseGun"));
+	BaseGun* baseGun = (BaseGun*)AddGo(new BaseGun(player, "graphics/gun.png", "BaseGun"));
 	baseGun->sortLayer = 4;
 	baseGun->SetPosition(player->GetPosition());
 
-	background = (SpriteGo*)AddGo(new SpriteGo("graphics/bg.png", "Bg"));
+	SpriteGo* background = (SpriteGo*)AddGo(new SpriteGo("graphics/bg.png", "Bg"));
 	background->sortLayer = -2;
 	background->SetOrigin(Origins::MC);
 
-	backgroundOutline = (SpriteGo*)AddGo(new SpriteGo("graphics/tiles_outline.png", "BgOutline"));
+	SpriteGo* backgroundOutline = (SpriteGo*)AddGo(new SpriteGo("graphics/tiles_outline.png", "BgOutline"));
 	backgroundOutline->sortLayer = 0;
 	backgroundOutline->SetOrigin(Origins::MC);
 
@@ -77,9 +77,11 @@ void SceneGame::Release()
 
 void SceneGame::Reset()
 {
-	player->Reset();
-	baseGun->Reset();
-	background->Reset();
+	//player->Reset();
+	//baseGun->Reset();
+	//background->Reset();
+
+	//bullet.SetTargetMonster(&monster);
 
 	for (auto go : gameObjects)
 	{
@@ -109,6 +111,7 @@ void SceneGame::Update(float dt)
 {
 	Scene::Update(dt);
 
+	Player* player = (Player*)FindGo("Player");
 	currentPlayerPosition = player->GetPosition();
 
 	sf::Vector2f halfViewSize = worldView.getSize() * 0.5f;
@@ -120,6 +123,8 @@ void SceneGame::Update(float dt)
 	sf::Vector2f maxValue = { wallBounds.left + wallBounds.width - halfViewSize.x, wallBounds.top + wallBounds.height - halfViewSize.y };
 
 	sf::Vector2f clampPlayerPosistion = Utils::Clamp(currentPlayerPosition, minValue, maxValue);
+
+	TestFunc(800.0f);
 
 	worldView.setCenter(clampPlayerPosistion);
 }
@@ -215,4 +220,30 @@ VertexArrayGo* SceneGame::CreateTile(std::string textureId, sf::Vector2i size, s
 	}
 
 	return tile;
+}
+
+bool SceneGame::TestFunc(float inputDistance)
+{
+	Player* player = (Player*)FindGo("Player");
+	Monster* monster = (Monster*)FindGo("Monster");
+	BaseGun* basegun = (BaseGun*)FindGo("BaseGun");
+
+	if (player == nullptr) 
+	{
+		return false;
+	}
+
+	sf::Vector2f difference = monster->GetPosition() - player->GetPosition();
+	float distance = std::sqrt(difference.x * difference.x + difference.y * difference.y);
+
+	if (distance <= inputDistance)
+	{
+		basegun->SetFire(true);
+		std::cout << "TEST : " << "성공" << std::endl;
+		std::cout << "TEST : " << distance << std::endl;
+		return true;
+	}
+	std::cout << "TEST : " << "실패" << std::endl;
+	basegun->SetFire(false);
+	return false;
 }

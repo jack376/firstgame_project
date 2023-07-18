@@ -5,6 +5,12 @@
 #include "InputMgr.h"
 #include "Utils.h"
 #include "ResourceMgr.h"
+#include "Collision.h"
+
+sf::FloatRect Monster::GetGlobalBounds() const
+{
+	return body.getGlobalBounds();
+}
 
 void Monster::Init()
 {
@@ -53,7 +59,7 @@ void Monster::Update(float dt)
 	{
 		status = StatusType::Move;
 
-		animationSpeed = 3.0f;
+		animationSpeed = 2.0f;
 
 		if (magnitude > 1.f)
 		{

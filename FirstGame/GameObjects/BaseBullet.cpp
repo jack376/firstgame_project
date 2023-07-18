@@ -6,14 +6,21 @@
 #include "Utils.h"
 #include "Character.h"
 #include "inputMgr.h"
+#include "Collision.h"
+#include "Monster.h"
 
-void BaseBullet::Fire(const sf::Vector2f& pos, const sf::Vector2f& dir, float speed)
+void BaseBullet::Fire(const sf::Vector2f& position, const sf::Vector2f& direction, float speed)
 {
-    sprite.setRotation(Utils::Angle(dir));
-    SetPosition(pos);
+    sprite.setRotation(Utils::Angle(direction));
+    sprite.setPosition(position);
 
-    direction = dir;
+	bulletDirection = direction;
     bulletSpeed = speed;
+}
+
+void BaseBullet::SetTargetMonster(Monster* monster)
+{
+	this->targetMonster = monster;
 }
 
 void BaseBullet::Init()
@@ -30,17 +37,14 @@ void BaseBullet::Reset()
 {
     SpriteGo::Reset();
 
-	sortLayer = 2;
-
 	sf::Vector2f spriteCenter = sf::Vector2f(sprite.getTexture()->getSize().x / 2 - 50.0f, sprite.getTexture()->getSize().y / 2);
 	sprite.setOrigin(spriteCenter);
-
     sprite.setRotation(0.0f);
-    SetPosition(0.0f, 0.0f);
-    direction = { 0.0f, 0.0f };
-    bulletSpeed = 500.0f;
-    bulletRange = 500.0f;
-    bulletDamage = 25;
+    sprite.setPosition(0.0f, 0.0f);
+
+	sortLayer = 2;
+
+	bulletDirection = { 0.0f, 0.0f };
 }
 
 void BaseBullet::Update(float dt)
@@ -59,23 +63,22 @@ void BaseBullet::Update(float dt)
 		return;
 	}
 
-	position += direction * bulletSpeed * dt;
+	position += bulletDirection * bulletSpeed * dt;
 	sprite.setPosition(position);
 
 	/*
-	if (zombies != nullptr)
+	if (targetMonster != nullptr)
 	{
-		for (Zombie* zombie : *zombies)
+		if (sprite.getGlobalBounds().intersects(targetMonster->GetGlobalBounds()))
 		{
-			if (sprite.getGlobalBounds().intersects(zombie->sprite.getGlobalBounds()))
-			{
-				zombie->OnHitBullet(bulletDamage);
-				SetActive(false);
-				SCENE_MGR.GetCurrentScene()->RemoveGo(this);
-				baseBulletPool->Return(this);
-				break;
-			}
-		}
+			std::cout << "TEST : " << "충돌 성공" << std::endl;
+
+			//monster->OnHitBullet(bulletDamage);
+			//SetActive(false);
+			SCENE_MGR.GetCurrentScene()->RemoveGo(this);
+			bulletPool->Return(this);
+			//break;
+		}	
 	}
 	*/
 }

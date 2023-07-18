@@ -175,7 +175,8 @@ void BaseGun::Update(float dt)
         fireRecoilEffect.setColor(sf::Color(255, 255, 255, 200));
     }
 
-    if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Left))
+    //if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Left)) // 이거 수정 800 범위 안에 들어올 시
+    if (isFire)
     {
         BaseBullet* bullet = poolBaseBullets.Get();
         bullet->Fire(GetPosition(), look, 2000.f);
@@ -215,9 +216,14 @@ void BaseGun::UpdateFlipAndRotation(bool flip, float angle)
     sprite.setScale(1.0f, scaleValue);
     sprite.setRotation(angle);
     
-    if (isFireRecoilEffect)
+    if (isFireRecoilEffect) // 아직 없어도 되지만 추후에 사용할 bool 변수
     {
         fireRecoilEffect.setPosition(position);
         fireRecoilEffect.setRotation(angle);
     }
+}
+
+void BaseGun::SetFire(bool test)
+{
+    isFire = test;
 }
