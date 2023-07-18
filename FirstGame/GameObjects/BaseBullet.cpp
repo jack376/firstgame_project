@@ -8,20 +8,7 @@
 #include "inputMgr.h"
 #include "Collision.h"
 #include "Monster.h"
-
-void BaseBullet::Fire(const sf::Vector2f& position, const sf::Vector2f& direction, float speed)
-{
-    sprite.setRotation(Utils::Angle(direction));
-    sprite.setPosition(position);
-
-	bulletDirection = direction;
-    bulletSpeed = speed;
-}
-
-void BaseBullet::SetTargetMonster(Monster* monster)
-{
-	this->targetMonster = monster;
-}
+#include "SceneGame.h"
 
 void BaseBullet::Init()
 {
@@ -37,10 +24,13 @@ void BaseBullet::Reset()
 {
     SpriteGo::Reset();
 
-	sf::Vector2f spriteCenter = sf::Vector2f(sprite.getTexture()->getSize().x / 2 - 50.0f, sprite.getTexture()->getSize().y / 2);
-	sprite.setOrigin(spriteCenter);
+	bulletSpriteCenter.x = sprite.getTexture()->getSize().x / 2;
+	bulletSpriteCenter.y = sprite.getTexture()->getSize().y / 2;
+	sprite.setOrigin(bulletSpriteCenter);
     sprite.setRotation(0.0f);
     sprite.setPosition(0.0f, 0.0f);
+
+	//sprite.getTexture()->getSize().x - 50.0f
 
 	sortLayer = 2;
 
@@ -58,33 +48,56 @@ void BaseBullet::Update(float dt)
 		SetActive(false);
 		SCENE_MGR.GetCurrentScene()->RemoveGo(this);
 		bulletPool->Return(this);
-		//std::cout << "TEST : " << bulletPool->GetUseList().size() << std::endl;
-		//std::cout << "TEST : " << bulletRange << std::endl;
 		return;
 	}
 
 	position += bulletDirection * bulletSpeed * dt;
 	sprite.setPosition(position);
 
-	/*
-	if (targetMonster != nullptr)
-	{
-		if (sprite.getGlobalBounds().intersects(targetMonster->GetGlobalBounds()))
-		{
-			std::cout << "TEST : " << "面倒 己傍" << std::endl;
+	bulletCollider.left = position.x - (sprite.getTexture()->getSize().x / 8);
+	bulletCollider.top  = position.y - (sprite.getTexture()->getSize().y / 8);
 
-			//monster->OnHitBullet(bulletDamage);
-			//SetActive(false);
-			SCENE_MGR.GetCurrentScene()->RemoveGo(this);
-			bulletPool->Return(this);
-			//break;
-		}	
+	bulletColliderDraw.setPosition(bulletCollider.left, bulletCollider.top);
+	bulletColliderDraw.setSize(sf::Vector2f(bulletCollider.width, bulletCollider.height));
+	bulletColliderDraw.setOutlineColor(sf::Color::Red);
+	bulletColliderDraw.setOutlineThickness(2.0f);
+	bulletColliderDraw.setFillColor(sf::Color::Transparent);
+
+	SceneGame* sceneGame = (SceneGame*)SCENE_MGR.GetCurrentScene();
+	if (sceneGame != nullptr)
+	{
+		Monster* nearMonster = sceneGame->GetClosestMonsterToPlayer();
+		if (nearMonster != nullptr)
+		{
+			if (sprite.getGlobalBounds().intersects(nearMonster->GetGlobalBounds()))
+			{
+				std::cout << "TEST : " << "面倒 己傍" << std::endl;
+
+				//monster->OnHitBullet(bulletDamage);
+				//SetActive(false);
+				SCENE_MGR.GetCurrentScene()->RemoveGo(this);
+				bulletPool->Return(this);
+				//break;
+			}
+		}
 	}
-	*/
 }
 
 void BaseBullet::Draw(sf::RenderWindow& window)
 {
 	window.draw(sprite, sf::BlendAdd);
-    //SpriteGo::Draw(window);
+	window.draw(bulletColliderDraw);
+}
+
+void BaseBullet::Fire(const sf::Vector2f& pos, const sf::Vector2f& dir, float speed)
+{
+	sprite.setRotation(Utils::Angle(dir));
+	SetPosition(pos);
+	bulletDirection = dir;
+	bulletSpeed = speed;
+}
+
+void BaseBullet::SetMonsterList(const std::list<Monster*>* list)
+{
+	monsters = list;
 }

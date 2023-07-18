@@ -11,6 +11,8 @@
 #include "BaseGun.h"
 #include "BaseBullet.h"
 #include "VertexArrayGo.h"
+#include "TextGo.h"
+#include <sstream>
 
 SceneGame::SceneGame() : Scene(SceneId::Game)
 {
@@ -24,11 +26,8 @@ void SceneGame::Init()
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
 	sf::Vector2f centerPos = windowSize * 0.5f;
 
-	Player* player = (Player*)AddGo(new Player("Player"));
+	player = (Player*)AddGo(new Player("Player"));
 	player->sortLayer = 1;
-
-	Monster* monster = (Monster*)AddGo(new Monster(player, "Monster"));
-	monster->sortLayer = 2;
 
 	BaseGun* baseGun = (BaseGun*)AddGo(new BaseGun(player, "graphics/gun.png", "BaseGun"));
 	baseGun->sortLayer = 4;
@@ -60,6 +59,8 @@ void SceneGame::Init()
 	
 	AddGo(tile);
 
+	CreateMonsters(100);
+
 	for (auto go : gameObjects)
 	{
 		go->Init();
@@ -83,6 +84,8 @@ void SceneGame::Reset()
 
 	//bullet.SetTargetMonster(&monster);
 
+	ClearObjectPool(monsterPool);
+
 	for (auto go : gameObjects)
 	{
 		go->Reset();
@@ -92,6 +95,8 @@ void SceneGame::Reset()
 void SceneGame::Enter()
 {
 	Scene::Enter();
+
+	ClearObjectPool(monsterPool);
 
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
 	sf::Vector2f centerPos = windowSize * 0.5f;
@@ -104,6 +109,10 @@ void SceneGame::Enter()
 
 void SceneGame::Exit()
 {
+	ClearObjectPool(monsterPool);
+
+	player->Reset();
+
 	Scene::Exit();
 }
 
@@ -111,7 +120,16 @@ void SceneGame::Update(float dt)
 {
 	Scene::Update(dt);
 
-	Player* player = (Player*)FindGo("Player");
+	if (player == nullptr)
+	{
+		return;
+	}
+
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1))
+	{
+		SpawnMonsters(5, player->GetPosition(), 1000.0f);
+	}
+
 	currentPlayerPosition = player->GetPosition();
 
 	sf::Vector2f halfViewSize = worldView.getSize() * 0.5f;
@@ -124,9 +142,11 @@ void SceneGame::Update(float dt)
 
 	sf::Vector2f clampPlayerPosistion = Utils::Clamp(currentPlayerPosition, minValue, maxValue);
 
-	TestFunc(800.0f);
+	//TestFunc(800.0f);
 
 	worldView.setCenter(clampPlayerPosistion);
+
+
 }
 
 void SceneGame::Draw(sf::RenderWindow& window)
@@ -222,11 +242,12 @@ VertexArrayGo* SceneGame::CreateTile(std::string textureId, sf::Vector2i size, s
 	return tile;
 }
 
-bool SceneGame::TestFunc(float inputDistance)
+/*
+bool SceneGame::GunRangeSearch(float inputDistance)
 {
-	Player* player = (Player*)FindGo("Player");
-	Monster* monster = (Monster*)FindGo("Monster");
-	BaseGun* basegun = (BaseGun*)FindGo("BaseGun");
+	BaseGun* baseGun = (BaseGun*)FindGo("BaseGun");
+
+	GetClosestMonsterToPlayer();
 
 	if (player == nullptr) 
 	{
@@ -238,12 +259,97 @@ bool SceneGame::TestFunc(float inputDistance)
 
 	if (distance <= inputDistance)
 	{
-		basegun->SetFire(true);
+		baseGun->SetFire(true);
 		std::cout << "TEST : " << "성공" << std::endl;
 		std::cout << "TEST : " << distance << std::endl;
 		return true;
 	}
-	std::cout << "TEST : " << "실패" << std::endl;
-	basegun->SetFire(false);
-	return false;
+	else
+	{
+		std::cout << "TEST : " << "실패" << std::endl;
+		baseGun->SetFire(false);
+		return false;
+	}
+}
+*/
+
+
+
+void SceneGame::CreateMonsters(int count)
+{
+	monsterPool.OnCreate = [this](Monster* monster)
+	{
+		Monster::Types monsterType = (Monster::Types)Utils::RandomRange(0, 3);
+		monster->SetType(monsterType);
+		monster->SetPlayer(player);
+		monster->sortLayer = 1;
+		monster->SetActive(false);
+		//monster->SetBloodPool(&bloodEffectPool);
+	};
+	monsterPool.Init(count);
+}
+
+void SceneGame::SpawnMonsters(int count, sf::Vector2f center, float radius)
+{
+	for (int i = 0; i < count; i++)
+	{
+		Monster* monster = monsterPool.Get();
+		monster->SetActive(true);
+
+		sf::Vector2f spawnPosition;
+
+		do
+		{
+			spawnPosition = center + Utils::RandomInCircle(radius);
+		} while (Utils::Distance(center, spawnPosition) < 100.0f);
+
+		monster->SetPosition(spawnPosition);
+		monster->Reset();
+
+		AddGo(monster);
+	}
+
+	monsterCount = monsterPool.GetUseList().size();
+	//TextGo* uiZombieCount = (TextGameObj*)FindGo("uiZombieCount");
+	//stringstream ss;
+	//ss << "Zombie : " << zombiecount;  //남은 좀비수 표시 
+	//uiZombieCount->SetString(ss.str());
+}
+
+ObjectPool<Monster>& SceneGame::GetMonsterPool()
+{
+	return monsterPool;
+}
+
+const std::list<Monster*>* SceneGame::GetMonsterList()
+{
+	return &monsterPool.GetUseList();
+}
+
+template<typename T>
+inline void SceneGame::ClearObjectPool(ObjectPool<T>& pool)
+{
+	for (auto obj : pool.GetUseList())
+	{
+		RemoveGo(obj);
+	}
+	pool.Clear();
+}
+
+Monster* SceneGame::GetClosestMonsterToPlayer()
+{
+	const std::list<Monster*>* monsterList = GetMonsterList();
+	Monster* closestMonster = nullptr;
+	float closestDistance = std::numeric_limits<float>::max();
+
+	for (Monster* monster : *monsterList)
+	{
+		float distance = Utils::Distance(player->GetPosition(), monster->GetPosition());
+		if (distance < closestDistance)
+		{
+			closestDistance = distance;
+			closestMonster = monster;
+		}
+	}
+	return closestMonster;
 }

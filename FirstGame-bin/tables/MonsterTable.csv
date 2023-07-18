@@ -1,0 +1,4 @@
+MonsterType,TextureId,Speed,MaxHP,Damage,AttackRate
+0,graphics/monster1.png,30.0,60,6,1.5
+1,graphics/monster2.png,50.5,40,4,2.0
+2,graphics/monster3.png,20.0,90,9,1.0

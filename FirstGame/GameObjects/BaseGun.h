@@ -11,7 +11,9 @@ protected:
 
 	Player* player = nullptr;
 	BaseBullet* bullet = nullptr;
-	
+
+	ObjectPool<BaseBullet> poolBaseBullets;
+
 	sf::Vector2f look;
 	sf::Vector2f direction;
 
@@ -21,7 +23,7 @@ protected:
 	float fireRecoilEffectDuration = 0.0f;
 	float fireRecoilAnimationSpeed = 12.0f;
 
-	ObjectPool<BaseBullet> poolBaseBullets;
+	float bulletCooldown = 0.1f;
 
 public:
 	BaseGun(Player* player, const std::string& textureId = "", const std::string& n = "")
