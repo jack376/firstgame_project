@@ -32,9 +32,6 @@ void Character::BodyAnimation(float defaultScale, float scaleRange, float flowTi
 {
 	bodyAnimation.x = -sin(flowTimeBySpeed * 2.0f * M_PI); // -1 ~ 1
 	float scaleX = defaultScale + ((bodyAnimation.x + 1.0f) / 2.0f) * scaleRange; 
-	//                 100%       +       0 ~ 2      /       1    *    0.2f)
-
-	//std::cout << "TEST : " << scaleX << std::endl;
 
 	scaleX = GetFlipX() ? -abs(scaleX) : abs(scaleX);
 

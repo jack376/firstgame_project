@@ -126,3 +126,33 @@ void Monster::SetPlayer(Player* player)
 {
 	this->player = player;
 }
+
+void Monster::OnHitBullet(int bulletDamage)
+{
+	currentHp -= bulletDamage;
+	if (currentHp <= 0)
+	{
+		//SetBulletHitEffect(position);
+		Scene* scene = SCENE_MGR.GetCurrentScene();
+		SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
+		if (sceneGame != nullptr)
+		{
+			sceneGame->OnDieMonster(this);
+		}
+	}
+}
+
+void Monster::SetBulletHitEffectPool(ObjectPool<SpriteEffect>* pool)
+{
+	effectPool = pool;
+}
+
+void Monster::SetBulletHitEffect(sf::Vector2f position)
+{
+	SpriteEffect* bulletHitEffect = effectPool->Get();
+	bulletHitEffect->SetActive(true);
+	bulletHitEffect->SetOrigin(Origins::MC);
+	bulletHitEffect->SetPosition(position);
+
+	SCENE_MGR.GetCurrentScene()->AddGo(bulletHitEffect);
+}

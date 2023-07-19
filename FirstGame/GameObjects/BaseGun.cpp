@@ -93,7 +93,6 @@ void BaseGun::Update(float dt)
         fireRecoilEffect.setColor(sf::Color(255, 255, 255, 255));
     }
 
-    //if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Left))
     if (isFire) // 수정 예정 800 범위 안에 들어올 시
     {
         bulletTotalCooldown -= dt;
@@ -106,12 +105,12 @@ void BaseGun::Update(float dt)
             bullet->sortLayer = 3;
 
             Scene* scene = SCENE_MGR.GetCurrentScene();
-            SceneGame* inGame = dynamic_cast<SceneGame*>(scene);
-            if (inGame != nullptr)
+            SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
+            if (sceneGame != nullptr)
             {
-                //bullet->SetZombieList(SceneGame->GetZombieList());
-                inGame->AddGo(bullet);
+                bullet->SetMonsterList(sceneGame->GetMonsterList());
             }
+            sceneGame->AddGo(bullet);
             bulletTotalCooldown = bulletCurrentCooldown;
         }
     }
@@ -141,7 +140,7 @@ void BaseGun::UpdateFlipAndRotation(bool flip, float angle)
     sprite.setScale(1.0f, scaleValue);
     sprite.setRotation(angle);
     
-    if (isFireRecoilEffect) // 추후에 사용할 bool 변수
+    if (isFireRecoilEffect)
     {
         fireRecoilEffect.setPosition(position);
         fireRecoilEffect.setRotation(angle);

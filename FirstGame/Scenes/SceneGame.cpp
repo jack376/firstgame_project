@@ -59,7 +59,8 @@ void SceneGame::Init()
 	
 	AddGo(tile);
 
-	CreateMonsters(100);
+	CreateBulletHitEffect(200);
+	CreateMonsters(200);
 
 	for (auto go : gameObjects)
 	{
@@ -82,9 +83,8 @@ void SceneGame::Reset()
 	//baseGun->Reset();
 	//background->Reset();
 
-	//bullet.SetTargetMonster(&monster);
-
 	ClearObjectPool(monsterPool);
+	ClearObjectPool(bulletHitEffectPool);
 
 	for (auto go : gameObjects)
 	{
@@ -97,6 +97,7 @@ void SceneGame::Enter()
 	Scene::Enter();
 
 	ClearObjectPool(monsterPool);
+	ClearObjectPool(bulletHitEffectPool);
 
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
 	sf::Vector2f centerPos = windowSize * 0.5f;
@@ -110,6 +111,7 @@ void SceneGame::Enter()
 void SceneGame::Exit()
 {
 	ClearObjectPool(monsterPool);
+	ClearObjectPool(bulletHitEffectPool);
 
 	player->Reset();
 
@@ -127,7 +129,7 @@ void SceneGame::Update(float dt)
 
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1))
 	{
-		SpawnMonsters(5, player->GetPosition(), 1000.0f);
+		SpawnMonsters(15, player->GetPosition(), 500.0f);
 	}
 
 	currentPlayerPosition = player->GetPosition();
@@ -247,7 +249,7 @@ void SceneGame::CreateMonsters(int count)
 		monster->SetPlayer(player);
 		monster->sortLayer = 1;
 		monster->SetActive(false);
-		//monster->SetBloodPool(&bloodEffectPool);
+		monster->SetBulletHitEffectPool(&bulletHitEffectPool);
 	};
 	monsterPool.Init(count);
 }
@@ -288,6 +290,26 @@ const std::list<Monster*>* SceneGame::GetMonsterList()
 	return &monsterPool.GetUseList();
 }
 
+ObjectPool<SpriteEffect>& SceneGame::GetBulletHitEffectPool()
+{
+	return bulletHitEffectPool;
+}
+
+void SceneGame::CreateBulletHitEffect(int count)
+{
+	bulletHitEffectPool.OnCreate = [this](SpriteEffect* bulletHitEffect)
+	{
+		bulletHitEffect->SetName("BulletHitEffect");
+		bulletHitEffect->SetDuration(0.1f);
+		bulletHitEffect->textureId = "graphics/bullet_hit.png";
+		bulletHitEffect->sortLayer = 1;
+		bulletHitEffect->sortOrder = 1;
+		bulletHitEffect->SetActive(false);
+		bulletHitEffect->SetPool(&bulletHitEffectPool);
+	};
+	bulletHitEffectPool.Init(count);
+}
+
 template<typename T>
 inline void SceneGame::ClearObjectPool(ObjectPool<T>& pool)
 {
@@ -314,4 +336,20 @@ Monster* SceneGame::GetNearMonsterSearch()
 		}
 	}
 	return nearMonster;
+}
+
+void SceneGame::OnDieMonster(Monster* monster)
+{
+	RemoveGo(monster);
+	monsterPool.Return(monster);
+
+	sf::Vector2f pos = monster->GetPosition();
+	monsterCount = monsterPool.GetUseList().size();
+	//TextGo* uiMonsterCount = (TextGo*)FindGo("uiMonsterCount");
+	//stringstream ss;
+	//ss << "Zombie : " << zombiecount;
+	//uiZombieCount->SetString(ss.str());
+
+	//AddScore(1);
+	//SpawnItem(pos);
 }
