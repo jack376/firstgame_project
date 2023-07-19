@@ -94,6 +94,7 @@ void BaseGun::Update(float dt)
     }
 
     //if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Left))
+
     if (isFire) // 수정 예정 800 범위 안에 들어올 시
     {
         bulletTotalCooldown -= dt;
