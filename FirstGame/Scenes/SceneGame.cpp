@@ -329,7 +329,7 @@ Monster* SceneGame::GetNearMonsterSearch()
 	for (Monster* monster : *monsterList)
 	{
 		float distance = Utils::Distance(player->GetPosition(), monster->GetPosition());
-		if (distance < nearDistance)
+		if (distance <= nearDistance)
 		{
 			nearDistance = distance;
 			nearMonster = monster;

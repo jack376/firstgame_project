@@ -24,7 +24,7 @@ void BaseBullet::Reset()
     sprite.setRotation(0.0f);
     sprite.setPosition(0.0f, 0.0f);
 
-	bulletRange = 1000.0f;
+	bulletRange = 700.0f;
 }
 
 void BaseBullet::Update(float dt)
@@ -52,10 +52,10 @@ void BaseBullet::Update(float dt)
 	bulletColliderDraw.setSize(sf::Vector2f(bulletCollider.width, bulletCollider.height));
 	bulletColliderDraw.setFillColor(sf::Color::Transparent);
 
-	if (Variables::toggleColliderDraw) // TEST CODE
+	if (isBulletColliderDrawView) // TEST CODE
 	{
 		bulletColliderDraw.setOutlineColor(sf::Color::Red);
-		bulletColliderDraw.setOutlineThickness(2.0f);
+		bulletColliderDraw.setOutlineThickness(1.0f);
 	}
 	
 	SceneGame* sceneGame = (SceneGame*)SCENE_MGR.GetCurrentScene();
@@ -70,7 +70,7 @@ void BaseBullet::Update(float dt)
 			SetActive(false);
 			SCENE_MGR.GetCurrentScene()->RemoveGo(this);
 			pool->Return(this);
-			bulletLife = 0.05f;
+			bulletLife = 0.02f;
 		}
 	}
 }

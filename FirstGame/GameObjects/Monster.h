@@ -31,6 +31,7 @@ protected:
 
 	sf::FloatRect monsterCollider = sf::FloatRect(0.0f, 0.0f, 100.0f, 100.0f);
 	sf::RectangleShape monsterColliderDraw;
+	bool isMonsterColliderDrawView = false;
 
 	ObjectPool<SpriteEffect>* effectPool;
 

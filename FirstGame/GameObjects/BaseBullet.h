@@ -16,13 +16,14 @@ protected:
 
 	sf::Vector2f bulletDirection;
 	float bulletSpeed  = 1500.0f;
-	float bulletRange  = 1000.0f;
+	float bulletRange  = 700.0f;
 	float bulletCooldown;
 	int   bulletDamage = 25;
-	float bulletLife   = 0.05f;
+	float bulletLife   = 0.02f;
 
 	sf::FloatRect bulletCollider = sf::FloatRect(0.0f, 0.0f, 30.0f, 30.0f);
 	sf::RectangleShape bulletColliderDraw;
+	bool isBulletColliderDrawView = false;
 
 	Monster* targetMonster;
 

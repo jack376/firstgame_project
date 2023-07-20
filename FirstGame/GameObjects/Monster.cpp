@@ -66,10 +66,10 @@ void Monster::Update(float dt)
 	monsterColliderDraw.setSize(sf::Vector2f(monsterCollider.width, monsterCollider.height));
 	monsterColliderDraw.setFillColor(sf::Color::Transparent);
 
-	if (Variables::toggleColliderDraw)  // TEST CODE
+	if (isMonsterColliderDrawView)  // TEST CODE
 	{
 		monsterColliderDraw.setOutlineColor(sf::Color::Red);
-		monsterColliderDraw.setOutlineThickness(2.0f);
+		monsterColliderDraw.setOutlineThickness(1.0f);
 	}
 
 	float magnitude = Utils::Magnitude(direction);
