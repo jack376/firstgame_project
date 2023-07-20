@@ -8,8 +8,8 @@ public:
 	Player(const std::string& n = "") : Character(n) {}
 	virtual ~Player() override { Release(); }
 
-	void Init() override;
-	void Reset() override;
-	void Update(float dt) override;
-	void Draw(sf::RenderWindow& window) override;
+	void Init();
+	void Reset();
+	void Update(float dt);
+	void Draw(sf::RenderWindow& window);
 };

@@ -1,5 +1,7 @@
 #pragma once
 #include "Character.h"
+#include "ObjectPool.h"
+#include "SpriteEffect.h"
 
 class Player;
 class Monster : public Character
@@ -30,6 +32,8 @@ protected:
 	sf::FloatRect monsterCollider = sf::FloatRect(0.0f, 0.0f, 100.0f, 100.0f);
 	sf::RectangleShape monsterColliderDraw;
 
+	ObjectPool<SpriteEffect>* effectPool;
+
 public:
 	Monster(const std::string& n = "") : Character(n) {}
 	virtual ~Monster() override { Release(); }
@@ -45,6 +49,8 @@ public:
 	Types GetType() const;
 
 	void SetPlayer(Player* player);
+	void OnHitBullet(int bulletDamage);
 
-
+	void SetBulletHitEffectPool(ObjectPool<SpriteEffect>* pool);
+	void SetBulletHitEffect(sf::Vector2f position);
 };
