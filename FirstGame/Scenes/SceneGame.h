@@ -2,7 +2,9 @@
 #include "Scene.h"
 #include "ObjectPool.h"
 #include <SpriteEffect.h>
+#include <BaseBullet.h>
 
+class BassBullet;
 class VertexArrayGo;
 class Monster;
 class Player;
@@ -21,6 +23,8 @@ protected:
 	ObjectPool<Monster> monsterPool;
 	ObjectPool<SpriteEffect> bulletHitEffectPool;
 
+	std::vector<std::vector<std::list<Monster*>>> gridList;
+
 public:
 	SceneGame();
 	virtual ~SceneGame() override = default;
@@ -33,12 +37,15 @@ public:
 	virtual void Update(float dt) override;
 	virtual void Draw(sf::RenderWindow& window) override;
 
+	//void CreateGridList(int gridCount, int cellSize);
+	//std::vector<std::vector<std::list<Monster*>>>& GetGridList();
+
 	VertexArrayGo* CreateTile(std::string textureId, sf::Vector2i size, sf::Vector2f tileSize, sf::Vector2f texSize);
 
 	ObjectPool<Monster>& GetMonsterPool();
 	ObjectPool<SpriteEffect>& GetBulletHitEffectPool();
 	const std::list<Monster*>* GetMonsterList();
-	Monster* GetNearMonsterSearch();
+	Monster* GetNearMonsterSearch(float posX, float posY);
 
 	template <typename T>
 	void ClearObjectPool(ObjectPool<T>& pool);

@@ -28,7 +28,7 @@ protected:
 
 	float gunOrigin = -60.0f;
 	float gunLength = 90.0f;
-	sf::Vector2f gunMuzzle;
+	sf::Vector2f gunMuzzlePosition;
 
 
 public:
@@ -46,4 +46,6 @@ public:
 	void UpdateFlipAndRotation(bool flip, float angle);
 
 	void SetFire(bool test);
+
+	sf::Vector2f GetMuzzlePosition();
 };

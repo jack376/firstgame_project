@@ -59,18 +59,25 @@ void BaseBullet::Update(float dt)
 	}
 	
 	SceneGame* sceneGame = (SceneGame*)SCENE_MGR.GetCurrentScene();
-	targetMonster = sceneGame->GetNearMonsterSearch();
-	if (targetMonster != nullptr && bulletCollider.intersects(targetMonster->GetMonsterCollider()))
+	Monster* targetMonster = sceneGame->GetNearMonsterSearch(position.x, position.y);
+
+	if (targetMonster != nullptr && monsters != nullptr)
 	{
-		bulletLife -= dt;
-		if (bulletLife < 0.0f)
+		//int gridX = (position.x + 1000) / 128;
+		//int gridY = (position.y + 1000) / 128;
+		//const std::list<Monster*>& monstersInCell = sceneGame->GetGridList()[gridX][gridY];
+		//for (Monster* monster : monstersInCell)
+		for (Monster* monster : *monsters)
 		{
-			targetMonster->SetBulletHitEffect(position);
-			targetMonster->OnHitBullet(bulletDamage);
-			SetActive(false);
-			SCENE_MGR.GetCurrentScene()->RemoveGo(this);
-			pool->Return(this);
-			bulletLife = 0.02f;
+			if (bulletCollider.intersects(monster->GetMonsterCollider()))
+			{
+				monster->SetBulletHitEffect(position);
+				monster->OnHitBullet(bulletDamage);
+				SetActive(false);
+				SCENE_MGR.GetCurrentScene()->RemoveGo(this);
+				pool->Return(this);
+				break;
+			}
 		}
 	}
 }

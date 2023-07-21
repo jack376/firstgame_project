@@ -59,8 +59,9 @@ void SceneGame::Init()
 	
 	AddGo(tile);
 
-	CreateBulletHitEffect(200);
-	CreateMonsters(200);
+	CreateBulletHitEffect(500);
+	CreateMonsters(500);
+	//CreateGridList(20, 128);
 
 	for (auto go : gameObjects)
 	{
@@ -127,12 +128,20 @@ void SceneGame::Update(float dt)
 		return;
 	}
 
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1))
-	{
-		SpawnMonsters(15, player->GetPosition(), 500.0f);
-	}
+	//CreateGridList(20, 128);
 
 	currentPlayerPosition = player->GetPosition();
+
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1))
+	{
+		SpawnMonsters(200, currentPlayerPosition, 500.0f);
+	}
+	/*
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num2))
+	{
+		CreateGridList(20, 128);
+	}
+	*/
 
 	sf::Vector2f halfViewSize = worldView.getSize() * 0.5f;
 
@@ -151,6 +160,38 @@ void SceneGame::Draw(sf::RenderWindow& window)
 {
 	Scene::Draw(window);
 }
+/*
+void SceneGame::CreateGridList(int gridCount, int cellSize)
+{
+	gridList.clear();
+	gridList.resize(gridCount, std::vector<std::list<Monster*>>(gridCount));
+
+	const std::list<Monster*>* monsterList = GetMonsterList();
+
+	for (Monster* monster : *monsterList)
+	{
+		int gridX = (monster->GetPosition().x + 1000) / cellSize;
+		int gridY = (monster->GetPosition().y + 1000) / cellSize;
+		gridList[gridX][gridY].push_back(monster);
+
+		//std::cout << gridX << std::endl;
+	}
+
+	
+	for (int i = 0; i < gridCount; ++i)
+	{
+		for (int j = 0; j < gridCount; ++j)
+		{
+			std::cout << "Cell (" << i << ", " << j << ") contains " << gridList[i][j].size() << " monsters\n";
+		}
+	}
+}
+
+std::vector<std::vector<std::list<Monster*>>>& SceneGame::GetGridList()
+{
+	return gridList;
+}
+*/
 
 VertexArrayGo* SceneGame::CreateTile(std::string textureId, sf::Vector2i size, sf::Vector2f tileSize, sf::Vector2f texSize)
 {
@@ -166,7 +207,7 @@ VertexArrayGo* SceneGame::CreateTile(std::string textureId, sf::Vector2i size, s
 		{ tileSize.x, 0.0f },
 		{ tileSize.x, tileSize.y },
 		{ 0.0f, tileSize.y }
-	};
+	}; 
 	sf::Vector2f texOffsets[4] =
 	{
 		{ 0.0f, 0.0f },
@@ -180,36 +221,6 @@ VertexArrayGo* SceneGame::CreateTile(std::string textureId, sf::Vector2i size, s
 	{
 		for (int j = 0; j < size.x; j++)
 		{
-			/*
-			int textureIndex = 11;
-			if (i != 0 && i != size.y - 1 && j != 0 && j != size.x - 1)
-			{
-				textureIndex = Utils::RandomRange(0, 11);
-			}
-
-			int textureIndex;
-			if (i == 0)
-			{
-				textureIndex = 0;
-			}
-			else if (i == size.y - 1)
-			{
-				textureIndex = 2;
-			}
-			else if (j == 0)
-			{
-				textureIndex = 3;
-			}
-			else if (j == size.x - 1)
-			{
-				textureIndex = 1;
-			}
-			else
-			{
-				textureIndex = Utils::RandomRange(4, 11);
-			}
-			*/
-
 			if (Utils::RandomRange(0, 20) != 0) // 20% 확률로 타일을 그림
 			{
 				currPos.x += tileSize.x;
@@ -240,6 +251,16 @@ VertexArrayGo* SceneGame::CreateTile(std::string textureId, sf::Vector2i size, s
 	return tile;
 }
 
+template<typename T>
+inline void SceneGame::ClearObjectPool(ObjectPool<T>& pool)
+{
+	for (auto obj : pool.GetUseList())
+	{
+		RemoveGo(obj);
+	}
+	pool.Clear();
+}
+
 void SceneGame::CreateMonsters(int count)
 {
 	monsterPool.OnCreate = [this](Monster* monster)
@@ -259,13 +280,12 @@ void SceneGame::SpawnMonsters(int count, sf::Vector2f center, float radius)
 	for (int i = 0; i < count; i++)
 	{
 		Monster* monster = monsterPool.Get();
-		monster->SetActive(true);
-
 		sf::Vector2f spawnPosition;
+		monster->SetActive(true);
 
 		do {
 			spawnPosition = center + Utils::RandomInCircle(radius);
-		} while (Utils::Distance(center, spawnPosition) < 100.0f);
+		} while (Utils::Distance(center, spawnPosition) < 200.0f);
 
 		monster->SetPosition(spawnPosition);
 		monster->Reset();
@@ -310,23 +330,20 @@ void SceneGame::CreateBulletHitEffect(int count)
 	bulletHitEffectPool.Init(count);
 }
 
-template<typename T>
-inline void SceneGame::ClearObjectPool(ObjectPool<T>& pool)
+Monster* SceneGame::GetNearMonsterSearch(float posX, float posY)
 {
-	for (auto obj : pool.GetUseList())
-	{
-		RemoveGo(obj);
-	}
-	pool.Clear();
-}
+	//int gridX = (posX + 1000) / 128;
+	//int gridY = (posY + 1000) / 128;
 
-Monster* SceneGame::GetNearMonsterSearch()
-{
 	const std::list<Monster*>* monsterList = GetMonsterList();
+	//const std::list<Monster*>& monsterList = GetGridList()[gridX][gridY];
 	Monster* nearMonster = nullptr;
-	float nearDistance = std::numeric_limits<float>::max();
+
+	//float nearDistance = std::numeric_limits<float>::max();
+	float nearDistance = 700.0f; // 총기 사정거리
 
 	for (Monster* monster : *monsterList)
+	//for (Monster* monster : monsterList)
 	{
 		float distance = Utils::Distance(player->GetPosition(), monster->GetPosition());
 		if (distance <= nearDistance)
@@ -343,8 +360,8 @@ void SceneGame::OnDieMonster(Monster* monster)
 	RemoveGo(monster);
 	monsterPool.Return(monster);
 
-	sf::Vector2f pos = monster->GetPosition();
-	monsterCount = monsterPool.GetUseList().size();
+	//sf::Vector2f pos = monster->GetPosition();
+	//monsterCount = monsterPool.GetUseList().size();
 	//TextGo* uiMonsterCount = (TextGo*)FindGo("uiMonsterCount");
 	//stringstream ss;
 	//ss << "Zombie : " << zombiecount;

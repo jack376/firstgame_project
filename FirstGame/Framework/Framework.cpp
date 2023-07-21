@@ -78,15 +78,18 @@ void Framework::Run()
 
         if (window.isOpen())
         {
+            fpsDelay -= dt;
+
             if (INPUT_MGR.GetKeyDown(sf::Keyboard::Tilde))
             {
                 fpsViewer.SetActive(!fpsViewer.GetActive());
             }
-            if (fpsViewer.GetActive())
+            if (fpsDelay <= 0.0f && fpsViewer.GetActive())
             {
                 std::stringstream ss;
                 ss << 1.0f / dt;
                 fpsViewer.SetString(ss.str());
+                fpsDelay = 1.0f;
             }
 
             Update(dt);

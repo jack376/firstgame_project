@@ -51,12 +51,15 @@ void BaseGun::Update(float dt)
 
     flowTime += dt;
     position = player->GetPosition();
-    gunMuzzle = position + look * gunLength;
+    gunMuzzlePosition = position + look * gunLength;
 
     SceneGame* sceneGame = (SceneGame*)SCENE_MGR.GetCurrentScene();
     if (sceneGame != nullptr)
     {
-        Monster* nearMonster = sceneGame->GetNearMonsterSearch();
+        bullet = poolBaseBullets.Get();
+        float positionX = bullet->GetPosition().x;
+        float positionY = bullet->GetPosition().y;
+        Monster* nearMonster = sceneGame->GetNearMonsterSearch(positionX, positionY);
 
         if (nearMonster != nullptr)
         {
@@ -71,6 +74,7 @@ void BaseGun::Update(float dt)
             sf::Vector2f mousePos        = INPUT_MGR.GetMousePos();
             sf::Vector2f mouseWorldPos   = SCENE_MGR.GetCurrentScene()-> ScreenToWorldPos(mousePos);
             sf::Vector2f playerScreenPos = SCENE_MGR.GetCurrentScene()-> WorldPosToScreen(position);
+            //std::cout << mouseWorldPos.x << ", " << mouseWorldPos.y << std::endl;
 
             look = Utils::Normalize(mousePos - playerScreenPos);
             float angle = Utils::Angle(look);
@@ -101,7 +105,7 @@ void BaseGun::Update(float dt)
             bullet = poolBaseBullets.Get();
             bullet->Init();
             bullet->Reset();
-            bullet->Fire(gunMuzzle, look, 1500.f);
+            bullet->Fire(gunMuzzlePosition, look, 1500.f);
             bullet->sortLayer = 3;
 
             Scene* scene = SCENE_MGR.GetCurrentScene();
@@ -130,7 +134,7 @@ void BaseGun::FireRecoilAnimation(const sf::Vector2f direction, float playSpeed,
     sf::Vector2f dir = Utils::Normalize(direction) * fireRecoil;
 
     sprite.setPosition(position.x -= dir.x, position.y -= dir.y);
-    fireRecoilEffect.setPosition(gunMuzzle.x -= dir.x, gunMuzzle.y -= dir.y);
+    fireRecoilEffect.setPosition(gunMuzzlePosition.x -= dir.x, gunMuzzlePosition.y -= dir.y);
 }
 
 void BaseGun::UpdateFlipAndRotation(bool flip, float angle)
@@ -150,4 +154,9 @@ void BaseGun::UpdateFlipAndRotation(bool flip, float angle)
 void BaseGun::SetFire(bool test)
 {
     isFire = test;
+}
+
+sf::Vector2f BaseGun::GetMuzzlePosition()
+{
+    return gunMuzzlePosition;
 }

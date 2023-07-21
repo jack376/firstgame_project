@@ -23,7 +23,7 @@ void Monster::Reset()
 	monsterSpriteCenter.x = body.getTexture()->getSize().x / 2;
 	monsterSpriteCenter.y = body.getTexture()->getSize().y / 2;
 	body.setOrigin(monsterSpriteCenter);
-	body.setPosition(0, 0);
+	body.setPosition(0.0f, 0.0f);
 
 	SetFlipX(false);
 
@@ -53,14 +53,14 @@ void Monster::Update(float dt)
 	
 	body.setRotation(Utils::Angle(look));
 
-	if (distance > 25.f)
+	if (distance > 40.f)
 	{
 		position += direction * speed * dt;
 		body.setPosition(position);
 	}
 
-	monsterCollider.left = position.x - (body.getTexture()->getSize().x / 2);
-	monsterCollider.top  = position.y - (body.getTexture()->getSize().y / 2);
+	monsterCollider.left = position.x - monsterSpriteCenter.x;
+	monsterCollider.top  = position.y - monsterSpriteCenter.y;
 
 	monsterColliderDraw.setPosition(monsterCollider.left, monsterCollider.top);
 	monsterColliderDraw.setSize(sf::Vector2f(monsterCollider.width, monsterCollider.height));

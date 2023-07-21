@@ -18,6 +18,8 @@ protected:
 
 	std::string title = "SFML Works!";
 
+	float fpsDelay = 1.0f;
+
 public:
 	virtual void Init(int width, int height, const std::string& title);
 	virtual void Release();

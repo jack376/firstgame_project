@@ -30,7 +30,7 @@ Character::StatusType Character::GetStatus() const
 
 void Character::BodyAnimation(float defaultScale, float scaleRange, float flowTimeBySpeed)
 {
-	bodyAnimation.x = -sin(flowTimeBySpeed * 2.0f * M_PI); // -1 ~ 1
+	bodyAnimation.x = -sin(flowTimeBySpeed * 2.0f * M_PI);
 	float scaleX = defaultScale + ((bodyAnimation.x + 1.0f) / 2.0f) * scaleRange; 
 
 	scaleX = GetFlipX() ? -abs(scaleX) : abs(scaleX);
@@ -69,8 +69,6 @@ void Character::LegsAnimation(float walkWidth, float flowTimeBySpeed)
 		legL.setScale(-1.0f, 1.0f);
 		legL.setRotation(-rotation);
 	}
-
-	//std::cout << "TEST : " << PositionX << std::endl;
 }
 
 void Character::SetWallBounds(const sf::FloatRect& bounds)

@@ -18,15 +18,13 @@ protected:
 	float bulletSpeed  = 1500.0f;
 	float bulletRange  = 700.0f;
 	float bulletCooldown;
-	int   bulletDamage = 25;
-	float bulletLife   = 0.02f;
+	int   bulletDamage = 50;
+	//float bulletLife   = 0.05f;
 
 	sf::FloatRect bulletCollider = sf::FloatRect(0.0f, 0.0f, 30.0f, 30.0f);
 	sf::RectangleShape bulletColliderDraw;
 	bool isBulletColliderDrawView = false;
-
-	Monster* targetMonster;
-
+	
 public:
 	ObjectPool<BaseBullet>* pool;
 
@@ -41,7 +39,4 @@ public:
 
 	void Fire(const sf::Vector2f& pos, const sf::Vector2f& dir, float speed);
 	void SetMonsterList(const std::list<Monster*>* list);
-	void SetTargetMonster(Monster* nearMonster);
-
-	void BulletHitAnimation(float defaultScale, float scaleRange, float flowTimeBySpeed);
 };
