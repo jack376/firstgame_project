@@ -63,11 +63,11 @@ void BaseBullet::Update(float dt)
 
 	if (targetMonster != nullptr && monsters != nullptr)
 	{
-		//int gridX = (position.x + 1000) / 128;
-		//int gridY = (position.y + 1000) / 128;
-		//const std::list<Monster*>& monstersInCell = sceneGame->GetGridList()[gridX][gridY];
-		//for (Monster* monster : monstersInCell)
-		for (Monster* monster : *monsters)
+		int gridX = (position.x + 1000) / 128;
+		int gridY = (position.y + 1000) / 128;
+		const std::list<Monster*>& monstersInCell = sceneGame->GetGridList()[gridX][gridY];
+		for (Monster* monster : monstersInCell)
+		//for (Monster* monster : *monsters)
 		{
 			if (bulletCollider.intersects(monster->GetMonsterCollider()))
 			{

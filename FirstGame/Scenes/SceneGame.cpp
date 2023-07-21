@@ -61,7 +61,7 @@ void SceneGame::Init()
 
 	CreateBulletHitEffect(500);
 	CreateMonsters(500);
-	//CreateGridList(20, 128);
+	CreateGridList(20, 128);
 
 	for (auto go : gameObjects)
 	{
@@ -127,21 +127,19 @@ void SceneGame::Update(float dt)
 	{
 		return;
 	}
-
-	//CreateGridList(20, 128);
-
+	CreateGridList(20, 128);
 	currentPlayerPosition = player->GetPosition();
 
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1))
 	{
-		SpawnMonsters(200, currentPlayerPosition, 500.0f);
+		SpawnMonsters(10, currentPlayerPosition, 500.0f);
 	}
-	/*
+	
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num2))
 	{
 		CreateGridList(20, 128);
 	}
-	*/
+
 
 	sf::Vector2f halfViewSize = worldView.getSize() * 0.5f;
 
@@ -160,7 +158,7 @@ void SceneGame::Draw(sf::RenderWindow& window)
 {
 	Scene::Draw(window);
 }
-/*
+
 void SceneGame::CreateGridList(int gridCount, int cellSize)
 {
 	gridList.clear();
@@ -176,22 +174,24 @@ void SceneGame::CreateGridList(int gridCount, int cellSize)
 
 		//std::cout << gridX << std::endl;
 	}
-
-	
+	/*
 	for (int i = 0; i < gridCount; ++i)
 	{
 		for (int j = 0; j < gridCount; ++j)
 		{
-			std::cout << "Cell (" << i << ", " << j << ") contains " << gridList[i][j].size() << " monsters\n";
+			if (gridList[i][j].size() != 0)
+			{
+				std::cout << "Cell (" << i << ", " << j << ") contains " << gridList[i][j].size() << " monsters\n";
+			}
 		}
 	}
+	*/
 }
 
 std::vector<std::vector<std::list<Monster*>>>& SceneGame::GetGridList()
 {
 	return gridList;
 }
-*/
 
 VertexArrayGo* SceneGame::CreateTile(std::string textureId, sf::Vector2i size, sf::Vector2f tileSize, sf::Vector2f texSize)
 {
@@ -332,18 +332,18 @@ void SceneGame::CreateBulletHitEffect(int count)
 
 Monster* SceneGame::GetNearMonsterSearch(float posX, float posY)
 {
-	//int gridX = (posX + 1000) / 128;
-	//int gridY = (posY + 1000) / 128;
+	int gridX = (posX + 1000) / 128;
+	int gridY = (posY + 1000) / 128;
 
-	const std::list<Monster*>* monsterList = GetMonsterList();
-	//const std::list<Monster*>& monsterList = GetGridList()[gridX][gridY];
+	//const std::list<Monster*>* monsterList = GetMonsterList();
+	const std::list<Monster*>& monsterList = GetGridList()[gridX][gridY];
 	Monster* nearMonster = nullptr;
 
 	//float nearDistance = std::numeric_limits<float>::max();
 	float nearDistance = 700.0f; // 총기 사정거리
 
-	for (Monster* monster : *monsterList)
-	//for (Monster* monster : monsterList)
+	//for (Monster* monster : *monsterList)
+	for (Monster* monster : monsterList)
 	{
 		float distance = Utils::Distance(player->GetPosition(), monster->GetPosition());
 		if (distance <= nearDistance)

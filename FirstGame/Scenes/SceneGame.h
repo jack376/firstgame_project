@@ -37,8 +37,8 @@ public:
 	virtual void Update(float dt) override;
 	virtual void Draw(sf::RenderWindow& window) override;
 
-	//void CreateGridList(int gridCount, int cellSize);
-	//std::vector<std::vector<std::list<Monster*>>>& GetGridList();
+	void CreateGridList(int gridCount, int cellSize);
+	std::vector<std::vector<std::list<Monster*>>>& GetGridList();
 
 	VertexArrayGo* CreateTile(std::string textureId, sf::Vector2i size, sf::Vector2f tileSize, sf::Vector2f texSize);
 

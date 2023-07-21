@@ -110,9 +110,16 @@ void BaseGun::Update(float dt)
 
             Scene* scene = SCENE_MGR.GetCurrentScene();
             SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
+
+
+            int gridX = (bullet->GetPosition().x + 1000) / 128;
+            int gridY = (bullet->GetPosition().x + 1000) / 128;
+            const std::list<Monster*>& monsterList = sceneGame->GetGridList()[gridX][gridY];
+
             if (sceneGame != nullptr)
             {
-                bullet->SetMonsterList(sceneGame->GetMonsterList());
+                bullet->SetMonsterList(&monsterList);
+                //bullet->SetMonsterList(sceneGame->GetMonsterList());
             }
             sceneGame->AddGo(bullet);
             bulletTotalCooldown = bulletCurrentCooldown;
