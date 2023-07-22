@@ -59,15 +59,11 @@ void BaseBullet::Update(float dt)
 	}
 	
 	SceneGame* sceneGame = (SceneGame*)SCENE_MGR.GetCurrentScene();
-	Monster* targetMonster = sceneGame->GetNearMonsterSearch(position.x, position.y);
+	Monster* targetMonster = sceneGame->GetNearMonsterSearch();
 
 	if (targetMonster != nullptr && monsters != nullptr)
 	{
-		int gridX = (position.x + 1000) / 128;
-		int gridY = (position.y + 1000) / 128;
-		const std::list<Monster*>& monstersInCell = sceneGame->GetGridList()[gridX][gridY];
-		for (Monster* monster : monstersInCell)
-		//for (Monster* monster : *monsters)
+		for (Monster* monster : *monsters)
 		{
 			if (bulletCollider.intersects(monster->GetMonsterCollider()))
 			{

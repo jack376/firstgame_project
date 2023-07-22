@@ -9,6 +9,15 @@ protected:
 public:
 	sf::Text text;
 
+	std::vector<sf::Sprite> corners;
+	sf::Sprite corner;
+
+	std::vector<sf::RectangleShape> sides;
+	sf::RectangleShape side;
+
+	sf::RectangleShape body;
+	sf::Color bodyColor;
+
 	std::function<void()> OnClick;
 	std::function<void()> OnEnter;
 	std::function<void()> OnExit;
@@ -22,5 +31,8 @@ public:
 
 	virtual void Update(float dt) override;
 	virtual void Draw(sf::RenderWindow& window) override;
+
+	void SetColor(int red = 0, int green = 0, int blue = 0, int alpha = 255);
+	void SetString(const std::string& string);
 };
 

@@ -19,7 +19,7 @@ void BaseGun::Init()
         bullet->textureId = "graphics/bullet.png";
         bullet->pool = &poolBaseBullets;
     };
-    poolBaseBullets.Init(1000);
+    poolBaseBullets.Init(500);
 }
 
 void BaseGun::Release()
@@ -56,11 +56,7 @@ void BaseGun::Update(float dt)
     SceneGame* sceneGame = (SceneGame*)SCENE_MGR.GetCurrentScene();
     if (sceneGame != nullptr)
     {
-        bullet = poolBaseBullets.Get();
-        float positionX = bullet->GetPosition().x;
-        float positionY = bullet->GetPosition().y;
-        Monster* nearMonster = sceneGame->GetNearMonsterSearch(positionX, positionY);
-
+        Monster* nearMonster = sceneGame->GetNearMonsterSearch();
         if (nearMonster != nullptr)
         {
             sf::Vector2f monsterPosition = nearMonster->GetPosition();
@@ -74,7 +70,6 @@ void BaseGun::Update(float dt)
             sf::Vector2f mousePos        = INPUT_MGR.GetMousePos();
             sf::Vector2f mouseWorldPos   = SCENE_MGR.GetCurrentScene()-> ScreenToWorldPos(mousePos);
             sf::Vector2f playerScreenPos = SCENE_MGR.GetCurrentScene()-> WorldPosToScreen(position);
-            //std::cout << mouseWorldPos.x << ", " << mouseWorldPos.y << std::endl;
 
             look = Utils::Normalize(mousePos - playerScreenPos);
             float angle = Utils::Angle(look);
@@ -110,16 +105,9 @@ void BaseGun::Update(float dt)
 
             Scene* scene = SCENE_MGR.GetCurrentScene();
             SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
-
-
-            int gridX = (bullet->GetPosition().x + 1000) / 128;
-            int gridY = (bullet->GetPosition().x + 1000) / 128;
-            const std::list<Monster*>& monsterList = sceneGame->GetGridList()[gridX][gridY];
-
             if (sceneGame != nullptr)
             {
-                bullet->SetMonsterList(&monsterList);
-                //bullet->SetMonsterList(sceneGame->GetMonsterList());
+                bullet->SetMonsterList(sceneGame->GetMonsterList());
             }
             sceneGame->AddGo(bullet);
             bulletTotalCooldown = bulletCurrentCooldown;

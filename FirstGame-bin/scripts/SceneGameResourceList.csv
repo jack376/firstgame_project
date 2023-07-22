@@ -1,8 +1,6 @@
-"RESOURCE_TYPES (0: 텍스처, 1:폰트, 2:사운드, 3: 애니메이션)",RESOURCE_PATH
+"RESOURCE_TYPES (0:TEXTURE, 1:FONT, 2:SOUND, 3:ANIMATION)",RESOURCE_PATH
 0,graphics/sprite_sheet.png
 0,graphics/RubySheet.png
-0,graphics/button.png
-0,graphics/button2.png
 0,graphics/gun.png
 0,graphics/bullet.png
 0,graphics/fire.png
@@ -16,3 +14,7 @@
 0,graphics/potato_legs_default.png
 0,graphics/tiles_outline.png
 0,graphics/bullet_hit.png
+0,graphics/button.png
+0,graphics/button_hover.png
+0,graphics/corner.png
+1,fonts/NanumGothic.ttf

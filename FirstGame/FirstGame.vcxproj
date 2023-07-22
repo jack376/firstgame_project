@@ -158,7 +158,7 @@
     <ClCompile Include="Framework\Collision.cpp" />
     <ClCompile Include="GameObjects\BaseBullet.cpp" />
     <ClCompile Include="GameObjects\BaseGun.cpp" />
-    <ClCompile Include="Button.cpp" />
+    <ClCompile Include="GameObjects\Button.cpp" />
     <ClCompile Include="DataTables\StringTable.cpp" />
     <ClCompile Include="Framework\DataTableMgr.cpp" />
     <ClCompile Include="Framework\Framework.cpp" />
@@ -195,7 +195,7 @@
     <ClInclude Include="Framework\Collision.h" />
     <ClInclude Include="GameObjects\BaseBullet.h" />
     <ClInclude Include="GameObjects\BaseGun.h" />
-    <ClInclude Include="Button.h" />
+    <ClInclude Include="GameObjects\Button.h" />
     <ClInclude Include="DataTables\DataTable.h" />
     <ClInclude Include="DataTables\StringTable.h" />
     <ClInclude Include="Framework\DataTableMgr.h" />
