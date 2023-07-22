@@ -33,23 +33,20 @@ void SceneGame::Init()
 	baseGun->sortLayer = 4;
 	baseGun->SetPosition(player->GetPosition());
 
-	Button* button = (Button*)AddGo(new Button("graphics/button.png", "Button"));
+	Button* button = (Button*)AddGo(new Button("Button"));
 	button->SetOrigin(Origins::TL);
 	button->sortLayer = 100;
 	button->SetPosition(50.0f, 50.0f);
-	button->SetColor(0, 0, 0, 192);
 	button->SetString("test");
 
 	button->OnEnter = [button]()
 	{
 		button->SetColor(255, 0, 0, 192);
-
 		std::cout << "Enter" << std::endl;
 	};
 	button->OnExit = [button]()
 	{
-		button->SetColor(0, 0, 0, 192);
-
+		button->SetColor();
 		std::cout << "Exit" << std::endl;
 	};
 	button->OnClick = [this]()
