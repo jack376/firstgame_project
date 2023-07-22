@@ -1,9 +1,14 @@
 #pragma once
 #include "Scene.h"
 
+class TextGo;
+class SpriteGo;
+class Button;
+
 class SceneTitle : public Scene
 {
 protected:
+	float flowTime = 0.0f;
 
 public:
 	SceneTitle();
@@ -17,5 +22,10 @@ public:
 
 	virtual void Update(float dt) override;
 	virtual void Draw(sf::RenderWindow& window) override;
+
+	Button* CreateButton(const std::string& name, const std::string& text, float posX, float posY, std::function<void()> onClickAction);
+	SpriteGo* BgSpriteGo(const std::string& imagePath, const std::string& name, int sortLayer, float scaleX, float scaleY);
+	sf::Vector2f TitleCharacterAnimation(float defaultScale, float scaleRange, float flowTimeBySpeed);
+	sf::Vector2f TitleSplashAnimation(float defaultPosition, float positionRange, float flowTimeBySpeed, bool invert = false);
 };
 

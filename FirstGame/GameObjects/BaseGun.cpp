@@ -16,7 +16,7 @@ void BaseGun::Init()
 
     poolBaseBullets.OnCreate = [this](BaseBullet* bullet) 
     {
-        bullet->textureId = "graphics/bullet.png";
+        bullet->textureId = "graphics/game/bullet.png";
         bullet->pool = &poolBaseBullets;
     };
     poolBaseBullets.Init(500);
@@ -32,7 +32,7 @@ void BaseGun::Reset()
 {
     SpriteGo::Reset();
 
-    fireRecoilEffect.setTexture(*RESOURCE_MGR.GetTexture("graphics/fire.png"));
+    fireRecoilEffect.setTexture(*RESOURCE_MGR.GetTexture("graphics/game/bullet_muzzle_fire.png"));
 
 
     SetOrigin(sprite.getTexture()->getSize().x / 2 + gunOrigin, sprite.getTexture()->getSize().y / 2);

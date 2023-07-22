@@ -1,8 +1,7 @@
 #pragma once
 #include "Scene.h"
 #include "ObjectPool.h"
-#include <SpriteEffect.h>
-#include <BaseBullet.h>
+#include "SpriteEffect.h"
 
 class BassBullet;
 class VertexArrayGo;

@@ -3,15 +3,15 @@
 #include "SceneMgr.h"
 #include "InputMgr.h"
 #include "ResourceMgr.h"
-#include "GameObject.h"
 #include "SceneGame.h"
+#include "GameObject.h"
+#include "TextGo.h"
+#include "VertexArrayGo.h"
 #include "Player.h"
 #include "Monster.h"
 #include "Button.h"
 #include "BaseGun.h"
 #include "BaseBullet.h"
-#include "VertexArrayGo.h"
-#include "TextGo.h"
 #include <sstream>
 
 SceneGame::SceneGame() : Scene(SceneId::Game)
@@ -27,58 +27,56 @@ void SceneGame::Init()
 	sf::Vector2f centerPos = windowSize * 0.5f;
 
 	player = (Player*)AddGo(new Player("Player"));
-	player->sortLayer = 1;
+	player->sortLayer = 3;
 
-	BaseGun* baseGun = (BaseGun*)AddGo(new BaseGun(player, "graphics/gun.png", "BaseGun"));
+	BaseGun* baseGun = (BaseGun*)AddGo(new BaseGun(player, "graphics/game/gun.png", "BaseGun"));
 	baseGun->sortLayer = 4;
 	baseGun->SetPosition(player->GetPosition());
 
-	Button* button = (Button*)AddGo(new Button("Button"));
-	button->SetOrigin(Origins::TL);
-	button->sortLayer = 100;
-	button->SetPosition(50.0f, 50.0f);
-	button->SetString("test");
-
-	button->OnEnter = [button]()
+	Button* backButton = (Button*)AddGo(new Button("BackButton"));
+	backButton->sortLayer = 100;
+	backButton->SetPosition(50.0f, windowSize.y - 350.0f);
+	backButton->SetString("BACK");
+	backButton->OnEnter = [backButton]()
 	{
-		button->SetColor(255, 0, 0, 192);
+		backButton->SetColor(255, 0, 0, 192);
 		std::cout << "Enter" << std::endl;
 	};
-	button->OnExit = [button]()
+	backButton->OnExit = [backButton]()
 	{
-		button->SetColor();
+		backButton->SetColor();
 		std::cout << "Exit" << std::endl;
 	};
-	button->OnClick = [this]()
+	backButton->OnClick = [this]()
 	{
 		std::cout << "Click" << std::endl;
-		//SCENE_MGR.ChangeScene(SceneId::Title);
+		SCENE_MGR.ChangeScene(SceneId::Title);
 	};
 
-	SpriteGo* background = (SpriteGo*)AddGo(new SpriteGo("graphics/bg.png", "Bg"));
-	background->sortLayer = -2;
-	background->SetOrigin(Origins::MC);
+	SpriteGo* ground = (SpriteGo*)AddGo(new SpriteGo("graphics/game/ground.png", "Ground"));
+	ground->sortLayer = 0;
+	ground->SetOrigin(Origins::MC);
 
-	SpriteGo* backgroundOutline = (SpriteGo*)AddGo(new SpriteGo("graphics/tiles_outline.png", "BgOutline"));
-	backgroundOutline->sortLayer = 0;
-	backgroundOutline->SetOrigin(Origins::MC);
+	SpriteGo* groundOutline = (SpriteGo*)AddGo(new SpriteGo("graphics/game/ground_outline.png", "GroundOutline"));
+	groundOutline->sortLayer = 2;
+	groundOutline->SetOrigin(Origins::MC);
 
-	sf::Vector2f tileWorldSize   = { 64.0f, 64.0f };
+	sf::Vector2f tileWorldSize = { 64.0f, 64.0f };
 	sf::Vector2f tileTextureSize = { 64.0f, 64.0f };
 
-	VertexArrayGo* tile = CreateTile("graphics/tile.png", { 32, 32 }, tileWorldSize, tileTextureSize);
-	tile->sortLayer = -1;
+	VertexArrayGo* tile = CreateTile("graphics/game/tile.png", { 32, 32 }, tileWorldSize, tileTextureSize);
+	tile->sortLayer = 1;
 	tile->SetOrigin(Origins::MC);
 	tile->SetPosition(0.0f, 0.0f);
 
 	wallBounds = tile->vertexArray.getBounds();
 
-	wallBounds.left   += tileWorldSize.x;
-	wallBounds.top    += tileWorldSize.y;
-	wallBounds.width  -= tileWorldSize.x * 2.0f;
+	wallBounds.left += tileWorldSize.x;
+	wallBounds.top += tileWorldSize.y;
+	wallBounds.width -= tileWorldSize.x * 2.0f;
 	wallBounds.height -= tileWorldSize.y * 2.0f;
 	player->SetWallBounds(wallBounds);
-	
+
 	AddGo(tile);
 
 	CreateBulletHitEffect(500);
@@ -124,6 +122,8 @@ void SceneGame::Enter()
 	worldView.setCenter({ 0, 0 });
 	uiView.setSize(windowSize);
 	uiView.setCenter(windowSize * 0.5f);
+
+	player->SetPosition(0.0f, 0.0f);
 }
 
 void SceneGame::Exit()
@@ -146,9 +146,10 @@ void SceneGame::Update(float dt)
 	}
 	
 	currentPlayerPosition = player->GetPosition();
+
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1))
 	{
-		SpawnMonsters(10, currentPlayerPosition, { 0.0f, 0.0f }, 950.0f);
+		SpawnMonsters(20, currentPlayerPosition, { 0.0f, 0.0f }, 950.0f);
 	}
 
 	sf::Vector2f halfViewSize = worldView.getSize() * 0.5f;
@@ -244,7 +245,7 @@ void SceneGame::CreateMonsters(int count)
 		Monster::Types monsterType = (Monster::Types)Utils::RandomRange(0, 3);
 		monster->SetType(monsterType);
 		monster->SetPlayer(player);
-		monster->sortLayer = 1;
+		monster->sortLayer = 5;
 		monster->SetActive(false);
 		monster->SetBulletHitEffectPool(&bulletHitEffectPool);
 	};
@@ -297,7 +298,7 @@ void SceneGame::CreateBulletHitEffect(int count)
 	{
 		bulletHitEffect->SetName("BulletHitEffect");
 		bulletHitEffect->SetDuration(0.1f);
-		bulletHitEffect->textureId = "graphics/bullet_hit.png";
+		bulletHitEffect->textureId = "graphics/game/bullet_hit.png";
 		bulletHitEffect->sortLayer = 1;
 		bulletHitEffect->sortOrder = 1;
 		bulletHitEffect->SetActive(false);

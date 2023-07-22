@@ -11,15 +11,15 @@ void Player::Init()
 
 void Player::Reset()
 {
-	body.setTexture(*RESOURCE_MGR.GetTexture("graphics/potato_body_default.png"));
+	body.setTexture(*RESOURCE_MGR.GetTexture("graphics/game/potato_body_default.png"));
 	body.setOrigin(body.getTexture()->getSize().x / 2, body.getTexture()->getSize().y / 2);
 	body.setPosition(0.0f, 0.0f);
 
-	legL.setTexture(*RESOURCE_MGR.GetTexture("graphics/potato_legs_default.png"));
+	legL.setTexture(*RESOURCE_MGR.GetTexture("graphics/game/potato_legs_default.png"));
 	legL.setOrigin(legL.getTexture()->getSize().x / 2, legL.getTexture()->getSize().y / 2);
 	legL.setPosition(0.0f, 0.0f);
 
-	legR.setTexture(*RESOURCE_MGR.GetTexture("graphics/potato_legs_default.png"));
+	legR.setTexture(*RESOURCE_MGR.GetTexture("graphics/game/potato_legs_default.png"));
 	legR.setOrigin(legR.getTexture()->getSize().x / 2, legR.getTexture()->getSize().y / 2);
 	legR.setPosition(0.0f, 0.0f);
 
@@ -71,6 +71,8 @@ void Player::Update(float dt)
 		status = StatusType::Idle;
 
 		animationSpeed = 1.0f;
+
+		body.setPosition(position);
 
 		legR.setPosition(position.x + legsIdleWidth, position.y);
 		legR.setScale(-1.0f, 1.0f);

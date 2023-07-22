@@ -7,7 +7,7 @@
 void Player2::Init()
 {
 	SpriteGo::Init();
-	std::string textureId = "graphics/RubySheet.png";
+	std::string textureId = "graphics/game/RubySheet.png";
 
 	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("animations/Idle_Side.csv"));
 	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("animations/Idle_Down.csv"));

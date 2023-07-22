@@ -44,9 +44,9 @@ void Framework::Run()
     Init(screenWidth, screenHeight, title);
     clock.restart();
 
-    TextGo fpsViewer("fonts/NanumGothic.ttf", "fpsViewer");
+    TextGo fpsViewer("fonts/RoboNoto-Medium.ttf", "fpsViewer");
     sf::Font systemFont;
-    systemFont.loadFromFile("fonts/NanumGothic.ttf");
+    systemFont.loadFromFile("fonts/RoboNoto-Medium.ttf");
     fpsViewer.SetFont(systemFont);
     fpsViewer.SetCharacterSize(20);
     fpsViewer.SetOrigin(Origins::TL);
