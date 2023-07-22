@@ -264,7 +264,7 @@ void SceneGame::SpawnMonsters(int count, sf::Vector2f playerCenter, sf::Vector2f
 
 		do {
 			spawnPosition = mapCenter + Utils::RandomInCircle(radius);
-		} while (Utils::Distance(playerCenter, spawnPosition) < 50.0f && Utils::Distance(mapCenter, spawnPosition) < radius);
+		} while (Utils::Distance(playerCenter, spawnPosition) < 50.0f && Utils::Distance(mapCenter, spawnPosition) < 950.0f);
 
 		monster->SetPosition(spawnPosition);
 		monster->Reset();
