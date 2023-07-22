@@ -61,6 +61,13 @@ void SceneGame::Init()
 	groundOutline->sortLayer = 2;
 	groundOutline->SetOrigin(Origins::MC);
 
+	SpriteGo* hpBar = (SpriteGo*)AddGo(new SpriteGo("graphics/stroke_side.png", "HpBar"));
+	hpBar->sortLayer = 100;
+	hpBar->SetOrigin(Origins::ML);
+
+
+
+
 	sf::Vector2f tileWorldSize = { 64.0f, 64.0f };
 	sf::Vector2f tileTextureSize = { 64.0f, 64.0f };
 

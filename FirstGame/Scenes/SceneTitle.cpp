@@ -62,11 +62,11 @@ void SceneTitle::Init()
 
 	TextGo* version = (TextGo*)AddGo(new TextGo("fonts/RoboNoto-Medium.ttf", "Version"));
 	version->sortLayer = 100;
-	version->SetString("version 7.7.7.7");
+	version->SetString("version 1.0a");
 	version->SetOrigin(Origins::BR);
-	version->SetPosition(windowSize.x - 50.0f, windowSize.y - 50.0f);
+	version->SetPosition(windowSize.x - 22.0f, windowSize.y - 25.0f);
 	version->SetCharacterSize(24);
-	version->SetFillColor(sf::Color::White);
+	version->SetFillColor(sf::Color(255, 255, 255, 192));
 
 	for (auto go : gameObjects)
 	{

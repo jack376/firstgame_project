@@ -14,6 +14,8 @@
 0,graphics/game/potato_body_default.png
 0,graphics/game/potato_legs_default.png
 0,graphics/corner.png
+0,graphics/stroke_corner.png
+0,graphics/stroke_side.png
 1,fonts/RoboNoto-Medium.ttf
 1,fonts/BMHANNAPro.ttf
 1,fonts/Chewy-Regular.ttf

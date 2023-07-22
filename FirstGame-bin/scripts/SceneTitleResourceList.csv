@@ -1,5 +1,7 @@
 "RESOURCE_TYPES (0:TEXTURE, 1:FONT, 2:SOUND, 3:ANIMATION)",RESOURCE_PATH
 0,graphics/corner.png
+0,graphics/stroke_corner.png
+0,graphics/stroke_side.png
 0,graphics/title/title_bg.png
 0,graphics/title/title_character.png
 0,graphics/title/title_fade.png
