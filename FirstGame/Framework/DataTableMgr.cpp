@@ -2,11 +2,13 @@
 #include "DataTableMgr.h"
 #include "StringTable.h"
 #include "MonsterTable.h"
+#include "UIShopTable.h"
 
 void DataTableMgr::LoadAll()
 {
 	tables.insert({ DataTable::Ids::String, new StringTable() });
 	tables.insert({ DataTable::Ids::Monster, new MonsterTable() });
+	tables.insert({ DataTable::Ids::Shop, new UIShopTable() });
 
 	for (auto pair : tables)
 	{

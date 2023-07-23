@@ -40,4 +40,11 @@ enum class SceneId
 	Count,
 };
 
+enum class uiType
+{
+	Text,
+	Thumbnail,
+	Box,
+};
+
 #include "AnimationClip.h"

@@ -3,12 +3,13 @@
 #include "ObjectPool.h"
 #include "SpriteEffect.h"
 
-class BassBullet;
-class VertexArrayGo;
 class Monster;
 class Player;
+class BaseUI;
+class BassBullet;
 class BaseGun;
 class SpriteGo;
+class VertexArrayGo;
 
 class SceneGame : public Scene
 {
@@ -49,5 +50,7 @@ public:
 
 	void CreateBulletHitEffect(int count);
 	void OnDieMonster(Monster* monster);
+
+	void CreateShopUI(float posiX, float posiY, std::string name, float scale);
 };
 

@@ -8,6 +8,7 @@ public:
 		None = -1,
 		String = 0,
 		Monster = 1,
+		Shop = 2,
 	};
 
 	DataTable(const DataTable& other) = delete;

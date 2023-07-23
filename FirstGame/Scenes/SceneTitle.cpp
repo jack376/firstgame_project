@@ -7,7 +7,7 @@
 #include "SceneTitle.h"
 #include "SpriteGo.h"
 #include "TextGo.h"
-#include "Button.h"
+#include "BaseUI.h"
 
 SceneTitle::SceneTitle() : Scene(SceneId::Title)
 {
@@ -24,7 +24,7 @@ void SceneTitle::Init()
 	float buttonPos = 50.0f;
 	float buttonGap = 125.0f;
 
-	Button* exitButton = CreateButton
+	BaseUI* exitButton = CreateButton
 	(
 		"ExitButton", "EXIT", buttonPos, windowSize.y - buttonPos - buttonGap * 1.0f, [this]()
 		{
@@ -32,7 +32,7 @@ void SceneTitle::Init()
 		}
 	);
 
-	Button* optionButton = CreateButton
+	BaseUI* optionButton = CreateButton
 	(
 		"OptionButton", "OPTION", buttonPos, windowSize.y - buttonPos - buttonGap * 2.0f, [this]()
 		{
@@ -40,7 +40,7 @@ void SceneTitle::Init()
 		}
 	);
 	
-	Button* startButton = CreateButton
+	BaseUI* startButton = CreateButton
 	(
 		"StartButton", "START", buttonPos, windowSize.y - buttonPos - buttonGap * 3.0f, [this]()
 		{
@@ -121,12 +121,13 @@ void SceneTitle::Draw(sf::RenderWindow& window)
 	Scene::Draw(window);
 }
 
-Button* SceneTitle::CreateButton(const std::string& name, const std::string& text, float posX, float posY, std::function<void()> onClickAction)
+BaseUI* SceneTitle::CreateButton(const std::string& name, const std::string& text, float posX, float posY, std::function<void()> onClickAction)
 {
-	Button* newButton = (Button*)AddGo(new Button(name));
+	BaseUI* newButton = (BaseUI*)AddGo(new BaseUI(name));
 	newButton->sortLayer = 100;
 	newButton->SetString(text);
 	newButton->SetPosition(posX, posY);
+	newButton->SetSizeAdd(0.0f, -15.0f);
 	newButton->OnEnter = [newButton]()
 	{
 		newButton->SetColor(255, 255, 255, 255);

@@ -1,30 +1,39 @@
 #include "stdafx.h"
-#include "Button.h"
+#include "BaseUI.h"
 #include "InputMgr.h"
 #include "SceneMgr.h"
 #include "ResourceMgr.h"
 
-Button::Button(const std::string& n) 
-    : GameObject(n)
+BaseUI::BaseUI(const std::string& n, uiType uiStatus) : GameObject(n), uiStatus(uiStatus)
 {
+    switch (uiStatus)
+    {
+    case uiType::Text:
+        bodyColor = sf::Color(0, 0, 0, 192);
+        break;
+    case uiType::Thumbnail:
+        bodyColor = sf::Color(50, 50, 50, 255);
+        break;
+    case uiType::Box:
+        bodyColor = sf::Color::Black;
+        break;
+    }
+    textColor = sf::Color::White;
+    strokeColor = sf::Color::Transparent;
 }
 
-Button::~Button()
+BaseUI::~BaseUI()
 {
     Release();
 }
 
-void Button::Init()
+void BaseUI::Init()
 {
 }
 
-void Button::Reset()
+void BaseUI::Reset()
 {
     isHover = false;
-
-    bodyColor   = sf::Color(0, 0, 0, 192);
-    textColor   = sf::Color(255, 255, 255, 255);
-    strokeColor = sf::Color(0, 0, 0, 0);
 
     corner.setTexture(*RESOURCE_MGR.GetTexture("graphics/corner.png"));
     corner.setOrigin(0.0f, 0.0f);
@@ -38,36 +47,65 @@ void Button::Reset()
     sideStroke.setOrigin(0.0f, 0.0f);
     sideStroke.setColor(strokeColor);
 
+    thumbnail.setTexture(*RESOURCE_MGR.GetTexture("graphics/thumbnail.png"));
+    thumbnail.setOrigin(thumbnail.getTexture()->getSize().x * 0.5f, thumbnail.getTexture()->getSize().y * 0.5f);
+
     text.setFont(*RESOURCE_MGR.GetFont("fonts/Chewy-Regular.ttf"));
     text.setCharacterSize(fontSize);
-    sf::FloatRect textRect = text.getLocalBounds();
-
-    sf::Vector2f textOriginTuning(-6.0f, 0.0f);
-    float buttonHeight = (fontSize * 1.8) + buttonModifySize.y;
     text.setLetterSpacing(1.0f);
 
     sf::Vector2f cornerTextureSize(corner.getTexture()->getSize());
+
+    if (uiStatus == uiType::Text)
+    {
+        sf::Vector2f textOriginTuning(-6.0f, 0.0f);
+        sf::FloatRect textRect = text.getLocalBounds();
+        textHeight = (fontSize * 1.8) + buttonModifySize.y;
+
+        buttonSizeX = textRect.top + textRect.width + cornerTextureSize.x * 2.0f;
+        buttonSizeY = textHeight;
+
+        text.setOrigin(textOriginTuning.x, textOriginTuning.y + (textRect.top + textRect.height * 0.5f));
+        text.setPosition(buttonModifyPosition.x + cornerTextureSize.x, buttonModifyPosition.y + textHeight * 0.5f);
+        text.setFillColor(textColor);
+    }
+    else if (uiStatus == uiType::Thumbnail)
+    {
+        sf::FloatRect thumRect = thumbnail.getLocalBounds();
+        float blankSize = 0.0f;
+
+        buttonSizeX = thumRect.top + thumRect.width + (cornerTextureSize.x * 2.0f) * blankSize;
+        buttonSizeY = thumRect.top + thumRect.height + (cornerTextureSize.y * 2.0f) * blankSize;
+    }
+    else if (uiStatus == uiType::Box)
+    {
+        sf::FloatRect boxRect(buttonModifyPosition, buttonModifySize);
+
+        buttonSizeX = buttonModifySize.x;
+        buttonSizeY = buttonModifySize.y;
+    }
+
+    sf::Vector2f buttonSize(buttonSizeX, buttonSizeY);
     sf::Vector2f buttonPosition(buttonModifyPosition);
-    sf::Vector2f buttonSize(sf::Vector2f(buttonModifySize.x + textRect.top + textRect.width + (cornerTextureSize.x * 2.0f), buttonHeight));
     sf::Vector2f bodyRectSize(buttonSize.x - cornerTextureSize.x * 2, buttonSize.y - cornerTextureSize.y * 2);
     sf::Vector2f sideSizeWidth(buttonSize.x - cornerTextureSize.x * 2, cornerTextureSize.y);
     sf::Vector2f sideSizeHeight(cornerTextureSize.x, buttonSize.y - cornerTextureSize.y * 2);
 
-    text.setOrigin(textOriginTuning.x, textOriginTuning.y + (textRect.top + textRect.height * 0.5f));
-    text.setPosition(buttonPosition.x + cornerTextureSize.x, buttonPosition.y + buttonHeight * 0.5f);
-    text.setFillColor(textColor);
+    thumbnail.setPosition(buttonPosition.x + cornerTextureSize.x + bodyRectSize.x * 0.5f, buttonPosition.y + cornerTextureSize.y + bodyRectSize.y * 0.5f);
 
     buttonCollider.setSize(buttonSize);
     buttonCollider.setPosition(buttonPosition);
     buttonCollider.setFillColor(sf::Color::Transparent);
-    //buttonCollider.setOutlineColor(sf::Color::Blue); // Collider View Test
+    //buttonCollider.setOutlineColor(sf::Color::Green); // Collider View Test
     //buttonCollider.setOutlineThickness(2.0f); // Collider View Test
 
+    // body
     body.setSize(bodyRectSize);
     body.setPosition(buttonPosition.x + cornerTextureSize.x, buttonPosition.y + cornerTextureSize.y);
     body.setFillColor(bodyColor);
     body.setOrigin(0.0f, 0.0f);
 
+    //Corner, Side
     corners.resize(4, corner);
 
     corners[0].setPosition(buttonPosition); // Top-Left
@@ -86,24 +124,6 @@ void Button::Reset()
     corners[3].setRotation(180);
     corners[3].setColor(bodyColor);
 
-    cornerStrokes.resize(4, cornerStroke);
-
-    cornerStrokes[0].setPosition(buttonPosition); // Top-Left
-    cornerStrokes[0].setRotation(0);
-    cornerStrokes[0].setColor(strokeColor);
-
-    cornerStrokes[1].setPosition(buttonPosition.x + buttonSize.x, buttonPosition.y); // Top-Right
-    cornerStrokes[1].setRotation(90);
-    cornerStrokes[1].setColor(strokeColor);
-
-    cornerStrokes[2].setPosition(buttonPosition.x, buttonPosition.y + buttonSize.y); // Bottom-Left
-    cornerStrokes[2].setRotation(270);
-    cornerStrokes[2].setColor(strokeColor);
-
-    cornerStrokes[3].setPosition(buttonPosition + buttonSize); // Bottom-Right
-    cornerStrokes[3].setRotation(180);
-    cornerStrokes[3].setColor(strokeColor);
-
     sides.resize(4, side);
 
     sides[0].setPosition(buttonPosition.x + cornerTextureSize.x, buttonPosition.y); // Top
@@ -121,6 +141,25 @@ void Button::Reset()
     sides[3].setPosition(buttonPosition.x + buttonSize.x - cornerTextureSize.x, buttonPosition.y + cornerTextureSize.y); // Right
     sides[3].setSize(sideSizeHeight);
     sides[3].setFillColor(bodyColor);
+
+    // Stroke
+    cornerStrokes.resize(4, cornerStroke);
+
+    cornerStrokes[0].setPosition(buttonPosition); // Top-Left
+    cornerStrokes[0].setRotation(0);
+    cornerStrokes[0].setColor(strokeColor);
+
+    cornerStrokes[1].setPosition(buttonPosition.x + buttonSize.x, buttonPosition.y); // Top-Right
+    cornerStrokes[1].setRotation(90);
+    cornerStrokes[1].setColor(strokeColor);
+
+    cornerStrokes[2].setPosition(buttonPosition.x, buttonPosition.y + buttonSize.y); // Bottom-Left
+    cornerStrokes[2].setRotation(270);
+    cornerStrokes[2].setColor(strokeColor);
+
+    cornerStrokes[3].setPosition(buttonPosition + buttonSize); // Bottom-Right
+    cornerStrokes[3].setRotation(180);
+    cornerStrokes[3].setColor(strokeColor);
 
     sideStrokes.resize(4, sideStroke);
 
@@ -145,13 +184,12 @@ void Button::Reset()
     sideStrokes[3].setColor(strokeColor);
 }
 
-void Button::Update(float dt)
+void BaseUI::Update(float dt)
 {
-    sf::Vector2f mousePos   = INPUT_MGR.GetMousePos();
+    sf::Vector2f mousePos = INPUT_MGR.GetMousePos();
     sf::Vector2f uiMousePos = SCENE_MGR.GetCurrentScene()->ScreenToUiPos(mousePos);
 
     bool prevHover = isHover;
-    //isHover = sprite.getGlobalBounds().contains(uiMousePos);
     isHover = buttonCollider.getGlobalBounds().contains(uiMousePos);
 
     if (!prevHover && isHover)
@@ -177,7 +215,7 @@ void Button::Update(float dt)
     }
 }
 
-void Button::Draw(sf::RenderWindow& window)
+void BaseUI::Draw(sf::RenderWindow& window)
 {
     window.draw(body);
 
@@ -198,11 +236,21 @@ void Button::Draw(sf::RenderWindow& window)
         window.draw(sideStroke);
     }
 
-    window.draw(text);
+    switch (uiStatus)
+    {
+    case uiType::Text:
+        window.draw(text);
+        break;
+    case uiType::Thumbnail:
+        window.draw(thumbnail);
+        break;
+    case uiType::Box:
+        break;
+    }
     window.draw(buttonCollider);
 }
 
-void Button::SetColor(int red, int green, int blue, int alpha)
+void BaseUI::SetColor(int red, int green, int blue, int alpha)
 {
     bodyColor = sf::Color(red, green, blue, alpha);
     body.setFillColor(bodyColor);
@@ -223,13 +271,13 @@ void Button::SetColor(int red, int green, int blue, int alpha)
     }
 }
 
-void Button::SetTextColor(int red, int green, int blue, int alpha)
+void BaseUI::SetTextColor(int red, int green, int blue, int alpha)
 {
     textColor = sf::Color(red, green, blue, alpha);
     text.setFillColor(textColor);
 }
 
-void Button::SetStrokeColor(int red, int green, int blue, int alpha)
+void BaseUI::SetStrokeColor(int red, int green, int blue, int alpha)
 {
     strokeColor = sf::Color(red, green, blue, alpha);
     if (sideStrokes.size() >= 4)
@@ -241,20 +289,25 @@ void Button::SetStrokeColor(int red, int green, int blue, int alpha)
     }
 }
 
-void Button::SetString(const std::string& string)
-{   
+void BaseUI::SetString(const std::string& string)
+{
     std::string utf8String = string;
     sf::String unicodeString = sf::String::fromUtf8(utf8String.begin(), utf8String.end());
     text.setString(unicodeString);
 }
 
-void Button::SetSize(float x, float y)
+void BaseUI::SetCharacterSize(unsigned int fontSize)
+{
+    this->fontSize = fontSize;
+}
+
+void BaseUI::SetSizeAdd(float x, float y)
 {
     buttonModifySize = sf::Vector2f(x, y);
     buttonCollider.setSize(sf::Vector2f(x, y));
 }
 
-void Button::SetPosition(float x, float y)
+void BaseUI::SetPosition(float x, float y)
 {
     buttonModifyPosition = sf::Vector2f(x, y);
     buttonCollider.setPosition(x, y);

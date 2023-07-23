@@ -9,9 +9,12 @@
 #include "VertexArrayGo.h"
 #include "Player.h"
 #include "Monster.h"
-#include "Button.h"
+#include "BaseUI.h"
+#include "Thumbnail.h"
 #include "BaseGun.h"
 #include "BaseBullet.h"
+#include "DataTableMgr.h"
+#include "UIShopTable.h"
 #include <sstream>
 
 SceneGame::SceneGame() : Scene(SceneId::Game)
@@ -25,6 +28,7 @@ void SceneGame::Init()
 
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
 	sf::Vector2f centerPos = windowSize * 0.5f;
+	float resolutionScale = windowSize.x / 1920.0f;
 
 	player = (Player*)AddGo(new Player("Player"));
 	player->sortLayer = 3;
@@ -33,9 +37,9 @@ void SceneGame::Init()
 	baseGun->sortLayer = 4;
 	baseGun->SetPosition(player->GetPosition());
 
-	Button* backButton = (Button*)AddGo(new Button("BackButton"));
+	BaseUI* backButton = (BaseUI*)AddGo(new BaseUI("BackButton"));
 	backButton->sortLayer = 100;
-	backButton->SetPosition(50.0f, windowSize.y - 350.0f);
+	backButton->SetPosition(50.0f, windowSize.y - 150.0f);
 	backButton->SetString("BACK");
 	backButton->OnEnter = [backButton]()
 	{
@@ -53,20 +57,20 @@ void SceneGame::Init()
 		SCENE_MGR.ChangeScene(SceneId::Title);
 	};
 
-	SpriteGo* ground = (SpriteGo*)AddGo(new SpriteGo("graphics/game/ground.png", "Ground"));
-	ground->sortLayer = 0;
-	ground->SetOrigin(Origins::MC);
+	float shopUiPositionX = 375.0f * resolutionScale;
+
+	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 0.0f, windowSize.y / 32, "Gatling Laser", resolutionScale);
+	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 1.0f, windowSize.y / 32, "Plasma Rifle", resolutionScale);
+	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 2.0f, windowSize.y / 32, "Laser Gun", resolutionScale);
+	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 3.0f, windowSize.y / 32, "Taser Gun", resolutionScale);
 
 	SpriteGo* groundOutline = (SpriteGo*)AddGo(new SpriteGo("graphics/game/ground_outline.png", "GroundOutline"));
 	groundOutline->sortLayer = 2;
 	groundOutline->SetOrigin(Origins::MC);
 
-	SpriteGo* hpBar = (SpriteGo*)AddGo(new SpriteGo("graphics/stroke_side.png", "HpBar"));
-	hpBar->sortLayer = 100;
-	hpBar->SetOrigin(Origins::ML);
-
-
-
+	SpriteGo* ground = (SpriteGo*)AddGo(new SpriteGo("graphics/game/ground.png", "Ground"));
+	ground->sortLayer = 0;
+	ground->SetOrigin(Origins::MC);
 
 	sf::Vector2f tileWorldSize = { 64.0f, 64.0f };
 	sf::Vector2f tileTextureSize = { 64.0f, 64.0f };
@@ -78,9 +82,9 @@ void SceneGame::Init()
 
 	wallBounds = tile->vertexArray.getBounds();
 
-	wallBounds.left += tileWorldSize.x;
-	wallBounds.top += tileWorldSize.y;
-	wallBounds.width -= tileWorldSize.x * 2.0f;
+	wallBounds.left   += tileWorldSize.x;
+	wallBounds.top    += tileWorldSize.y;
+	wallBounds.width  -= tileWorldSize.x * 2.0f;
 	wallBounds.height -= tileWorldSize.y * 2.0f;
 	player->SetWallBounds(wallBounds);
 
@@ -347,4 +351,121 @@ void SceneGame::OnDieMonster(Monster* monster)
 
 	//AddScore(1);
 	//SpawnItem(pos);
+}
+
+void SceneGame::CreateShopUI(float posiX, float posiY, std::string name, float scale = 1.0f)
+{
+	const ShopItemInfo& itemInfo = DATATABLE_MGR.Get<UIShopTable>(DataTable::Ids::Shop)->Get(name);
+
+	std::string path     = itemInfo.textureId;
+	name                 = itemInfo.name;
+	std::string category = itemInfo.category;
+	std::string title    = itemInfo.title;
+	std::string infoText = itemInfo.info;
+	std::string amount   = itemInfo.amount;
+	int         tier     = itemInfo.tier;
+
+	float sizeX = 360.0f * scale;
+	float sizeY = 480.0f * scale;
+
+	float thumbnailSizeX = 100.0f * scale;
+	float thumbnailSizeY = 100.0f * scale;
+
+	float blank = 20.0f * scale;
+
+	BaseUI* box = (BaseUI*)AddGo(new BaseUI("Box", uiType::Box));
+	box->sortLayer = 101;
+	box->SetPosition(posiX, posiY);
+	box->SetSizeAdd(sizeX, sizeY);
+	switch (tier) // Tier Stroke Color
+	{
+	case 1:
+		box->SetStrokeColor(0, 0, 0, 0);
+		box->SetColor(0, 0, 0, 255);
+		break;
+	case 2:
+		box->SetStrokeColor(75, 175, 225, 255);
+		box->SetColor(15, 30, 45, 255);
+		break;
+	case 3:
+		box->SetStrokeColor(150, 75, 225, 255);
+		box->SetColor(15, 15, 30, 255);
+		break;
+	case 4:
+		box->SetStrokeColor(225, 50, 50, 255);
+		box->SetColor(30, 15, 15, 255);
+		break;
+	default:
+		box->SetStrokeColor(0, 0, 0, 0);
+		box->SetColor(0, 0, 0, 255);
+		break;
+	}
+
+	SpriteGo* thumbnail = (SpriteGo*)AddGo(new SpriteGo(path, name));
+	thumbnail->sortLayer = 103;
+	thumbnail->SetPosition(posiX + blank, posiY + blank);
+	thumbnail->sprite.setScale(scale, scale);
+
+	BaseUI* thumbnailBox = (BaseUI*)AddGo(new BaseUI("thumbnailBox", uiType::Box));
+	thumbnailBox->sortLayer = 102;
+	thumbnailBox->SetColor(255, 255, 255, 32);
+	thumbnailBox->SetPosition(posiX + blank, posiY + blank);
+	thumbnailBox->SetSizeAdd(thumbnailSizeX, thumbnailSizeY);
+
+	BaseUI* buttonBox = (BaseUI*)AddGo(new BaseUI("ButtonBox", uiType::Box));
+	buttonBox->sortLayer = 102;
+	buttonBox->SetColor(255, 255, 255, 32);
+	buttonBox->SetPosition(posiX + sizeX * 0.25f, posiY + sizeY * 0.875f - blank);
+	buttonBox->SetSizeAdd(sizeX * 0.5f, sizeY * 0.125f);
+
+	float buttonBoxCenterX = sizeX * 0.250f + posiX + sizeX * 0.5f / 2;
+	float buttonBoxCenterY = sizeY * 0.875f + posiY - blank + sizeY * 0.125f / 2;
+	float heightTuning = 8.0f * scale;
+
+	SpriteGo* materialIcon = (SpriteGo*)AddGo(new SpriteGo("graphics/game/material_ui.png", "MaterialIcon"));
+	materialIcon->sortLayer = 104;
+	materialIcon->SetOrigin(Origins::MC);
+	materialIcon->SetPosition(buttonBoxCenterX + blank * 2.5f, buttonBoxCenterY);
+
+	TextGo* itemName = (TextGo*)AddGo(new TextGo("fonts/Kanit-SemiBold.ttf", name));
+	itemName->sortLayer = 105;
+	itemName->SetOrigin(Origins::TL);
+	itemName->SetCharacterSize(32 * scale);
+	itemName->SetPosition(posiX + sizeX * 0.33f + blank - 3.0f, posiY + sizeY * 0.0625f);
+	itemName->SetFillColor(sf::Color(255, 255, 255, 255));
+	itemName->SetString(name);
+
+	TextGo* itemCategory = (TextGo*)AddGo(new TextGo("fonts/Kanit-Medium.ttf", category));
+	itemCategory->sortLayer = 105;
+	itemCategory->SetOrigin(Origins::TL);
+	itemCategory->SetCharacterSize(26 * scale);
+	itemCategory->SetPosition(posiX + sizeX * 0.33f + blank - 2.0f, posiY + sizeY * 0.135f);
+	itemCategory->SetFillColor(sf::Color(255, 255, 192, 255));
+	itemCategory->SetString(category);
+
+	TextGo* itemTitle = (TextGo*)AddGo(new TextGo("fonts/Kanit-Medium.ttf", title));
+	itemTitle->sortLayer = 106;
+	itemTitle->SetOrigin(Origins::TL);
+	itemTitle->SetCharacterSize(20 * scale);
+	itemTitle->SetPosition(posiX + blank, posiY + sizeY * 0.25f + heightTuning);
+	itemTitle->SetFillColor(sf::Color(255, 255, 192, 255));
+	itemTitle->SetString(title);
+
+	TextGo* itemInfoText = (TextGo*)AddGo(new TextGo("fonts/Kanit-Medium.ttf", infoText));
+	itemInfoText->sortLayer = 105;
+	itemInfoText->SetOrigin(Origins::TL);
+	itemInfoText->SetCharacterSize(20 * scale);
+	itemInfoText->SetPosition(posiX + blank, posiY + sizeY * 0.25f + heightTuning);
+	itemInfoText->SetFillColor(sf::Color(255, 255, 255, 255));
+	itemInfoText->SetString(infoText);
+
+	TextGo* moneyAmount = (TextGo*)AddGo(new TextGo("fonts/Chewy-Regular.ttf", amount));
+	moneyAmount->sortLayer = 104;
+	moneyAmount->SetOrigin(Origins::MC);
+	moneyAmount->SetCharacterSize(48 * scale);
+	moneyAmount->SetPosition(buttonBoxCenterX - blank, buttonBoxCenterY - heightTuning);
+	moneyAmount->SetFillColor(sf::Color(255, 255, 255, 255));
+	moneyAmount->text.setOutlineThickness(5.0f * scale);
+	moneyAmount->text.setOutlineColor(sf::Color(0, 0, 0, 192));
+	moneyAmount->SetString(amount);
 }

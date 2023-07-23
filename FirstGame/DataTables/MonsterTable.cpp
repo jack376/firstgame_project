@@ -39,7 +39,7 @@ const MonsterInfo& MonsterTable::Get(Monster::Types id)
     auto find = table.find(id);
     if (find == table.end())
     {
-        throw std::runtime_error("ERROR : Undefined Zombie Type");
+        throw std::runtime_error("ERROR : Undefined Monster Type");
     }
     return find->second;
 }

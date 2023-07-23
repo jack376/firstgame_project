@@ -73,7 +73,7 @@ void Character::LegsAnimation(float walkWidth, float flowTimeBySpeed)
 
 void Character::SetWallBounds(const sf::FloatRect& bounds)
 {
-	wallBounds = bounds;
+	wallBounds   = bounds;
 	wallBoundsLT = { bounds.left, bounds.top };
 	wallBoundsRB = { bounds.left + bounds.width, bounds.top + bounds.height };
 }
