@@ -38,7 +38,7 @@ protected:
 	ObjectPool<BulletHitEffect>* effectPool;
 	ObjectPool<DieEffect>* dieEffectPool;
 
-	float flashDuration = 0.1f;
+	float monsterHitColorDuration = 0.1f;
 
 public:
 	Monster(const std::string& n = "") : Character(n) {}

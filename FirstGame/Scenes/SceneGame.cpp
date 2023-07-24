@@ -300,6 +300,7 @@ void SceneGame::SpawnMonsters(int count, sf::Vector2f playerCenter, sf::Vector2f
 		} while (Utils::Distance(playerCenter, spawnPosition) < 50.0f && Utils::Distance(mapCenter, spawnPosition) < 950.0f);
 
 		monster->SetPosition(spawnPosition);
+		//람다로 만들 함수 -->> monster->SetDieEffect(spawnPosition);
 		monster->Reset();
 
 		AddGo(monster);

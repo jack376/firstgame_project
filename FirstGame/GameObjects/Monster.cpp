@@ -92,10 +92,10 @@ void Monster::Update(float dt)
 	}
 	BodyAnimation(1.0f, 0.2f, flowTime);
 
-	if (flashDuration > 0)
+	if (monsterHitColorDuration > 0)
 	{
-		flashDuration -= dt;
-		if (flashDuration <= 0)
+		monsterHitColorDuration -= dt;
+		if (monsterHitColorDuration <= 0)
 		{
 			body.setColor(sf::Color(255, 255, 255, 255));
 		}
@@ -141,8 +141,9 @@ void Monster::SetPlayer(Player* player)
 void Monster::OnHitBullet(int bulletDamage)
 {
 	currentHp -= bulletDamage;
-	flashDuration = 0.05f;
+	monsterHitColorDuration = 0.1f;
 	body.setColor(sf::Color(0, 255, 200, 255));
+
 	if (currentHp <= 0)
 	{
 		SetDieEffect(position);

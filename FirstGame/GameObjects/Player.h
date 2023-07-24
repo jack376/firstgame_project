@@ -4,8 +4,6 @@
 class Character;
 class Player : public Character
 {
-
-
 public:
 	Player(const std::string& n = "") : Character(n) {}
 	virtual ~Player() override { Release(); }
