@@ -155,6 +155,8 @@
   <ItemGroup>
     <ClCompile Include="Animation\AnimationClip.cpp" />
     <ClCompile Include="Animation\AnimationController.cpp" />
+    <ClCompile Include="GameObjects\BulletHitEffect.cpp" />
+    <ClCompile Include="GameObjects\DieEffect.cpp" />
     <ClCompile Include="GameObjects\BaseUI.cpp" />
     <ClCompile Include="Framework\Collision.cpp" />
     <ClCompile Include="GameObjects\BaseBullet.cpp" />
@@ -195,6 +197,8 @@
     <ClInclude Include="3rd\rapidcsv.h" />
     <ClInclude Include="Animation\AnimationController.h" />
     <ClInclude Include="Animation\AnimationClip.h" />
+    <ClInclude Include="GameObjects\BulletHitEffect.h" />
+    <ClInclude Include="GameObjects\DieEffect.h" />
     <ClInclude Include="GameObjects\BaseUI.h" />
     <ClInclude Include="Framework\Collision.h" />
     <ClInclude Include="GameObjects\BaseBullet.h" />

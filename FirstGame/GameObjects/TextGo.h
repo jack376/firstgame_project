@@ -19,6 +19,7 @@ public:
 	void SetCharacterSize(const int& fontSize);
 	void SetString(const std::string& str);
 	void SetFillColor(const sf::Color& color);
+	void SetScale(float x, float y);
 
 	virtual void Init() override;
 	virtual void Release() override;

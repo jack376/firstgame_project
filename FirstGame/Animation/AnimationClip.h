@@ -23,4 +23,6 @@ struct AnimationClip
     std::vector<AnimationFrame> frames;  // 몇 프레임으로 구성된 클립인가
 
     bool LoadFromFile(const std::string path);
+
+    //AnimationClip(const AnimationClip& other) = delete;
 };

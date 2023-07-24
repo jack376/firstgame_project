@@ -8,9 +8,9 @@
 #include "Collision.h"
 #include "SceneMgr.h"
 #include "SceneGame.h"
-#include <functional>
 #include "MonsterTable.h"
 #include "DataTableMgr.h"
+#include <functional>
 
 void Monster::Init()
 {
@@ -34,6 +34,8 @@ void Monster::Reset()
 void Monster::Update(float dt)
 {
 	flowTime += dt * animationSpeed;
+	deltaTime = dt;
+
 	if (player == nullptr)
 	{
 		return;
@@ -89,6 +91,15 @@ void Monster::Update(float dt)
 		animationSpeed = 1.0f;
 	}
 	BodyAnimation(1.0f, 0.2f, flowTime);
+
+	if (flashDuration > 0)
+	{
+		flashDuration -= dt;
+		if (flashDuration <= 0)
+		{
+			body.setColor(sf::Color(255, 255, 255, 255));
+		}
+	}
 }
 
 void Monster::Draw(sf::RenderWindow& window)
@@ -130,9 +141,11 @@ void Monster::SetPlayer(Player* player)
 void Monster::OnHitBullet(int bulletDamage)
 {
 	currentHp -= bulletDamage;
+	flashDuration = 0.05f;
+	body.setColor(sf::Color(0, 255, 200, 255));
 	if (currentHp <= 0)
 	{
-		//SetBulletHitEffect(position);
+		SetDieEffect(position);
 		Scene* scene = SCENE_MGR.GetCurrentScene();
 		SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
 		if (sceneGame != nullptr)
@@ -142,17 +155,36 @@ void Monster::OnHitBullet(int bulletDamage)
 	}
 }
 
-void Monster::SetBulletHitEffectPool(ObjectPool<SpriteEffect>* pool)
+void Monster::SetBulletHitEffectPool(ObjectPool<BulletHitEffect>* pool)
 {
 	effectPool = pool;
 }
 
 void Monster::SetBulletHitEffect(sf::Vector2f position)
 {
-	SpriteEffect* bulletHitEffect = effectPool->Get();
+	BulletHitEffect* bulletHitEffect = effectPool->Get();
 	bulletHitEffect->SetActive(true);
 	bulletHitEffect->SetOrigin(Origins::MC);
 	bulletHitEffect->SetPosition(position);
 
 	SCENE_MGR.GetCurrentScene()->AddGo(bulletHitEffect);
+}
+
+void Monster::SetDieEffectPool(ObjectPool<DieEffect>* pool)
+{
+	dieEffectPool = pool;
+}
+
+void Monster::SetDieEffect(sf::Vector2f position)
+{
+	DieEffect* dieEffect = dieEffectPool->Get();
+	float randomValue = Utils::RandomRange(1, 8);
+
+	dieEffect->SetActive(true);
+	dieEffect->SetOrigin(Origins::MC);
+	dieEffect->SetPosition(position);
+	dieEffect->sprite.setScale(0.8f + randomValue / 16.0f, 0.8f + randomValue / 16.0f);
+	dieEffect->sprite.setRotation(randomValue * 45);
+
+	SCENE_MGR.GetCurrentScene()->AddGo(dieEffect);
 }

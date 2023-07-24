@@ -130,7 +130,7 @@ BaseUI* SceneTitle::CreateButton(const std::string& name, const std::string& tex
 	newButton->SetSizeAdd(0.0f, -15.0f);
 	newButton->OnEnter = [newButton]()
 	{
-		newButton->SetColor(255, 255, 255, 255);
+		newButton->SetColor(255, 255, 255, 192);
 		newButton->SetTextColor(0, 0, 0, 255);
 	};
 	newButton->OnExit = [newButton]()
@@ -155,10 +155,10 @@ SpriteGo* SceneTitle::BgSpriteGo(const std::string& imagePath, const std::string
 
 sf::Vector2f SceneTitle::TitleCharacterAnimation(float defaultScale, float scaleRange, float flowTimeBySpeed)
 {
-	float animationX = sin(flowTimeBySpeed * 1.15f * M_PI);
+	float animationX = sin(flowTimeBySpeed * 1.15f * _PI);
 	float scaleX = defaultScale + ((animationX + 1.0f) / 2.0f) * scaleRange;
 
-	float animationY = -sin(flowTimeBySpeed * 1.15f * M_PI);
+	float animationY = -sin(flowTimeBySpeed * 1.15f * _PI);
 	float scaleY = defaultScale + ((animationY + 1.0f) / 2.0f) * scaleRange;
 
 	return sf::Vector2f(scaleX, scaleY);
@@ -168,14 +168,14 @@ sf::Vector2f SceneTitle::TitleSplashAnimation(float defaultPosition, float posit
 {
 	if (!invert)
 	{
-		float animationX = cos(flowTimeBySpeed * 0.5f * M_PI);
+		float animationX = cos(flowTimeBySpeed * 0.5f * _PI);
 		float positionX = defaultPosition + ((animationX + 1.0f) / 2.0f) * positionRange;
 
 		return sf::Vector2f(positionX, 0.0f);
 	}
 	else
 	{
-		float animationX = -cos(flowTimeBySpeed * 0.5f * M_PI);
+		float animationX = -cos(flowTimeBySpeed * 0.5f * _PI);
 		float positionX = defaultPosition + ((animationX + 1.0f) / 2.0f) * positionRange;
 
 		return sf::Vector2f(positionX, 0.0f);

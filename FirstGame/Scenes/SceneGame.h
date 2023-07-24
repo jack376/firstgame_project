@@ -1,7 +1,8 @@
 #pragma once
 #include "Scene.h"
 #include "ObjectPool.h"
-#include "SpriteEffect.h"
+#include "BulletHitEffect.h"
+#include "DieEffect.h"
 
 class Monster;
 class Player;
@@ -14,14 +15,18 @@ class VertexArrayGo;
 class SceneGame : public Scene
 {
 protected:	
+	int monsterCount = 0;
+	bool isShop = false;
+	bool shopCreated = false;
+
 	sf::FloatRect wallBounds;
 
 	sf::Vector2f currentPlayerPosition;
 	Player* player = nullptr;
 
-	int monsterCount = 0;
 	ObjectPool<Monster> monsterPool;
-	ObjectPool<SpriteEffect> bulletHitEffectPool;
+	ObjectPool<BulletHitEffect> bulletHitEffectPool;
+	ObjectPool<DieEffect> dieEffectPool;
 
 public:
 	SceneGame();
@@ -38,7 +43,9 @@ public:
 	VertexArrayGo* CreateTile(std::string textureId, sf::Vector2i size, sf::Vector2f tileSize, sf::Vector2f texSize);
 
 	ObjectPool<Monster>& GetMonsterPool();
-	ObjectPool<SpriteEffect>& GetBulletHitEffectPool();
+	ObjectPool<BulletHitEffect>& GetBulletHitEffectPool();
+	ObjectPool<DieEffect>& GetDieEffectPool();
+
 	const std::list<Monster*>* GetMonsterList();
 	Monster* GetNearMonsterSearch();
 
@@ -47,10 +54,12 @@ public:
 
 	void CreateMonsters(int count);
 	void SpawnMonsters(int count, sf::Vector2f playerCenter, sf::Vector2f mapCenter, float radius);
-
-	void CreateBulletHitEffect(int count);
+	
 	void OnDieMonster(Monster* monster);
+	void CreateBulletHitEffect(int count);
+	void CreateDieEffect(int count);
 
 	void CreateShopUI(float posiX, float posiY, std::string name, float scale);
+	void SetActiveShopUI(std::string name, bool active);
 };
 

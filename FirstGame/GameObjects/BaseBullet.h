@@ -3,6 +3,8 @@
 #include "ObjectPool.h"
 
 class SpriteEffect;
+class BulletHitEffect;
+class DieEffect;
 class Monster;
 class BaseGun;
 
@@ -18,11 +20,12 @@ protected:
 	float bulletSpeed  = 1500.0f;
 	float bulletRange  = 700.0f;
 	float bulletCooldown;
-	int   bulletDamage = 50;
+	int   bulletDamage = 10;
 	//float bulletLife   = 0.05f;
 
 	sf::FloatRect bulletCollider = sf::FloatRect(0.0f, 0.0f, 30.0f, 30.0f);
 	sf::RectangleShape bulletColliderDraw;
+	
 	bool isBulletColliderDrawView = false;
 	
 public:

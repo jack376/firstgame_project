@@ -123,7 +123,7 @@ void BaseGun::Draw(sf::RenderWindow& window)
 
 void BaseGun::FireRecoilAnimation(const sf::Vector2f direction, float playSpeed, float flowTime)
 {
-    float fireRecoilAnimation = sin((flowTime * playSpeed) * 2.0f * M_PI);
+    float fireRecoilAnimation = sin((flowTime * playSpeed) * 2.0f * _PI);
     float fireRecoil = 1.0f + ((fireRecoilAnimation + 1.0f) * 5.0f);
 
     sf::Vector2f dir = Utils::Normalize(direction) * fireRecoil;

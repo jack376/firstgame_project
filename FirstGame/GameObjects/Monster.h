@@ -1,7 +1,8 @@
 #pragma once
 #include "Character.h"
 #include "ObjectPool.h"
-#include "SpriteEffect.h"
+#include "BulletHitEffect.h"
+#include "DieEffect.h"
 
 class Player;
 class Monster : public Character
@@ -31,9 +32,13 @@ protected:
 
 	sf::FloatRect monsterCollider = sf::FloatRect(0.0f, 0.0f, 100.0f, 100.0f);
 	sf::RectangleShape monsterColliderDraw;
-	bool isMonsterColliderDrawView = true;
+	
+	bool isMonsterColliderDrawView = false;
 
-	ObjectPool<SpriteEffect>* effectPool;
+	ObjectPool<BulletHitEffect>* effectPool;
+	ObjectPool<DieEffect>* dieEffectPool;
+
+	float flashDuration = 0.1f;
 
 public:
 	Monster(const std::string& n = "") : Character(n) {}
@@ -52,6 +57,9 @@ public:
 	void SetPlayer(Player* player);
 	void OnHitBullet(int bulletDamage);
 
-	void SetBulletHitEffectPool(ObjectPool<SpriteEffect>* pool);
+	void SetBulletHitEffectPool(ObjectPool<BulletHitEffect>* pool);
 	void SetBulletHitEffect(sf::Vector2f position);
+
+	void SetDieEffectPool(ObjectPool<DieEffect>* pool);
+	void SetDieEffect(sf::Vector2f position);
 };

@@ -11,9 +11,11 @@
 3,animations/Move_Up.csv
 1,fonts/RoboNoto-Medium.ttf
 1,fonts/Chewy-Regular.ttf
+1,fonts/Kanit-Bold.ttf
+1,fonts/Kanit-Regular.ttf
 1,fonts/Kanit-Medium.ttf
 1,fonts/Kanit-SemiBold.ttf
-0,graphics/thumbnail.png
 0,graphics/corner.png
 0,graphics/stroke_corner.png
 0,graphics/stroke_side.png
+0,graphics/thumbnail.png

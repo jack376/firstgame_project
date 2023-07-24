@@ -3,7 +3,7 @@
 class AnimationController
 {
 protected:
-    std::unordered_map<std::string, AnimationClip> clips;
+    std::unordered_map<std::string, AnimationClip> clips; // 포인터로 수정
 
     std::queue<std::string> queue;   // 애니메이션 ID queue 자료구조
     float speed     = 1.0f;          // 애니메이션 속도 배율

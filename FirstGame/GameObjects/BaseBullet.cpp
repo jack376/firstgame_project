@@ -61,6 +61,8 @@ void BaseBullet::Update(float dt)
 	SceneGame* sceneGame = (SceneGame*)SCENE_MGR.GetCurrentScene();
 	Monster* targetMonster = sceneGame->GetNearMonsterSearch();
 
+	sf::FloatRect bulletReturnArea(-960.0f, -960.0f, 1920.0f, 1920.0f);
+
 	if (targetMonster != nullptr && monsters != nullptr)
 	{
 		for (Monster* monster : *monsters)
@@ -74,7 +76,14 @@ void BaseBullet::Update(float dt)
 				pool->Return(this);
 				break;
 			}
+
 		}
+	}
+	if (!bulletReturnArea.contains(position.x, position.y))
+	{
+		SetActive(false);
+		SCENE_MGR.GetCurrentScene()->RemoveGo(this);
+		pool->Return(this);
 	}
 }
 

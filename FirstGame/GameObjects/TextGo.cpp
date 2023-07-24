@@ -52,6 +52,11 @@ void TextGo::SetFillColor(const sf::Color& color)
 	text.setFillColor(color);
 }
 
+void TextGo::SetScale(float x = 1.0f, float y = 1.0f)
+{
+	text.setScale(x, y);
+}
+
 void TextGo::SetFont(sf::Font& font)
 {
 	text.setFont(font);
