@@ -67,6 +67,10 @@ void BaseBullet::Update(float dt)
 	{
 		for (Monster* monster : *monsters)
 		{
+			if (!monster->GetActive())
+			{
+				continue;
+			}
 			if (bulletCollider.intersects(monster->GetMonsterCollider()))
 			{
 				monster->SetBulletHitEffect(position);
@@ -76,7 +80,6 @@ void BaseBullet::Update(float dt)
 				pool->Return(this);
 				break;
 			}
-
 		}
 	}
 	if (!bulletReturnArea.contains(position.x, position.y))

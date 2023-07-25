@@ -33,10 +33,16 @@ void DieEffect::Update(float dt)
 		{
 			SCENE_MGR.GetCurrentScene()->RemoveGo(this);
 			pool->Return(this);
+			
 		}
 		else
 		{
 			SetActive(false);
+		}
+
+		if (onSpawnEffectComplete)
+		{
+			onSpawnEffectComplete();
 		}
 	}
 }
@@ -54,4 +60,9 @@ void DieEffect::SetDuration(float duration)
 void DieEffect::SetPool(ObjectPool<DieEffect>* pool)
 {
 	this->pool = pool;
+}
+
+void DieEffect::SetOnSpawnEffectComplete(std::function<void()> callBack)
+{
+	onSpawnEffectComplete = callBack;
 }

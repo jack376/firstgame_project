@@ -8,6 +8,8 @@ protected:
 	ObjectPool<DieEffect>* pool = nullptr;
 
 public:
+	std::function<void()> onSpawnEffectComplete;
+
 	DieEffect(const float& flowTime = 0.0f, const std::string& textureId = "", const std::string& n = "");
 	virtual ~DieEffect() override {};
 
@@ -18,5 +20,6 @@ public:
 
 	void SetDuration(float duration);
 	void SetPool(ObjectPool<DieEffect>* pool);
+	void SetOnSpawnEffectComplete(std::function<void()> callBack);
 };
 

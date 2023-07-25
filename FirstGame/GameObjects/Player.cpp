@@ -4,6 +4,8 @@
 #include "InputMgr.h"
 #include "Utils.h"
 #include "ResourceMgr.h"
+#include "SceneMgr.h"
+#include "SceneGame.h"
 
 void Player::Init()
 {
@@ -83,6 +85,18 @@ void Player::Update(float dt)
 		legL.setRotation(0.0f);
 	}
 	BodyAnimation(1.0f, 0.2f, flowTime);
+
+	playerCollider.left = position.x - playerBodyCenter.x;
+	playerCollider.top = position.y - playerBodyCenter.y;
+
+	if (hitColorOverlayDuration > 0)
+	{
+		hitColorOverlayDuration -= dt;
+		if (hitColorOverlayDuration <= 0)
+		{
+			body.setColor(sf::Color(255, 255, 255, 255));
+		}
+	}
 }
 
 void Player::Draw(sf::RenderWindow& window)
@@ -90,4 +104,44 @@ void Player::Draw(sf::RenderWindow& window)
 	window.draw(legR);
 	window.draw(legL);
 	window.draw(body);
+}
+
+sf::FloatRect Player::GetPlayerCollider() const
+{
+	return playerCollider;
+}
+
+void Player::OnHitted(int damage)
+{
+	if (!isAlive)
+	{
+		return;
+	}
+	currentHp -= std::min(currentHp, damage);
+	hitColorOverlayDuration = 0.05f;
+	body.setColor(sf::Color(255, 0, 0, 255));
+
+	Scene* scene = SCENE_MGR.GetCurrentScene();
+	SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
+	sceneGame->SetHpUI((float)currentHp / maxHp);
+
+	/*
+	if (currentHp <= 30)
+	{
+		SpriteGo* hitFade = (SpriteGo*)FindGo("title_fade");
+	}
+	*/
+
+	if (currentHp <= 0)
+	{
+		OnDie();
+	}
+}
+
+void Player::OnDie()
+{
+	isAlive = false;
+	Scene* scene = SCENE_MGR.GetCurrentScene();
+	SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
+	sceneGame->OnDiePlayer();
 }

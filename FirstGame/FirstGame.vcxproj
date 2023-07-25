@@ -155,13 +155,13 @@
   <ItemGroup>
     <ClCompile Include="Animation\AnimationClip.cpp" />
     <ClCompile Include="Animation\AnimationController.cpp" />
+    <ClCompile Include="GameObjects\EntityEffect.cpp" />
     <ClCompile Include="GameObjects\BulletHitEffect.cpp" />
     <ClCompile Include="GameObjects\DieEffect.cpp" />
     <ClCompile Include="GameObjects\BaseUI.cpp" />
     <ClCompile Include="Framework\Collision.cpp" />
     <ClCompile Include="GameObjects\BaseBullet.cpp" />
     <ClCompile Include="GameObjects\BaseGun.cpp" />
-    <ClCompile Include="GameObjects\Button.cpp" />
     <ClCompile Include="DataTables\StringTable.cpp" />
     <ClCompile Include="Framework\DataTableMgr.cpp" />
     <ClCompile Include="Framework\Framework.cpp" />
@@ -190,20 +190,19 @@
     <ClCompile Include="Global\Variables.cpp" />
     <ClCompile Include="Scenes\SceneTitle.cpp" />
     <ClCompile Include="GameObjects\TextGo.cpp" />
-    <ClCompile Include="GameObjects\Thumbnail.cpp" />
     <ClCompile Include="DataTables\UIShopTable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rd\rapidcsv.h" />
     <ClInclude Include="Animation\AnimationController.h" />
     <ClInclude Include="Animation\AnimationClip.h" />
+    <ClInclude Include="GameObjects\EntityEffect.h" />
     <ClInclude Include="GameObjects\BulletHitEffect.h" />
     <ClInclude Include="GameObjects\DieEffect.h" />
     <ClInclude Include="GameObjects\BaseUI.h" />
     <ClInclude Include="Framework\Collision.h" />
     <ClInclude Include="GameObjects\BaseBullet.h" />
     <ClInclude Include="GameObjects\BaseGun.h" />
-    <ClInclude Include="GameObjects\Button.h" />
     <ClInclude Include="DataTables\DataTable.h" />
     <ClInclude Include="DataTables\StringTable.h" />
     <ClInclude Include="Framework\DataTableMgr.h" />
@@ -230,7 +229,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Global\Variables.h" />
     <ClInclude Include="GameObjects\TextGo.h" />
-    <ClInclude Include="GameObjects\Thumbnail.h" />
     <ClInclude Include="DataTables\UIShopTable.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

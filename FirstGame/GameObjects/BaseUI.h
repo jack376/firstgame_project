@@ -56,6 +56,7 @@ public:
 	void SetColor(int red = 0, int green = 0, int blue = 0, int alpha = 255);
 	void SetTextColor(int red = 255, int green = 255, int blue = 255, int alpha = 255);
 	void SetStrokeColor(int red = 0, int green = 0, int blue = 0, int alpha = 0);
+	void SetThumbnailColor(int red = 0, int green = 0, int blue = 0, int alpha = 255);
 
 	void SetString(const std::string& string);
 	void SetCharacterSize(unsigned int fontSize = 54);

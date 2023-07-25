@@ -77,8 +77,8 @@ void Character::SetWallBounds(const sf::FloatRect& bounds)
 	wallBoundsLT = { bounds.left, bounds.top };
 	wallBoundsRB = { bounds.left + bounds.width, bounds.top + bounds.height };
 
-	std::cout << "World Position : " << wallBoundsLT.x << wallBoundsLT.y << std::endl;
-	std::cout << "World Size : "     << wallBoundsRB.x << wallBoundsRB.y << std::endl;
+	std::cout << "World Position : " << wallBoundsLT.x << ", " << wallBoundsLT.y << std::endl;
+	std::cout << "World Size : "     << wallBoundsRB.x << ", " << wallBoundsRB.y << std::endl;
 }
 
 sf::FloatRect Character::GetWallBounds()

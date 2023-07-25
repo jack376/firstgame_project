@@ -289,6 +289,11 @@ void BaseUI::SetStrokeColor(int red, int green, int blue, int alpha)
     }
 }
 
+void BaseUI::SetThumbnailColor(int red, int green, int blue, int alpha)
+{
+    thumbnail.setColor(sf::Color(red, green, blue, alpha));
+}
+
 void BaseUI::SetString(const std::string& string)
 {
     std::string utf8String = string;

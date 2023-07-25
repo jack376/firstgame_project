@@ -34,7 +34,6 @@ void BaseGun::Reset()
 
     fireRecoilEffect.setTexture(*RESOURCE_MGR.GetTexture("graphics/game/bullet_muzzle_fire.png"));
 
-
     SetOrigin(sprite.getTexture()->getSize().x / 2 + gunOrigin, sprite.getTexture()->getSize().y / 2);
     fireRecoilEffect.setOrigin(sprite.getTexture()->getSize().x / 2, sprite.getTexture()->getSize().y / 2);
 
@@ -57,7 +56,7 @@ void BaseGun::Update(float dt)
     if (sceneGame != nullptr)
     {
         Monster* nearMonster = sceneGame->GetNearMonsterSearch();
-        if (nearMonster != nullptr)
+        if (nearMonster != nullptr && nearMonster->GetActive())
         {
             sf::Vector2f monsterPosition = nearMonster->GetPosition();
 
@@ -67,11 +66,11 @@ void BaseGun::Update(float dt)
         }
         else
         {
-            sf::Vector2f mousePos        = INPUT_MGR.GetMousePos();
-            sf::Vector2f mouseWorldPos   = SCENE_MGR.GetCurrentScene()-> ScreenToWorldPos(mousePos);
+            sf::Vector2f mousePosition   = INPUT_MGR.GetMousePos();
+            sf::Vector2f mouseWorldPos   = SCENE_MGR.GetCurrentScene()-> ScreenToWorldPos(mousePosition);
             sf::Vector2f playerScreenPos = SCENE_MGR.GetCurrentScene()-> WorldPosToScreen(position);
 
-            look = Utils::Normalize(mousePos - playerScreenPos);
+            look = Utils::Normalize(mousePosition - playerScreenPos);
             float angle = Utils::Angle(look);
             UpdateFlipAndRotation(player->GetFlipX(), angle);
         }

@@ -18,9 +18,9 @@ protected:
 
 	sf::Vector2f bulletDirection;
 	float bulletSpeed  = 1500.0f;
-	float bulletRange  = 700.0f;
+	float bulletRange  = 700.0f; // 니어몬스터서치랑 동기화 예정
 	float bulletCooldown;
-	int   bulletDamage = 10;
+	int   bulletDamage = 50;
 	//float bulletLife   = 0.05f;
 
 	sf::FloatRect bulletCollider = sf::FloatRect(0.0f, 0.0f, 30.0f, 30.0f);

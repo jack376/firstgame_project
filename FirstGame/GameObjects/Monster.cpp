@@ -20,9 +20,9 @@ void Monster::Reset()
 {
 	body.setTexture(*RESOURCE_MGR.GetTexture(textureId));
 
-	monsterSpriteCenter.x = body.getTexture()->getSize().x / 2;
-	monsterSpriteCenter.y = body.getTexture()->getSize().y / 2;
-	body.setOrigin(monsterSpriteCenter);
+	monsterBodyCenter.x = body.getTexture()->getSize().x / 2;
+	monsterBodyCenter.y = body.getTexture()->getSize().y / 2;
+	body.setOrigin(monsterBodyCenter);
 	body.setPosition(0.0f, 0.0f);
 
 	SetFlipX(false);
@@ -34,7 +34,6 @@ void Monster::Reset()
 void Monster::Update(float dt)
 {
 	flowTime += dt * animationSpeed;
-	deltaTime = dt;
 
 	if (player == nullptr)
 	{
@@ -43,7 +42,6 @@ void Monster::Update(float dt)
 
 	float distance = Utils::Distance(player->GetPosition(), position);
 	direction = Utils::Normalize(player->GetPosition() - position);
-
 	if (direction.x < 0)
 	{
 		SetFlipX(true);
@@ -52,27 +50,36 @@ void Monster::Update(float dt)
 	{
 		SetFlipX(false);
 	}
-	
 	body.setRotation(Utils::Angle(look));
 
-	if (distance > 40.f)
+	if (distance > 25.f)
 	{
-		position += direction * speed * dt;
+		position += direction * moveSpeed * dt;
 		body.setPosition(position);
 	}
 
-	monsterCollider.left = position.x - monsterSpriteCenter.x;
-	monsterCollider.top  = position.y - monsterSpriteCenter.y;
+	monsterCollider.left = position.x - monsterBodyCenter.x;
+	monsterCollider.top = position.y - monsterBodyCenter.y;
 
+	attackTimer += dt;
+	if (attackTimer > attackRate)
+	{
+		if (monsterCollider.intersects(player->GetPlayerCollider()))
+		{
+			attackTimer = 0.0f;
+			player->OnHitted(damage);
+		}
+	}
+
+	// Draw view ///////////////////////////////////////////////////////////////////////////////////
+	/*
 	monsterColliderDraw.setPosition(monsterCollider.left, monsterCollider.top);
 	monsterColliderDraw.setSize(sf::Vector2f(monsterCollider.width, monsterCollider.height));
 	monsterColliderDraw.setFillColor(sf::Color::Transparent);
-
-	if (isMonsterColliderDrawView)  // TEST CODE
-	{
-		monsterColliderDraw.setOutlineColor(sf::Color::Red);
-		monsterColliderDraw.setOutlineThickness(1.0f);
-	}
+	monsterColliderDraw.setOutlineColor(sf::Color::Red);
+	monsterColliderDraw.setOutlineThickness(1.0f);
+	*/
+	////////////////////////////////////////////////////////////////////////////////////////////////
 
 	float magnitude = Utils::Magnitude(direction);
 	if (magnitude > 0.0f)
@@ -92,10 +99,10 @@ void Monster::Update(float dt)
 	}
 	BodyAnimation(1.0f, 0.2f, flowTime);
 
-	if (flashDuration > 0)
+	if (hitColorOverlayDuration > 0)
 	{
-		flashDuration -= dt;
-		if (flashDuration <= 0)
+		hitColorOverlayDuration -= dt;
+		if (hitColorOverlayDuration <= 0)
 		{
 			body.setColor(sf::Color(255, 255, 255, 255));
 		}
@@ -122,7 +129,7 @@ void Monster::SetType(Types t)
 
 	monsterType = (Monster::Types)info.monsterType;
 	textureId   = info.textureId;
-	speed       = info.speed;
+	moveSpeed   = info.speed;
 	maxHp       = info.maxHp;
 	damage      = info.damage;
 	attackRate  = info.attackRate;
@@ -141,8 +148,8 @@ void Monster::SetPlayer(Player* player)
 void Monster::OnHitBullet(int bulletDamage)
 {
 	currentHp -= bulletDamage;
-	flashDuration = 0.05f;
-	body.setColor(sf::Color(0, 255, 200, 255));
+	hitColorOverlayDuration = 0.05f;
+	body.setColor(sf::Color(0, 255, 200, 128));	
 	if (currentHp <= 0)
 	{
 		SetDieEffect(position);
@@ -153,6 +160,26 @@ void Monster::OnHitBullet(int bulletDamage)
 			sceneGame->OnDieMonster(this);
 		}
 	}
+}
+
+void Monster::SetEntityEffectPool(ObjectPool<EntityEffect>* pool)
+{
+	entityEffectPool = pool;
+}
+
+void Monster::SetEntityEffect(sf::Vector2f position, std::function<void()> onEntityEffectComplete)
+{
+	float randomValue = Utils::RandomRange(1, 16);
+
+	EntityEffect* entityEffect = entityEffectPool->Get();
+	entityEffect->SetActive(true);
+	entityEffect->SetOrigin(Origins::MC);
+	entityEffect->SetPosition(position);
+	entityEffect->sprite.setRotation(randomValue * 22.5f);
+
+	SCENE_MGR.GetCurrentScene()->AddGo(entityEffect);
+
+	entityEffect->SetOnEntityEffectComplete(onEntityEffectComplete);
 }
 
 void Monster::SetBulletHitEffectPool(ObjectPool<BulletHitEffect>* pool)
@@ -183,7 +210,7 @@ void Monster::SetDieEffect(sf::Vector2f position)
 	dieEffect->SetActive(true);
 	dieEffect->SetOrigin(Origins::MC);
 	dieEffect->SetPosition(position);
-	dieEffect->sprite.setScale(0.8f + randomValue / 16.0f, 0.8f + randomValue / 16.0f);
+	dieEffect->sprite.setScale(0.8f + randomValue / 12.0f, 0.8f + randomValue / 12.0f);
 	dieEffect->sprite.setRotation(randomValue * 45);
 
 	SCENE_MGR.GetCurrentScene()->AddGo(dieEffect);

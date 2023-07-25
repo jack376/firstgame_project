@@ -10,7 +10,6 @@
 #include "Player.h"
 #include "Monster.h"
 #include "BaseUI.h"
-#include "Thumbnail.h"
 #include "BaseGun.h"
 #include "BaseBullet.h"
 #include "DataTableMgr.h"
@@ -26,10 +25,14 @@ void SceneGame::Init()
 {
 	Release();
 
+	sf::Vector2f defaultResolution(1920.0f, 1080.0f);
+
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
-	sf::Vector2f centerPos = windowSize * 0.5f;
+	sf::Vector2f centerPos  = windowSize * 0.5f;
+
 	float resolutionScale = windowSize.x / 1920.0f;
 	float shopUiPositionX = 375.0f * resolutionScale;
+	float ThumbnailSize   = 64.0f;
 
 	player = (Player*)AddGo(new Player("Player"));
 	player->sortLayer = 3;
@@ -38,28 +41,42 @@ void SceneGame::Init()
 	baseGun->sortLayer = 4;
 	baseGun->SetPosition(player->GetPosition());
 
-	BaseUI* backButton = (BaseUI*)AddGo(new BaseUI("BackButton"));
-	backButton->sortLayer = 100;
-	backButton->SetPosition(50.0f, windowSize.y - 150.0f);
-	backButton->SetString("PAUSE");
-	backButton->OnEnter = [backButton]()
+	BaseUI* PauseButton = (BaseUI*)AddGo(new BaseUI("BackButton", uiType::Thumbnail));
+	PauseButton->sortLayer = 100;
+	PauseButton->SetPosition(defaultResolution.x * resolutionScale - ThumbnailSize - 50.0f, 50.0f);
+	PauseButton->SetColor(0, 0, 0, 192);
+	PauseButton->SetThumbnailColor(255, 255, 255, 192);
+	PauseButton->OnEnter = [PauseButton]()
 	{
-		backButton->SetColor(255, 255, 255, 192);
-		backButton->SetTextColor(0, 0, 0, 255);
+		PauseButton->SetColor(255, 255, 255, 192);
+		PauseButton->SetThumbnailColor(0, 0, 0, 192);
 		std::cout << "Enter" << std::endl;
 	};
-	backButton->OnExit = [backButton]()
+	PauseButton->OnExit = [PauseButton]()
 	{
-		backButton->SetColor();
-		backButton->SetTextColor();
+		PauseButton->SetColor();
+		PauseButton->SetThumbnailColor(255, 255, 255, 192);
 		std::cout << "Exit" << std::endl;
 	};
-	backButton->OnClick = [this]()
+	PauseButton->OnClick = [this]()
 	{
 		std::cout << "Click" << std::endl;
 		SCENE_MGR.ChangeScene(SceneId::Title);
 	};
 	
+	float barPosition = 50.0f;
+
+	CreateBar("graphics/bar_back.png", "HpBarBack", barPosition, 1);
+	CreateBar("graphics/bar_main.png", "HpBarMain", barPosition, 2, sf::Color(255, 64, 0, 255));
+	CreateBar("graphics/bar_bord.png", "HpBarBord", barPosition, 3);
+
+	CreateBar("graphics/bar_back.png", "ExpBarBack", barPosition * 2, 1);
+	CreateBar("graphics/bar_main.png", "ExpBarMain", barPosition * 2, 2, sf::Color(0, 224, 64, 255));
+	CreateBar("graphics/bar_bord.png", "ExpBarBord", barPosition * 2, 3);
+
+	CreateBar("graphics/material_icon.png", "MaterialIcon", barPosition * 3);
+	CreateBar("graphics/material_bag.png",  "MaterialBag" , barPosition * 4);
+
 	SpriteGo* groundOutline = (SpriteGo*)AddGo(new SpriteGo("graphics/game/ground_outline.png", "GroundOutline"));
 	groundOutline->sortLayer = 2;
 	groundOutline->SetOrigin(Origins::MC);
@@ -68,11 +85,11 @@ void SceneGame::Init()
 	ground->sortLayer = 0;
 	ground->SetOrigin(Origins::MC);
 
-	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 1.0f, windowSize.y / 4, "Plasma Rifle", resolutionScale);
-	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 2.0f, windowSize.y / 4, "Laser Gun", resolutionScale);
-	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 3.0f, windowSize.y / 4, "Gatling Laser", resolutionScale);
+	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 1, windowSize.y / 4, "Plasma Rifle", resolutionScale);
+	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 2, windowSize.y / 4, "Laser Gun", resolutionScale);
+	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 3, windowSize.y / 4, "Gatling Laser", resolutionScale);
 
-	sf::Vector2f tileWorldSize = { 64.0f, 64.0f };
+	sf::Vector2f tileWorldSize   = { 64.0f, 64.0f };
 	sf::Vector2f tileTextureSize = { 64.0f, 64.0f };
 
 	VertexArrayGo* tile = CreateTile("graphics/game/tile.png", { 32, 32 }, tileWorldSize, tileTextureSize);
@@ -86,6 +103,7 @@ void SceneGame::Init()
 	wallBounds.top    += tileWorldSize.y;
 	wallBounds.width  -= tileWorldSize.x * 2;
 	wallBounds.height -= tileWorldSize.y * 2;
+
 	player->SetWallBounds(wallBounds);
 
 	AddGo(tile);
@@ -93,6 +111,7 @@ void SceneGame::Init()
 	CreateMonsters(256);
 	CreateDieEffect(256);
 	CreateBulletHitEffect(256);
+	CreateEntityEffect(256);
 
 	for (auto go : gameObjects)
 	{
@@ -114,6 +133,9 @@ void SceneGame::Reset()
 	ClearObjectPool(monsterPool);
 	ClearObjectPool(dieEffectPool);
 	ClearObjectPool(bulletHitEffectPool);
+	ClearObjectPool(entityEffectPool);
+
+	isPlaying = true;
 
 	for (auto go : gameObjects)
 	{
@@ -127,6 +149,7 @@ void SceneGame::Enter()
 	ClearObjectPool(monsterPool);
 	ClearObjectPool(dieEffectPool);
 	ClearObjectPool(bulletHitEffectPool);
+	ClearObjectPool(entityEffectPool);
 
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
 	sf::Vector2f centerPos = windowSize * 0.5f;
@@ -144,7 +167,9 @@ void SceneGame::Exit()
 	ClearObjectPool(monsterPool);
 	ClearObjectPool(dieEffectPool);
 	ClearObjectPool(bulletHitEffectPool);
+	ClearObjectPool(entityEffectPool);
 
+	isPlaying = false;
 	player->Reset();
 
 	Scene::Exit();
@@ -163,7 +188,7 @@ void SceneGame::Update(float dt)
 
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1)) // Test Code
 	{
-		SpawnMonsters(20, currentPlayerPosition, { 0.0f, 0.0f }, 900.0f);
+		SpawnMonsters(3, currentPlayerPosition, { 0.0f, 0.0f }, 900.0f);
 	}
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num2)) // Test Code
 	{
@@ -185,7 +210,6 @@ void SceneGame::Update(float dt)
 			shopCreated = false;
 		}
 	}
-
 
 	sf::Vector2f halfViewSize = worldView.getSize() * 0.5f;
 
@@ -283,6 +307,7 @@ void SceneGame::CreateMonsters(int count)
 		monster->SetActive(false);
 		monster->SetBulletHitEffectPool(&bulletHitEffectPool);
 		monster->SetDieEffectPool(&dieEffectPool);
+		monster->SetEntityEffectPool(&entityEffectPool);
 	};
 	monsterPool.Init(count);
 }
@@ -293,38 +318,71 @@ void SceneGame::SpawnMonsters(int count, sf::Vector2f playerCenter, sf::Vector2f
 	{
 		Monster* monster = monsterPool.Get();
 		sf::Vector2f spawnPosition;
-		monster->SetActive(true);
+		monster->SetActive(false);
 
 		do {
 			spawnPosition = mapCenter + Utils::RandomInCircle(radius);
 		} while (Utils::Distance(playerCenter, spawnPosition) < 50.0f && Utils::Distance(mapCenter, spawnPosition) < 950.0f);
 
 		monster->SetPosition(spawnPosition);
-		monster->Reset();
-
-		AddGo(monster);
+		monster->SetEntityEffect(spawnPosition, [this, monster]() 
+		{
+			monster->SetActive(true);
+			monster->Reset();
+			AddGo(monster);
+		});
 	}
 	monsterCount = monsterPool.GetUseList().size();
 }
 
-ObjectPool<Monster>& SceneGame::GetMonsterPool()
+void SceneGame::OnDieMonster(Monster* monster)
 {
-	return monsterPool;
+	RemoveGo(monster);
+	monsterPool.Return(monster);
+
+	//sf::Vector2f pos = monster->GetPosition();
+	//monsterCount = monsterPool.GetUseList().size();
+	//TextGo* uiMonsterCount = (TextGo*)FindGo("uiMonsterCount");
+	//stringstream ss;
+	//ss << "Zombie : " << zombiecount;
+	//uiZombieCount->SetString(ss.str());
+
+	//AddScore(1);
+	//SpawnItem(pos);
 }
 
-const std::list<Monster*>* SceneGame::GetMonsterList()
+Monster* SceneGame::GetNearMonsterSearch()
 {
-	return &monsterPool.GetUseList();
+	float nearMonsterSearchDistance = 700.0f;
+
+	const std::list<Monster*>* monsterList = GetMonsterList();
+	Monster* nearMonster = nullptr;
+
+	for (Monster* monster : *monsterList)
+	{
+		float distance = Utils::Distance(player->GetPosition(), monster->GetPosition());
+		if (distance <= nearMonsterSearchDistance)
+		{
+			nearMonsterSearchDistance = distance;
+			nearMonster = monster;
+		}
+	}
+	return nearMonster;
 }
 
-ObjectPool<BulletHitEffect>& SceneGame::GetBulletHitEffectPool()
+void SceneGame::CreateEntityEffect(int count)
 {
-	return bulletHitEffectPool;
-}
-
-ObjectPool<DieEffect>& SceneGame::GetDieEffectPool()
-{
-	return dieEffectPool;
+	entityEffectPool.OnCreate = [this](EntityEffect* entityEffect)
+	{
+		entityEffect->SetName("EntityEffect");
+		entityEffect->SetDuration(1.0f);
+		entityEffect->textureId = "graphics/game/entity_effect.png";
+		entityEffect->sortLayer = 2;
+		entityEffect->sortOrder = 1;
+		entityEffect->SetActive(false);
+		entityEffect->SetPool(&entityEffectPool);
+	};
+	entityEffectPool.Init(count);
 }
 
 void SceneGame::CreateBulletHitEffect(int count)
@@ -355,41 +413,6 @@ void SceneGame::CreateDieEffect(int count)
 		dieEffect->SetPool(&dieEffectPool);
 	};
 	dieEffectPool.Init(count);
-}
-
-Monster* SceneGame::GetNearMonsterSearch()
-{
-	const std::list<Monster*>* monsterList = GetMonsterList();
-	Monster* nearMonster = nullptr;
-
-	float nearMonsterSearchDistance = 700.0f;
-
-	for (Monster* monster : *monsterList)
-	{
-		float distance = Utils::Distance(player->GetPosition(), monster->GetPosition());
-		if (distance <= nearMonsterSearchDistance)
-		{
-			nearMonsterSearchDistance = distance;
-			nearMonster = monster;
-		}
-	}
-	return nearMonster;
-}
-
-void SceneGame::OnDieMonster(Monster* monster)
-{
-	RemoveGo(monster);
-	monsterPool.Return(monster);
-
-	//sf::Vector2f pos = monster->GetPosition();
-	//monsterCount = monsterPool.GetUseList().size();
-	//TextGo* uiMonsterCount = (TextGo*)FindGo("uiMonsterCount");
-	//stringstream ss;
-	//ss << "Zombie : " << zombiecount;
-	//uiZombieCount->SetString(ss.str());
-
-	//AddScore(1);
-	//SpawnItem(pos);
 }
 
 void SceneGame::CreateShopUI(float posiX, float posiY, std::string name, float scale = 1.0f)
@@ -556,4 +579,31 @@ void SceneGame::SetActiveShopUI(std::string name, bool active)
 			gameObject->SetActive(active);
 		}
 	}
+}
+
+void SceneGame::CreateBar(const std::string& id, const std::string& name, float posY, int sort, sf::Color color)
+{
+	SpriteGo* bar = (SpriteGo*)AddGo(new SpriteGo(id, name));
+	bar->sortLayer = 100 + sort;
+	bar->sprite.setColor(color);
+	bar->SetOrigin(Origins::TL);
+	bar->SetPosition(50.0f, posY);
+
+}
+
+void SceneGame::SetHpUI(float currentHp)
+{
+	SpriteGo* hp = (SpriteGo*)FindGo("HpBarMain");
+	hp->sprite.setScale(1.0f * currentHp, 1.0f);
+}
+
+void SceneGame::SetExpUI(float currentExp)
+{
+	SpriteGo* exp = (SpriteGo*)FindGo("ExpBarMain");
+	exp->sprite.setScale(1.0f * currentExp, 1.0f);
+}
+
+void SceneGame::OnDiePlayer()
+{
+	isPlaying = false;
 }

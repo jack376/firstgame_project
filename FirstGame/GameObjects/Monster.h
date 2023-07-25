@@ -3,6 +3,7 @@
 #include "ObjectPool.h"
 #include "BulletHitEffect.h"
 #include "DieEffect.h"
+#include "EntityEffect.h"
 
 class Player;
 class Monster : public Character
@@ -10,35 +11,35 @@ class Monster : public Character
 public:
 	enum class Types
 	{
-		Normal = 0,
-		Faster = 1,
-		Heavy  = 2,
+		Normal   = 0,
+		Faster   = 1,
+		Heavy    = 2,
+		//Range    = 3,
+		//Tentacle = 4,
 	};
 
 protected:
 	Player* player = nullptr;
 
-	Types monsterType;
+	Types       monsterType;
 	std::string textureId;
-	float speed = 0.0f;
-	int maxHp = 0;
-	int damage = 0;
-	float attackRate = 0.0f;
+	float       moveSpeed  = 0.0f;
+	int         maxHp      = 0;
+	int         damage     = 0;
+	float       attackRate = 0.0f;
 
-	int currentHp = 0;
+	int   currentHp   = 0;
 	float attackTimer = 0.0f;
 
-	sf::Vector2f monsterSpriteCenter;
-
+	sf::Vector2f monsterBodyCenter;
 	sf::FloatRect monsterCollider = sf::FloatRect(0.0f, 0.0f, 100.0f, 100.0f);
 	sf::RectangleShape monsterColliderDraw;
-	
-	bool isMonsterColliderDrawView = false;
 
 	ObjectPool<BulletHitEffect>* effectPool;
 	ObjectPool<DieEffect>* dieEffectPool;
+	ObjectPool<EntityEffect>* entityEffectPool;
 
-	float flashDuration = 0.1f;
+
 
 public:
 	Monster(const std::string& n = "") : Character(n) {}
@@ -56,6 +57,9 @@ public:
 
 	void SetPlayer(Player* player);
 	void OnHitBullet(int bulletDamage);
+
+	void SetEntityEffectPool(ObjectPool<EntityEffect>* pool);
+	void SetEntityEffect(sf::Vector2f position, std::function<void()> onEntityEffectComplete);
 
 	void SetBulletHitEffectPool(ObjectPool<BulletHitEffect>* pool);
 	void SetBulletHitEffect(sf::Vector2f position);

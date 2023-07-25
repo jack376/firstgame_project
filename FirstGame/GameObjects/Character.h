@@ -11,6 +11,7 @@ public:
 		Idle,
 		Move,
 		Attack,
+		Spawn,
 	};
 
 protected:
@@ -26,7 +27,6 @@ protected:
 	sf::Vector2f look;
 	sf::Vector2f direction;
 
-	float moveSpeed = 500.f;
 	float flowTime = 0.0f;
 	float deltaTime = 0.0f;
 
@@ -39,6 +39,8 @@ protected:
 	sf::Vector2f wallBoundsRB;
 
 	bool filpX = false;
+
+	float hitColorOverlayDuration = 0.1f;
 
 public:
 	Character(const std::string& n = "") : GameObject(n) {}
