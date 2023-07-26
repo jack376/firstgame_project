@@ -77,6 +77,9 @@ public:
 	void CreateShopUI(float posiX, float posiY, std::string name, float scale = 1.0f);
 	void SetActiveShopUI(std::string name, bool active);
 
+	void CreatePlayerInfoUI(float posiX, float posiY, std::string name, float scale = 1.0f);
+	void SetActivePlayerInfoUI(std::string name, bool active);
+
 	void CreateBar(const std::string& id, const std::string& name, float posX, float posY, int sort = 0, sf::Color color = sf::Color::White);
 	void CreateText(const std::string& name, const std::string& str, float posX = 0.0f, float posY = 0.0f, int fontSize = 48, bool originMC = false);
 

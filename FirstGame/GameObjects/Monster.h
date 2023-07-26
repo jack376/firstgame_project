@@ -19,7 +19,8 @@ public:
 	};
 
 protected:
-	Player* player = nullptr;
+	int   currentHp = 0;
+	float attackTimer = 0.0f;
 
 	Types       monsterType;
 	std::string textureId;
@@ -28,8 +29,7 @@ protected:
 	int         damage     = 0;
 	float       attackRate = 0.0f;
 
-	int   currentHp   = 0;
-	float attackTimer = 0.0f;
+	Player* player = nullptr;
 
 	sf::Vector2f monsterBodyCenter;
 	sf::FloatRect monsterCollider = sf::FloatRect(0.0f, 0.0f, 100.0f, 100.0f);

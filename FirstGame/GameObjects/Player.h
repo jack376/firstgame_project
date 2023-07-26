@@ -5,14 +5,13 @@ class Character;
 class Player : public Character
 {
 protected:
-	bool isAlive = false;
-
+	bool isAlive = true;
 	int level      = 1;
-	int maxExp     = 8;
 	int currentExp = 0;
-	int maxHp      = 20;
-	int currentHp  = 20;
+	int currentHp = 20;
 
+	int   maxExp      = 8;
+	int   maxHp       = 20;
 	float hpRegen     = 0.0f;
 	float damage      = 0.0f;
 	float attackSpeed = 1.0f;
@@ -39,4 +38,6 @@ public:
 	void OnHitted(int damage);
 	void OnKilled();
 	void OnDie();
+
+
 };

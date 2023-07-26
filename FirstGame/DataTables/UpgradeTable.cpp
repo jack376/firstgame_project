@@ -28,20 +28,20 @@ bool UpgradeTable::Load()
         upgradeInfo.amount    = amount[i];
         upgradeInfo.tier      = tier[i];
 
-        upgradeTable[name[i]] = upgradeInfo;
+        table[name[i]] = upgradeInfo;
     }
     return true;
 }
 
 void UpgradeTable::Release()
 {
-    upgradeTable.clear();
+    table.clear();
 }
 
 const UpgradeInfo& UpgradeTable::Get(const std::string& name)
 {
-    auto find = upgradeTable.find(name);
-    if (find == upgradeTable.end())
+    auto find = table.find(name);
+    if (find == table.end())
     {
         throw std::runtime_error("ERROR : Undefined Item Name");
     }

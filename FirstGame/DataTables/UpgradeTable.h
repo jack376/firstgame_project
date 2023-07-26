@@ -16,7 +16,7 @@ struct UpgradeInfo
 class UpgradeTable : public DataTable
 {
 protected:
-    std::unordered_map<std::string, UpgradeInfo> upgradeTable;
+    std::unordered_map<std::string, UpgradeInfo> table;
 
 public:
     UpgradeTable() : DataTable(DataTable::Ids::Upgrade) {};

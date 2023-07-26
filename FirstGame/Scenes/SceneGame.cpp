@@ -783,6 +783,174 @@ void SceneGame::SetActiveShopUI(std::string name, bool active)
 	}
 }
 
+void SceneGame::CreatePlayerInfoUI(float posiX, float posiY, std::string name, float scale)
+{
+	const UpgradeInfo& upgradeInfo = DATATABLE_MGR.Get<UpgradeTable>(DataTable::Ids::Upgrade)->Get(name);
+
+	std::string textureId = upgradeInfo.textureId;
+	name = upgradeInfo.name;
+	std::string category = upgradeInfo.category;
+	std::string highlight = upgradeInfo.highlight;
+	std::string title = upgradeInfo.title;
+	int         value = upgradeInfo.value;
+	int         amount = upgradeInfo.amount;
+	int         tier = upgradeInfo.tier;
+
+	float blank = 20.0f * scale;
+	sf::Vector2f thumbSize(100.0f * scale, 100.0f * scale);
+
+	sf::Vector2f fullBoxSize(360.0f * scale, 270.0f * scale);
+	sf::Vector2f buttonBoxSize(180.0f * scale, 60.0f * scale);
+
+	BaseUI* box = (BaseUI*)AddGo(new BaseUI("Box" + name, uiType::Box));
+	box->sortLayer = 101;
+	box->SetPosition(posiX, posiY);
+	box->SetSizeAdd(fullBoxSize.x, fullBoxSize.y);
+	box->SetActive(false);
+
+	SpriteGo* thumbnail = (SpriteGo*)AddGo(new SpriteGo(textureId, "thumbnail_" + name));
+	thumbnail->sortLayer = 103;
+	thumbnail->SetPosition(posiX + blank, posiY + blank);
+	thumbnail->sprite.setScale(scale, scale); // 100 x 100 px * scale
+	thumbnail->SetActive(false);
+
+	BaseUI* thumbnailBox = (BaseUI*)AddGo(new BaseUI("thumbnailBox" + name, uiType::Box));
+	thumbnailBox->sortLayer = 102;
+	thumbnailBox->SetColor(255, 255, 255, 32);
+	thumbnailBox->SetPosition(posiX + blank, posiY + blank);
+	thumbnailBox->SetSizeAdd(thumbSize.x, thumbSize.y);
+	thumbnailBox->SetActive(false);
+
+	BaseUI* buttonBox = (BaseUI*)AddGo(new BaseUI("ButtonBox" + name, uiType::Box));
+	buttonBox->sortLayer = 102;
+	buttonBox->SetColor(255, 255, 255, 32);
+	buttonBox->SetPosition(posiX + fullBoxSize.x * 0.25f, posiY + fullBoxSize.y - buttonBoxSize.y - blank);
+	buttonBox->SetSizeAdd(buttonBoxSize.x, buttonBoxSize.y);
+	buttonBox->SetActive(false);
+
+	std::string amountString = std::to_string(amount);
+
+	TextGo* moneyAmount = (TextGo*)AddGo(new TextGo("fonts/Chewy-Regular.ttf", amountString + name));
+	moneyAmount->sortLayer = 104;
+	moneyAmount->SetOrigin(Origins::TR);
+	moneyAmount->SetCharacterSize(48);
+	moneyAmount->SetPosition(posiX + fullBoxSize.x * 0.5f + blank - 7.0f, posiY + fullBoxSize.y - buttonBoxSize.y - blank);
+	moneyAmount->SetFillColor(sf::Color(255, 255, 255, 255));
+	moneyAmount->SetScale(scale, scale);
+	moneyAmount->SetString(amountString);
+	moneyAmount->text.setOutlineColor(sf::Color(0, 0, 0, 255));
+	moneyAmount->text.setOutlineThickness(7.0f * scale);
+	moneyAmount->SetActive(false);
+
+	SpriteGo* materialIcon = (SpriteGo*)AddGo(new SpriteGo("graphics/game/material_ui.png", "MaterialIcon" + name));
+	materialIcon->sortLayer = 104;
+	materialIcon->SetOrigin(Origins::TL);
+	materialIcon->SetPosition(posiX + fullBoxSize.x * 0.5f + blank, posiY + fullBoxSize.y - buttonBoxSize.y - blank);
+	materialIcon->SetActive(false);
+
+	TextGo* upgradeName = (TextGo*)AddGo(new TextGo("fonts/Kanit-Bold.ttf", "upgrade_" + name));
+	upgradeName->sortLayer = 105;
+	upgradeName->SetOrigin(Origins::TL);
+	upgradeName->SetCharacterSize(30);
+	upgradeName->SetPosition(posiX + thumbSize.x + blank * 2, posiY + 30.0f);
+	upgradeName->SetFillColor(sf::Color(255, 255, 255, 255));
+	upgradeName->text.setScale(0.9f * scale, 1.0f * scale);
+	upgradeName->SetString(name);
+	upgradeName->SetActive(false);
+
+	TextGo* upgradeCategory = (TextGo*)AddGo(new TextGo("fonts/Kanit-SemiBold.ttf", category + name));
+	upgradeCategory->sortLayer = 105;
+	upgradeCategory->SetOrigin(Origins::TL);
+	upgradeCategory->SetCharacterSize(25);
+	upgradeCategory->SetPosition(posiX + thumbSize.x + blank * 2, posiY + 60.0f);
+	upgradeCategory->SetFillColor(sf::Color(255, 255, 128, 255));
+	upgradeCategory->SetScale(0.9f * scale, 1.0f * scale);
+	upgradeCategory->SetString(category);
+	upgradeCategory->SetActive(false);
+
+	TextGo* upgradeHighlight = (TextGo*)AddGo(new TextGo("fonts/Kanit-Medium.ttf", highlight + name));
+	upgradeHighlight->sortLayer = 106;
+	upgradeHighlight->SetOrigin(Origins::TL);
+	upgradeHighlight->SetCharacterSize(20);
+	upgradeHighlight->SetPosition(posiX + blank, posiY + thumbSize.y + blank * 2);
+	upgradeHighlight->SetFillColor(sf::Color(0, 192, 64, 255));
+	upgradeHighlight->SetScale(0.9f * scale, 1.0f * scale);
+	upgradeHighlight->SetString(highlight);
+	upgradeHighlight->SetActive(false);
+
+	TextGo* upgradeTitle = (TextGo*)AddGo(new TextGo("fonts/Kanit-Medium.ttf", title + name));
+	upgradeTitle->sortLayer = 105;
+	upgradeTitle->SetOrigin(Origins::TL);
+	upgradeTitle->SetCharacterSize(20);
+	upgradeTitle->SetPosition(posiX + blank, posiY + thumbSize.y + blank * 2);
+	upgradeTitle->SetFillColor(sf::Color(255, 255, 255, 255));
+	upgradeTitle->SetScale(0.9f * scale, 1.0f * scale);
+	upgradeTitle->SetString(title);
+	upgradeTitle->SetActive(false);
+
+	switch (tier) // Tier Color
+	{
+	case 1:
+		box->SetStrokeColor(0, 0, 0, 0);
+		box->SetColor(0, 0, 0, 255);
+		break;
+	case 2:
+		box->SetStrokeColor(75, 175, 225, 255);
+		box->SetColor(15, 30, 45, 255);
+		break;
+	case 3:
+		box->SetStrokeColor(150, 75, 225, 255);
+		box->SetColor(15, 15, 30, 255);
+		break;
+	case 4:
+		box->SetStrokeColor(225, 50, 50, 255);
+		box->SetColor(30, 15, 15, 255);
+		break;
+	default:
+		box->SetStrokeColor(0, 0, 0, 0);
+		box->SetColor(0, 0, 0, 255);
+		break;
+	}
+}
+
+void SceneGame::SetActivePlayerInfoUI(std::string name, bool active)
+{
+	const UpgradeInfo& upgradeInfo = DATATABLE_MGR.Get<UpgradeTable>(DataTable::Ids::Upgrade)->Get(name);
+
+	std::string textureId = upgradeInfo.textureId;
+	name = upgradeInfo.name;
+	std::string category = upgradeInfo.category;
+	std::string highlight = upgradeInfo.highlight;
+	std::string title = upgradeInfo.title;
+	int         value = upgradeInfo.value;
+	int         amount = upgradeInfo.amount;
+
+	std::string amountString = std::to_string(amount);
+
+	std::vector<std::string> gameObjectNames =
+	{
+		"Box" + name,
+		"thumbnail_" + name,
+		"thumbnailBox" + name,
+		"ButtonBox" + name,
+		"MaterialIcon" + name,
+		"upgrade_" + name,
+		category + name,
+		highlight + name,
+		title + name,
+		amountString + name
+	};
+
+	for (const std::string& gameObjectName : gameObjectNames)
+	{
+		GameObject* gameObject = FindGo(gameObjectName);
+		if (gameObject != nullptr)
+		{
+			gameObject->SetActive(active);
+		}
+	}
+}
+
 void SceneGame::CreateBar(const std::string& id, const std::string& name, float posX, float posY, int sort, sf::Color color)
 {
 	SpriteGo* bar = (SpriteGo*)AddGo(new SpriteGo(id, name));
