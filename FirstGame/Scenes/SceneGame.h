@@ -18,6 +18,11 @@ class SceneGame : public Scene
 protected:	
 	int monsterCount = 0;
 
+	int playerLevel = 1;
+
+	int waveCount = 1;
+	int waveTimer = 0;
+
 	bool isPlaying   = false;
 	bool isShop      = false;
 	bool shopCreated = false;
@@ -50,10 +55,10 @@ public:
 	Monster* GetNearMonsterSearch();
 	const std::list<Monster*>* GetMonsterList() { return &monsterPool.GetUseList(); }
 	
-	ObjectPool<Monster>& GetMonsterPool() { return monsterPool; }
-	ObjectPool<BulletHitEffect>& GetBulletHitEffectPool() { return bulletHitEffectPool; }
-	ObjectPool<DieEffect>& GetDieEffectPool() { return dieEffectPool; }
-	ObjectPool<EntityEffect>& GetEntityEffectPool() { return entityEffectPool; }
+	ObjectPool<Monster>         & GetMonsterPool()         { return monsterPool; }
+	ObjectPool<BulletHitEffect> & GetBulletHitEffectPool() { return bulletHitEffectPool; }
+	ObjectPool<DieEffect>       & GetDieEffectPool()       { return dieEffectPool; }
+	ObjectPool<EntityEffect>    & GetEntityEffectPool()    { return entityEffectPool; }
 
 	template <typename T>
 	void ClearObjectPool(ObjectPool<T>& pool);
@@ -66,13 +71,19 @@ public:
 	void CreateDieEffect(int count);
 	void CreateEntityEffect(int count);
 
-	void CreateShopUI(float posiX, float posiY, std::string name, float scale);
+	void CreateUpgradeUI(float posiX, float posiY, std::string name, float scale = 1.0f);
+	void SetActiveUpgradeUI(std::string name, bool active);
+
+	void CreateShopUI(float posiX, float posiY, std::string name, float scale = 1.0f);
 	void SetActiveShopUI(std::string name, bool active);
 
-	void CreateBar(const std::string& id, const std::string& name, float posY, int sort = 0, sf::Color color = sf::Color::White);
+	void CreateBar(const std::string& id, const std::string& name, float posX, float posY, int sort = 0, sf::Color color = sf::Color::White);
+	void CreateText(const std::string& name, const std::string& str, float posX = 0.0f, float posY = 0.0f, int fontSize = 48, bool originMC = false);
 
-	void SetHpUI(float currentHp);
+	void SetHpUI(float currentHp, int maxHp);
 	void SetExpUI(float currentExp);
+	void SetLevelUpUI(int level);
+
 	void OnDiePlayer();
 };
 

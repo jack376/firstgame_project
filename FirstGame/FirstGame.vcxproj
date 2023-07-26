@@ -190,7 +190,8 @@
     <ClCompile Include="Global\Variables.cpp" />
     <ClCompile Include="Scenes\SceneTitle.cpp" />
     <ClCompile Include="GameObjects\TextGo.cpp" />
-    <ClCompile Include="DataTables\UIShopTable.cpp" />
+    <ClCompile Include="DataTables\ShopTable.cpp" />
+    <ClCompile Include="DataTables\UpgradeTable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rd\rapidcsv.h" />
@@ -229,7 +230,8 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Global\Variables.h" />
     <ClInclude Include="GameObjects\TextGo.h" />
-    <ClInclude Include="DataTables\UIShopTable.h" />
+    <ClInclude Include="DataTables\ShopTable.h" />
+    <ClInclude Include="DataTables\UpgradeTable.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

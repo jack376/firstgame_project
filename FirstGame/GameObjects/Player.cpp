@@ -123,8 +123,7 @@ void Player::OnHitted(int damage)
 
 	Scene* scene = SCENE_MGR.GetCurrentScene();
 	SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
-	sceneGame->SetHpUI((float)currentHp / maxHp);
-
+	sceneGame->SetHpUI((float)currentHp, maxHp);
 	/*
 	if (currentHp <= 30)
 	{
@@ -135,6 +134,28 @@ void Player::OnHitted(int damage)
 	if (currentHp <= 0)
 	{
 		OnDie();
+	}
+}
+
+void Player::OnKilled()
+{
+	if (!isAlive)
+	{
+		return;
+	}
+
+	currentExp++;
+
+	Scene* scene = SCENE_MGR.GetCurrentScene();
+	SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
+	sceneGame->SetExpUI((float)currentExp / maxExp);
+
+	if (currentExp >= maxExp)
+	{
+		level++;
+		sceneGame->SetLevelUpUI(level);
+		currentExp = 0;
+		maxExp = maxExp + maxExp / 8;
 	}
 }
 

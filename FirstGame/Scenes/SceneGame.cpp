@@ -13,7 +13,8 @@
 #include "BaseGun.h"
 #include "BaseBullet.h"
 #include "DataTableMgr.h"
-#include "UIShopTable.h"
+#include "ShopTable.h"
+#include "UpgradeTable.h"
 #include <sstream>
 
 SceneGame::SceneGame() : Scene(SceneId::Game)
@@ -30,9 +31,9 @@ void SceneGame::Init()
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
 	sf::Vector2f centerPos  = windowSize * 0.5f;
 
-	float resolutionScale = windowSize.x / 1920.0f;
-	float shopUiPositionX = 375.0f * resolutionScale;
-	float ThumbnailSize   = 64.0f;
+	float resolutionScale    = windowSize.x / 1920.0f;
+	float shopUiPositionX    = 375.0f * resolutionScale;
+	float pauseThumbnailSize = 64.0f;
 
 	player = (Player*)AddGo(new Player("Player"));
 	player->sortLayer = 3;
@@ -43,7 +44,7 @@ void SceneGame::Init()
 
 	BaseUI* PauseButton = (BaseUI*)AddGo(new BaseUI("BackButton", uiType::Thumbnail));
 	PauseButton->sortLayer = 100;
-	PauseButton->SetPosition(defaultResolution.x * resolutionScale - ThumbnailSize - 50.0f, 50.0f);
+	PauseButton->SetPosition(defaultResolution.x * resolutionScale - pauseThumbnailSize - 50.0f, 50.0f);
 	PauseButton->SetColor(0, 0, 0, 192);
 	PauseButton->SetThumbnailColor(255, 255, 255, 192);
 	PauseButton->OnEnter = [PauseButton]()
@@ -64,18 +65,43 @@ void SceneGame::Init()
 		SCENE_MGR.ChangeScene(SceneId::Title);
 	};
 	
-	float barPosition = 50.0f;
+	float uiPos = 50.0f;
+	float magicNumber = 5.0f;
 
-	CreateBar("graphics/bar_back.png", "HpBarBack", barPosition, 1);
-	CreateBar("graphics/bar_main.png", "HpBarMain", barPosition, 2, sf::Color(255, 64, 0, 255));
-	CreateBar("graphics/bar_bord.png", "HpBarBord", barPosition, 3);
+	CreateBar("graphics/bar_back.png", "HpBarBack", uiPos, uiPos, 1);
+	CreateBar("graphics/bar_main.png", "HpBarMain", uiPos, uiPos, 2, sf::Color(255, 32, 0, 255));
+	CreateBar("graphics/bar_bord.png", "HpBarBord", uiPos, uiPos, 3);
 
-	CreateBar("graphics/bar_back.png", "ExpBarBack", barPosition * 2, 1);
-	CreateBar("graphics/bar_main.png", "ExpBarMain", barPosition * 2, 2, sf::Color(0, 224, 64, 255));
-	CreateBar("graphics/bar_bord.png", "ExpBarBord", barPosition * 2, 3);
+	CreateBar("graphics/bar_back.png", "ExpBarBack", uiPos, uiPos * 2, 1);
+	CreateBar("graphics/bar_main.png", "ExpBarMain", uiPos, uiPos * 2, 2, sf::Color::Transparent);
+	CreateBar("graphics/bar_bord.png", "ExpBarBord", uiPos, uiPos * 2, 3);
 
-	CreateBar("graphics/material_icon.png", "MaterialIcon", barPosition * 3);
-	CreateBar("graphics/material_bag.png",  "MaterialBag" , barPosition * 4);
+	CreateBar("graphics/material_icon.png", "MaterialIcon", uiPos - magicNumber * 2, uiPos * 3);
+	CreateBar("graphics/material_bag.png", "MaterialBag", uiPos - magicNumber * 2, uiPos * 4);
+
+	CreateText("WaveCount", "WAVE 1", windowSize.x * 0.5f, uiPos, 40, true);
+	CreateText("WaveTimer", "63", windowSize.x * 0.5f, uiPos * 2, 64, true);
+
+	CreateText("MaterialCount", "77", uiPos * 2 + magicNumber, uiPos * 3);
+	CreateText("MaterialKeeps", "33", uiPos * 2 + magicNumber, uiPos * 4);
+
+	TextGo* hpText = (TextGo*)AddGo(new TextGo("fonts/Chewy-Regular.ttf", "HpText"));
+	hpText->sortLayer = 110;
+	hpText->text.setOutlineColor(sf::Color(0, 0, 0, 255));
+	hpText->text.setOutlineThickness(3.0f);
+	hpText->SetOrigin(Origins::TL);
+	hpText->SetPosition(uiPos + magicNumber * 3, uiPos + magicNumber);
+	hpText->SetCharacterSize(24);
+	hpText->SetString("20 / 20");
+
+	TextGo* lvText = (TextGo*)AddGo(new TextGo("fonts/Chewy-Regular.ttf", "LvText"));
+	lvText->sortLayer = 110;
+	lvText->text.setOutlineColor(sf::Color(0, 0, 0, 255));
+	lvText->text.setOutlineThickness(3.0f);
+	lvText->SetOrigin(Origins::TL);
+	lvText->SetPosition(uiPos + magicNumber * 3, uiPos * 2 + magicNumber);
+	lvText->SetCharacterSize(24);
+	lvText->SetString("Lv 1");
 
 	SpriteGo* groundOutline = (SpriteGo*)AddGo(new SpriteGo("graphics/game/ground_outline.png", "GroundOutline"));
 	groundOutline->sortLayer = 2;
@@ -88,6 +114,8 @@ void SceneGame::Init()
 	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 1, windowSize.y / 4, "Plasma Rifle", resolutionScale);
 	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 2, windowSize.y / 4, "Laser Gun", resolutionScale);
 	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 3, windowSize.y / 4, "Gatling Laser", resolutionScale);
+	
+	CreateUpgradeUI(windowSize.x / 64 + shopUiPositionX * 1, windowSize.y / 4, "Back I", resolutionScale);
 
 	sf::Vector2f tileWorldSize   = { 64.0f, 64.0f };
 	sf::Vector2f tileTextureSize = { 64.0f, 64.0f };
@@ -195,17 +223,19 @@ void SceneGame::Update(float dt)
 		isShop = !isShop;
 		if (!shopCreated && isShop)
 		{
-			SetActiveShopUI("Plasma Rifle", true);
-			SetActiveShopUI("Laser Gun", true);
+			//SetActiveShopUI("Plasma Rifle", true);
+			//SetActiveShopUI("Laser Gun", true);
 			SetActiveShopUI("Gatling Laser", true);
+			SetActiveUpgradeUI("Back I", true);
 
 			shopCreated = true;
 		}
 		if (shopCreated && !isShop)
 		{
-			SetActiveShopUI("Plasma Rifle", false);
-			SetActiveShopUI("Laser Gun", false);
+			//SetActiveShopUI("Plasma Rifle", false);
+			//SetActiveShopUI("Laser Gun", false);
 			SetActiveShopUI("Gatling Laser", false);
+			SetActiveUpgradeUI("Back I", false);
 
 			shopCreated = false;
 		}
@@ -303,7 +333,7 @@ void SceneGame::CreateMonsters(int count)
 		Monster::Types monsterType = (Monster::Types)Utils::RandomRange(0, 3);
 		monster->SetType(monsterType);
 		monster->SetPlayer(player);
-		monster->sortLayer = 2;
+		monster->sortLayer = 5;
 		monster->SetActive(false);
 		monster->SetBulletHitEffectPool(&bulletHitEffectPool);
 		monster->SetDieEffectPool(&dieEffectPool);
@@ -339,6 +369,9 @@ void SceneGame::OnDieMonster(Monster* monster)
 {
 	RemoveGo(monster);
 	monsterPool.Return(monster);
+	player->OnKilled();
+
+	//std::cout << monsterPool.GetUseList().size() << std::endl; // 몬스터가 일정 수 이하면 스폰
 
 	//sf::Vector2f pos = monster->GetPosition();
 	//monsterCount = monsterPool.GetUseList().size();
@@ -415,28 +448,197 @@ void SceneGame::CreateDieEffect(int count)
 	dieEffectPool.Init(count);
 }
 
-void SceneGame::CreateShopUI(float posiX, float posiY, std::string name, float scale = 1.0f)
+void SceneGame::CreateUpgradeUI(float posiX, float posiY, std::string name, float scale)
 {
-	const ShopItemInfo& itemInfo = DATATABLE_MGR.Get<UIShopTable>(DataTable::Ids::Shop)->Get(name);
+	const UpgradeInfo& upgradeInfo = DATATABLE_MGR.Get<UpgradeTable>(DataTable::Ids::Upgrade)->Get(name);
+
+	std::string textureId = upgradeInfo.textureId;
+	name                  = upgradeInfo.name;
+	std::string category  = upgradeInfo.category;
+	std::string highlight = upgradeInfo.highlight;
+	std::string title     = upgradeInfo.title;
+	int         value     = upgradeInfo.value;
+	int         amount    = upgradeInfo.amount;
+	int         tier      = upgradeInfo.tier;
+
+	float blank = 20.0f * scale;
+	sf::Vector2f thumbSize(100.0f * scale, 100.0f * scale);
+
+	sf::Vector2f fullBoxSize(360.0f * scale, 270.0f * scale);
+	sf::Vector2f buttonBoxSize(180.0f * scale, 60.0f * scale);
+
+	BaseUI* box = (BaseUI*)AddGo(new BaseUI("Box" + name, uiType::Box));
+	box->sortLayer = 101;
+	box->SetPosition(posiX, posiY);
+	box->SetSizeAdd(fullBoxSize.x, fullBoxSize.y);
+	box->SetActive(false);
+
+	SpriteGo* thumbnail = (SpriteGo*)AddGo(new SpriteGo(textureId, "thumbnail_" + name));
+	thumbnail->sortLayer = 103;
+	thumbnail->SetPosition(posiX + blank, posiY + blank);
+	thumbnail->sprite.setScale(scale, scale); // 100 x 100 px * scale
+	thumbnail->SetActive(false);
+
+	BaseUI* thumbnailBox = (BaseUI*)AddGo(new BaseUI("thumbnailBox" + name, uiType::Box));
+	thumbnailBox->sortLayer = 102;
+	thumbnailBox->SetColor(255, 255, 255, 32);
+	thumbnailBox->SetPosition(posiX + blank, posiY + blank);
+	thumbnailBox->SetSizeAdd(thumbSize.x, thumbSize.y);
+	thumbnailBox->SetActive(false);
+
+	BaseUI* buttonBox = (BaseUI*)AddGo(new BaseUI("ButtonBox" + name, uiType::Box));
+	buttonBox->sortLayer = 102;
+	buttonBox->SetColor(255, 255, 255, 32);
+	buttonBox->SetPosition(posiX + fullBoxSize.x * 0.25f, posiY + fullBoxSize.y - buttonBoxSize.y - blank);
+	buttonBox->SetSizeAdd(buttonBoxSize.x, buttonBoxSize.y);
+	buttonBox->SetActive(false);
+
+	std::string amountString = std::to_string(amount);
+
+	TextGo* moneyAmount = (TextGo*)AddGo(new TextGo("fonts/Chewy-Regular.ttf", amountString + name));
+	moneyAmount->sortLayer = 104;
+	moneyAmount->SetOrigin(Origins::TR);
+	moneyAmount->SetCharacterSize(48);
+	moneyAmount->SetPosition(posiX + fullBoxSize.x * 0.5f + blank - 7.0f, posiY + fullBoxSize.y - buttonBoxSize.y - blank);
+	moneyAmount->SetFillColor(sf::Color(255, 255, 255, 255));
+	moneyAmount->SetScale(scale, scale);
+	moneyAmount->SetString(amountString);
+	moneyAmount->text.setOutlineColor(sf::Color(0, 0, 0, 255));
+	moneyAmount->text.setOutlineThickness(7.0f * scale);
+	moneyAmount->SetActive(false);
+
+	SpriteGo* materialIcon = (SpriteGo*)AddGo(new SpriteGo("graphics/game/material_ui.png", "MaterialIcon" + name));
+	materialIcon->sortLayer = 104;
+	materialIcon->SetOrigin(Origins::TL);
+	materialIcon->SetPosition(posiX + fullBoxSize.x * 0.5f + blank, posiY + fullBoxSize.y - buttonBoxSize.y - blank);
+	materialIcon->SetActive(false);
+
+	TextGo* upgradeName = (TextGo*)AddGo(new TextGo("fonts/Kanit-Bold.ttf", "upgrade_" + name));
+	upgradeName->sortLayer = 105;
+	upgradeName->SetOrigin(Origins::TL);
+	upgradeName->SetCharacterSize(30);
+	upgradeName->SetPosition(posiX + thumbSize.x + blank * 2, posiY + 30.0f);
+	upgradeName->SetFillColor(sf::Color(255, 255, 255, 255));
+	upgradeName->text.setScale(0.9f * scale, 1.0f * scale);
+	upgradeName->SetString(name);
+	upgradeName->SetActive(false);
+
+	TextGo* upgradeCategory = (TextGo*)AddGo(new TextGo("fonts/Kanit-SemiBold.ttf", category + name));
+	upgradeCategory->sortLayer = 105;
+	upgradeCategory->SetOrigin(Origins::TL);
+	upgradeCategory->SetCharacterSize(25);
+	upgradeCategory->SetPosition(posiX + thumbSize.x + blank * 2, posiY + 60.0f);
+	upgradeCategory->SetFillColor(sf::Color(255, 255, 128, 255));
+	upgradeCategory->SetScale(0.9f * scale, 1.0f * scale);
+	upgradeCategory->SetString(category);
+	upgradeCategory->SetActive(false);
+
+	TextGo* upgradeHighlight = (TextGo*)AddGo(new TextGo("fonts/Kanit-Medium.ttf", highlight + name));
+	upgradeHighlight->sortLayer = 106;
+	upgradeHighlight->SetOrigin(Origins::TL);
+	upgradeHighlight->SetCharacterSize(20);
+	upgradeHighlight->SetPosition(posiX + blank, posiY + thumbSize.y + blank * 2);
+	upgradeHighlight->SetFillColor(sf::Color(0, 192, 64, 255));
+	upgradeHighlight->SetScale(0.9f * scale, 1.0f * scale);
+	upgradeHighlight->SetString(highlight);
+	upgradeHighlight->SetActive(false);
+
+	TextGo* upgradeTitle = (TextGo*)AddGo(new TextGo("fonts/Kanit-Medium.ttf", title + name));
+	upgradeTitle->sortLayer = 105;
+	upgradeTitle->SetOrigin(Origins::TL);
+	upgradeTitle->SetCharacterSize(20);
+	upgradeTitle->SetPosition(posiX + blank, posiY + thumbSize.y + blank * 2);
+	upgradeTitle->SetFillColor(sf::Color(255, 255, 255, 255));
+	upgradeTitle->SetScale(0.9f * scale, 1.0f * scale);
+	upgradeTitle->SetString(title);
+	upgradeTitle->SetActive(false);
+
+	switch (tier) // Tier Color
+	{
+	case 1:
+		box->SetStrokeColor(0, 0, 0, 0);
+		box->SetColor(0, 0, 0, 255);
+		break;
+	case 2:
+		box->SetStrokeColor(75, 175, 225, 255);
+		box->SetColor(15, 30, 45, 255);
+		break;
+	case 3:
+		box->SetStrokeColor(150, 75, 225, 255);
+		box->SetColor(15, 15, 30, 255);
+		break;
+	case 4:
+		box->SetStrokeColor(225, 50, 50, 255);
+		box->SetColor(30, 15, 15, 255);
+		break;
+	default:
+		box->SetStrokeColor(0, 0, 0, 0);
+		box->SetColor(0, 0, 0, 255);
+		break;
+	}
+}
+
+void SceneGame::SetActiveUpgradeUI(std::string name, bool active)
+{
+	const UpgradeInfo& upgradeInfo = DATATABLE_MGR.Get<UpgradeTable>(DataTable::Ids::Upgrade)->Get(name);
+
+	std::string textureId = upgradeInfo.textureId;
+	name                  = upgradeInfo.name;
+	std::string category  = upgradeInfo.category;
+	std::string highlight = upgradeInfo.highlight;
+	std::string title     = upgradeInfo.title;
+	int         value     = upgradeInfo.value;
+	int         amount    = upgradeInfo.amount;
+
+	std::string amountString = std::to_string(amount);
+
+	std::vector<std::string> gameObjectNames =
+	{
+		"Box"          + name,
+		"thumbnail_"   + name,
+		"thumbnailBox" + name,
+		"ButtonBox"    + name,
+		"MaterialIcon" + name,
+		"upgrade_"     + name,
+		category       + name,
+		highlight      + name,
+		title          + name,
+		amountString   + name
+	};
+
+	for (const std::string& gameObjectName : gameObjectNames)
+	{
+		GameObject* gameObject = FindGo(gameObjectName);
+		if (gameObject != nullptr)
+		{
+			gameObject->SetActive(active);
+		}
+	}
+}
+
+void SceneGame::CreateShopUI(float posiX, float posiY, std::string name, float scale)
+{
+	const ShopItemInfo& itemInfo = DATATABLE_MGR.Get<ShopTable>(DataTable::Ids::Shop)->Get(name);
 
 	std::string path     = itemInfo.textureId;
 	name                 = itemInfo.name;
 	std::string category = itemInfo.category;
 	std::string title    = itemInfo.title;
 	std::string infoText = itemInfo.info;
-	std::string amount   = itemInfo.amount;
+	int			amount   = itemInfo.amount;
 	int         tier     = itemInfo.tier;
 
-	float sizeX = 360.0f * scale;
-	float sizeY = 480.0f * scale;
-	float thumbnailSizeX = 100.0f * scale;
-	float thumbnailSizeY = 100.0f * scale;
 	float blank = 20.0f * scale;
+
+	sf::Vector2f fullBoxSize(360.0f * scale, 480.0f * scale);
+	sf::Vector2f buttonBoxSize(180.0f * scale, 60.0f * scale);
+
+	sf::Vector2f thumbSize(100.0f * scale, 100.0f * scale);
 
 	BaseUI* box = (BaseUI*)AddGo(new BaseUI("Box" + name, uiType::Box));
 	box->sortLayer = 101;
 	box->SetPosition(posiX, posiY);
-	box->SetSizeAdd(sizeX, sizeY);
+	box->SetSizeAdd(fullBoxSize.x, fullBoxSize.y);
 	box->SetActive(false);
 
 	SpriteGo* thumbnail = (SpriteGo*)AddGo(new SpriteGo(path, "thumbnail_" + name));
@@ -449,31 +651,41 @@ void SceneGame::CreateShopUI(float posiX, float posiY, std::string name, float s
 	thumbnailBox->sortLayer = 102;
 	thumbnailBox->SetColor(255, 255, 255, 32);
 	thumbnailBox->SetPosition(posiX + blank, posiY + blank);
-	thumbnailBox->SetSizeAdd(thumbnailSizeX, thumbnailSizeY);
+	thumbnailBox->SetSizeAdd(thumbSize.x, thumbSize.y);
 	thumbnailBox->SetActive(false);
 
 	BaseUI* buttonBox = (BaseUI*)AddGo(new BaseUI("ButtonBox" + name, uiType::Box));
 	buttonBox->sortLayer = 102;
 	buttonBox->SetColor(255, 255, 255, 32);
-	buttonBox->SetPosition(posiX + sizeX * 0.25f, posiY + sizeY * 0.875f - blank);
-	buttonBox->SetSizeAdd(sizeX * 0.5f, sizeY * 0.125f);
+	buttonBox->SetPosition(posiX + fullBoxSize.x * 0.25f, posiY + fullBoxSize.y - buttonBoxSize.y - blank);
+	buttonBox->SetSizeAdd(buttonBoxSize.x, buttonBoxSize.y);
 	buttonBox->SetActive(false);
-
-	float buttonBoxCenterX = sizeX * 0.250f + posiX + sizeX * 0.5f / 2;
-	float buttonBoxCenterY = sizeY * 0.875f + posiY - blank + sizeY * 0.125f / 2;
-	float heightTuning = 8.0f * scale;
 
 	SpriteGo* materialIcon = (SpriteGo*)AddGo(new SpriteGo("graphics/game/material_ui.png", "MaterialIcon" + name));
 	materialIcon->sortLayer = 104;
-	materialIcon->SetOrigin(Origins::MC);
-	materialIcon->SetPosition(buttonBoxCenterX + blank * 2.5f, buttonBoxCenterY);
+	materialIcon->SetOrigin(Origins::TL);
+	materialIcon->SetPosition(posiX + fullBoxSize.x * 0.5f + blank, posiY + fullBoxSize.y - buttonBoxSize.y - blank);
 	materialIcon->SetActive(false);
+
+	std::string amountString = std::to_string(amount);
+
+	TextGo* moneyAmount = (TextGo*)AddGo(new TextGo("fonts/Chewy-Regular.ttf", amountString + name));
+	moneyAmount->sortLayer = 104;
+	moneyAmount->SetOrigin(Origins::TR);
+	moneyAmount->SetCharacterSize(48);
+	moneyAmount->SetPosition(posiX + fullBoxSize.x * 0.5f + blank - 3.0f, posiY + fullBoxSize.y - buttonBoxSize.y - blank);
+	moneyAmount->SetFillColor(sf::Color(255, 255, 255, 255));
+	moneyAmount->SetScale(0.9f * scale, 1.0f * scale);
+	moneyAmount->SetString(amountString);
+	moneyAmount->text.setOutlineColor(sf::Color(0, 0, 0, 255));
+	moneyAmount->text.setOutlineThickness(7.0f * scale);
+	moneyAmount->SetActive(false);
 
 	TextGo* itemName = (TextGo*)AddGo(new TextGo("fonts/Kanit-Bold.ttf", "item_" + name));
 	itemName->sortLayer = 105;
 	itemName->SetOrigin(Origins::TL);
 	itemName->SetCharacterSize(30);
-	itemName->SetPosition(posiX + sizeX * 0.33f + blank - 3.0f, posiY + sizeY * 0.0625f);
+	itemName->SetPosition(posiX + thumbSize.x + blank * 2, posiY + 30.0f);
 	itemName->SetFillColor(sf::Color(255, 255, 255, 255));
 	itemName->text.setScale(0.9f * scale, 1.0f * scale);
 	itemName->SetString(name);
@@ -483,7 +695,7 @@ void SceneGame::CreateShopUI(float posiX, float posiY, std::string name, float s
 	itemCategory->sortLayer = 105;
 	itemCategory->SetOrigin(Origins::TL);
 	itemCategory->SetCharacterSize(25);
-	itemCategory->SetPosition(posiX + sizeX * 0.33f + blank - 2.0f, posiY + sizeY * 0.135f);
+	itemCategory->SetPosition(posiX + thumbSize.x + blank * 2, posiY + 60.0f);
 	itemCategory->SetFillColor(sf::Color(255, 255, 128, 255));
 	itemCategory->SetScale(0.9f * scale, 1.0f * scale);
 	itemCategory->SetString(category);
@@ -493,7 +705,7 @@ void SceneGame::CreateShopUI(float posiX, float posiY, std::string name, float s
 	itemTitle->sortLayer = 106;
 	itemTitle->SetOrigin(Origins::TL);
 	itemTitle->SetCharacterSize(20);
-	itemTitle->SetPosition(posiX + blank, posiY + sizeY * 0.25f + heightTuning);
+	itemTitle->SetPosition(posiX + blank, posiY + thumbSize.y + blank * 2);
 	itemTitle->SetFillColor(sf::Color(0, 255, 32, 255));
 	itemTitle->SetScale(0.9f * scale, 1.0f * scale);
 	itemTitle->SetString(title);
@@ -503,23 +715,11 @@ void SceneGame::CreateShopUI(float posiX, float posiY, std::string name, float s
 	itemInfoText->sortLayer = 105;
 	itemInfoText->SetOrigin(Origins::TL);
 	itemInfoText->SetCharacterSize(20);
-	itemInfoText->SetPosition(posiX + blank, posiY + sizeY * 0.25f + heightTuning);
+	itemInfoText->SetPosition(posiX + blank, posiY + thumbSize.y + blank * 2);
 	itemInfoText->SetFillColor(sf::Color(255, 255, 255, 255));
 	itemInfoText->SetScale(0.9f * scale, 1.0f * scale);
 	itemInfoText->SetString(infoText);
 	itemInfoText->SetActive(false);
-
-	TextGo* moneyAmount = (TextGo*)AddGo(new TextGo("fonts/Chewy-Regular.ttf", amount + name));
-	moneyAmount->sortLayer = 104;
-	moneyAmount->SetOrigin(Origins::MC);
-	moneyAmount->SetCharacterSize(48);
-	moneyAmount->SetPosition(buttonBoxCenterX - blank, buttonBoxCenterY - heightTuning);
-	moneyAmount->SetFillColor(sf::Color(255, 255, 255, 255));
-	moneyAmount->SetScale(0.9f * scale, 1.0f * scale);
-	moneyAmount->SetString(amount);
-	moneyAmount->text.setOutlineColor(sf::Color(16, 16, 16, 255));
-	moneyAmount->text.setOutlineThickness(7.0f * scale);
-	moneyAmount->SetActive(false);
 
 	switch (tier) // Tier Color
 	{
@@ -548,16 +748,18 @@ void SceneGame::CreateShopUI(float posiX, float posiY, std::string name, float s
 
 void SceneGame::SetActiveShopUI(std::string name, bool active)
 {
-	const ShopItemInfo& itemInfo = DATATABLE_MGR.Get<UIShopTable>(DataTable::Ids::Shop)->Get(name);
+	const ShopItemInfo& itemInfo = DATATABLE_MGR.Get<ShopTable>(DataTable::Ids::Shop)->Get(name);
 
 	std::string path     = itemInfo.textureId;
 	name                 = itemInfo.name;
 	std::string category = itemInfo.category;
 	std::string title    = itemInfo.title;
 	std::string infoText = itemInfo.info;
-	std::string amount   = itemInfo.amount;
+	int         amount   = itemInfo.amount;
 
-	std::vector<std::string> gameObjectNames = 
+	std::string amountString = std::to_string(amount);
+
+	std::vector<std::string> gameObjectNames =
 	{
 		"Box"          + name,
 		"thumbnail_"   + name,
@@ -568,7 +770,7 @@ void SceneGame::SetActiveShopUI(std::string name, bool active)
 		category       + name,
 		title          + name,
 		infoText       + name,
-		amount         + name
+		amountString   + name
 	};
 
 	for (const std::string& gameObjectName : gameObjectNames)
@@ -581,29 +783,81 @@ void SceneGame::SetActiveShopUI(std::string name, bool active)
 	}
 }
 
-void SceneGame::CreateBar(const std::string& id, const std::string& name, float posY, int sort, sf::Color color)
+void SceneGame::CreateBar(const std::string& id, const std::string& name, float posX, float posY, int sort, sf::Color color)
 {
 	SpriteGo* bar = (SpriteGo*)AddGo(new SpriteGo(id, name));
 	bar->sortLayer = 100 + sort;
 	bar->sprite.setColor(color);
 	bar->SetOrigin(Origins::TL);
-	bar->SetPosition(50.0f, posY);
-
+	bar->SetPosition(posX, posY);
 }
 
-void SceneGame::SetHpUI(float currentHp)
+void SceneGame::CreateText(const std::string& name, const std::string& str, float posX, float posY, int fontSize, bool originMC)
 {
-	SpriteGo* hp = (SpriteGo*)FindGo("HpBarMain");
-	hp->sprite.setScale(1.0f * currentHp, 1.0f);
+	TextGo* text = (TextGo*)AddGo(new TextGo("fonts/Chewy-Regular.ttf", name));
+	text->sortLayer = 110;
+	text->SetOrigin(Origins::TL);
+	text->SetPosition(posX, posY);
+	text->SetCharacterSize(fontSize);
+	text->SetFillColor(sf::Color(255, 255, 255, 255));
+	text->SetString(str);
+	text->text.setOutlineColor(sf::Color(0, 0, 0, 255));
+	text->text.setOutlineThickness(5.0f);
+
+	if (originMC)
+	{
+		text->SetOrigin(Origins::MC);
+		text->SetPosition(posX, posY + 15.0f);
+	}
+}
+
+void SceneGame::SetHpUI(float currentHp, int maxHp)
+{
+	SpriteGo* hpBar = (SpriteGo*)FindGo("HpBarMain");
+	hpBar->sprite.setOrigin(0.0f, 0.0f);
+	hpBar->sprite.setScale(currentHp / (float)maxHp, 1.0f);
+
+	std::string currentHpString = std::to_string((int)currentHp);
+	std::string maxHpString = std::to_string(maxHp);
+
+	TextGo* hpText = (TextGo*)FindGo("HpText");
+	hpText->SetString(currentHpString + " / " + maxHpString);
 }
 
 void SceneGame::SetExpUI(float currentExp)
 {
-	SpriteGo* exp = (SpriteGo*)FindGo("ExpBarMain");
-	exp->sprite.setScale(1.0f * currentExp, 1.0f);
+	SpriteGo* expBar = (SpriteGo*)FindGo("ExpBarMain");
+	expBar->sprite.setOrigin(0.0f, 0.0f);
+	expBar->sprite.setScale(1.0f * currentExp, 1.0f);
+	expBar->sprite.setColor(sf::Color(0, 192, 64, 255));
+
+	std::string levelString = std::to_string(playerLevel);
+
+	TextGo* expCurrentText = (TextGo*)FindGo("LvText");
+	expCurrentText->SetString("Lv " + levelString);
+}
+
+void SceneGame::SetLevelUpUI(int level)
+{
+	playerLevel = level;
+
+	/*
+	TextGo* levelText = (TextGo*)AddGo(new TextGo("fonts/Chewy-Regular.ttf", "PlayerLevel"));
+	levelText->sortLayer = 100;
+	levelText->SetOrigin(Origins::TL);
+	levelText->SetPosition(posX + 75.0f, posY);
+	levelText->SetCharacterSize(fontSize);
+	levelText->SetFillColor(sf::Color(255, 255, 255, 255));
+	levelText->SetString(str);
+	levelText->text.setOutlineColor(sf::Color(16, 16, 16, 255));
+	levelText->text.setOutlineThickness(5.0f);
+	*/
+
+	// 웨이브 끝나고 업그레이드 대기
 }
 
 void SceneGame::OnDiePlayer()
 {
 	isPlaying = false;
+	player->Reset();
 }

@@ -39,8 +39,6 @@ protected:
 	ObjectPool<DieEffect>* dieEffectPool;
 	ObjectPool<EntityEffect>* entityEffectPool;
 
-
-
 public:
 	Monster(const std::string& n = "") : Character(n) {}
 	virtual ~Monster() override { Release(); }

@@ -48,7 +48,7 @@ void Monster::Update(float dt)
 	}
 	else if (direction.x > 0)
 	{
-		SetFlipX(false);
+		SetFlipX(false); 
 	}
 	body.setRotation(Utils::Angle(look));
 

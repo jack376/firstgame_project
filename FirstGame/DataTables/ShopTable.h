@@ -8,7 +8,7 @@ struct ShopItemInfo
     std::string category;
     std::string title;
     std::string info;
-    std::string amount;
+    int amount;
     int tier;
     int damage;
     float critical;
@@ -16,14 +16,14 @@ struct ShopItemInfo
     float range;
 };
 
-class UIShopTable : public DataTable
+class ShopTable : public DataTable
 {
 protected:
     std::unordered_map<std::string, ShopItemInfo> table;
 
 public:
-    UIShopTable() : DataTable(DataTable::Ids::Shop) {};
-    virtual ~UIShopTable() override = default;
+    ShopTable() : DataTable(DataTable::Ids::Shop) {};
+    virtual ~ShopTable() override = default;
 
     virtual bool Load() override;
     virtual void Release() override;

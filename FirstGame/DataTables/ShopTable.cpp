@@ -1,8 +1,8 @@
 #include "stdafx.h"
-#include "UIShopTable.h"
+#include "ShopTable.h"
 #include "rapidcsv.h"
 
-bool UIShopTable::Load()
+bool ShopTable::Load()
 {
     rapidcsv::Document doc("tables/ShopTable.csv");
 
@@ -11,7 +11,7 @@ bool UIShopTable::Load()
     std::vector<std::string> category  = doc.GetColumn<std::string>(2);
     std::vector<std::string> title     = doc.GetColumn<std::string>(3);
     std::vector<std::string> info      = doc.GetColumn<std::string>(4);
-    std::vector<std::string> amount    = doc.GetColumn<std::string>(5);
+    std::vector<int>         amount    = doc.GetColumn<int>(5);
     std::vector<int>         tier      = doc.GetColumn<int>(6);
     std::vector<int>         damage    = doc.GetColumn<int>(7);
     std::vector<float>       critical  = doc.GetColumn<float>(8);
@@ -40,12 +40,12 @@ bool UIShopTable::Load()
     return true;
 }
 
-void UIShopTable::Release()
+void ShopTable::Release()
 {
     table.clear();
 }
 
-const ShopItemInfo& UIShopTable::Get(const std::string& name)
+const ShopItemInfo& ShopTable::Get(const std::string& name)
 {
     auto find = table.find(name);
     if (find == table.end())
@@ -55,7 +55,7 @@ const ShopItemInfo& UIShopTable::Get(const std::string& name)
     return find->second;
 }
 
-std::string UIShopTable::replaceAll(std::string str, const std::string& from, const std::string& to)
+std::string ShopTable::replaceAll(std::string str, const std::string& from, const std::string& to)
 {
     size_t startPos = 0;
     while ((startPos = str.find(from, startPos)) != std::string::npos)
