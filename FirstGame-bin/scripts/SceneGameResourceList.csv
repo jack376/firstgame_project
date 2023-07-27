@@ -1,6 +1,4 @@
 "RESOURCE_TYPES (0:TEXTURE, 1:FONT, 2:SOUND, 3:ANIMATION)",RESOURCE_PATH
-0,graphics/game/sprite_sheet.png
-0,graphics/game/RubySheet.png
 0,graphics/game/gun.png
 0,graphics/game/bullet.png
 0,graphics/game/bullet_hit.png

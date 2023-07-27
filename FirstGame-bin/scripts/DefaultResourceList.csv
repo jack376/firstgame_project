@@ -1,14 +1,4 @@
 "RESOURCE_TYPES (0: 텍스처, 1:폰트, 2:사운드, 3: 애니메이션)",RESOURCE_PATH
-3,animations/Idle_Side.csv
-3,animations/Idle.csv
-3,animations/Idle_Down.csv
-3,animations/Idle_Side.csv
-3,animations/Idle_Up.csv
-3,animations/Jump.csv
-3,animations/Move.csv
-3,animations/Move_Down.csv
-3,animations/Move_Side.csv
-3,animations/Move_Up.csv
 1,fonts/RoboNoto-Medium.ttf
 1,fonts/Chewy-Regular.ttf
 1,fonts/Kanit-Bold.ttf

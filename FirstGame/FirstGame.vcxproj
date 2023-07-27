@@ -182,7 +182,6 @@
     <ClCompile Include="GameObjects\Monster.cpp" />
     <ClCompile Include="GameObjects\Player.cpp" />
     <ClCompile Include="DataTables\MonsterTable.cpp" />
-    <ClCompile Include="Player2.cpp" />
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Scenes\SceneGame.cpp" />
     <ClCompile Include="Framework\SceneMgr.cpp" />
@@ -220,7 +219,6 @@
     <ClInclude Include="GameObjects\Monster.h" />
     <ClInclude Include="GameObjects\Player.h" />
     <ClInclude Include="DataTables\MonsterTable.h" />
-    <ClInclude Include="Player2.h" />
     <ClInclude Include="Scenes\Scene.h" />
     <ClInclude Include="Scenes\SceneGame.h" />
     <ClInclude Include="Framework\SceneMgr.h" />
