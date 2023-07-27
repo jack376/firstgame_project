@@ -29,6 +29,7 @@ void SceneTitle::Init()
 		"ExitButton", "EXIT", buttonPos, windowSize.y - buttonPos - buttonGap * 1.0f, [this]()
 		{
 			std::cout << "EXIT Click" << std::endl;
+			FRAMEWORK.GetWindow().close();
 		}
 	);
 

@@ -4,7 +4,6 @@
 #include "MonsterTable.h"
 #include "ShopTable.h"
 #include "UpgradeTable.h"
-#include "PlayerInfoTable.h"
 
 void DataTableMgr::LoadAll()
 {
@@ -12,7 +11,6 @@ void DataTableMgr::LoadAll()
 	tables.insert({ DataTable::Ids::Monster, new MonsterTable() });
 	tables.insert({ DataTable::Ids::Shop, new ShopTable() });
 	tables.insert({ DataTable::Ids::Upgrade, new UpgradeTable() });
-	tables.insert({ DataTable::Ids::PlayerInfo, new PlayerInfoTable() });
 
 	for (auto pair : tables)
 	{
