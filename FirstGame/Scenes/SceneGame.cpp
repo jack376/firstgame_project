@@ -112,9 +112,9 @@ void SceneGame::Init()
 	ground->sortLayer = 0;
 	ground->SetOrigin(Origins::MC);
 
-	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 1, windowSize.y / 3, "Plasma Rifle", resolutionScale);
-	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 2, windowSize.y / 3, "Laser Gun", resolutionScale);
-	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 3, windowSize.y / 3, "Gatling Laser", resolutionScale);
+	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 1, windowSize.y / 4, "Plasma Rifle", resolutionScale);
+	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 2, windowSize.y / 4, "Laser Gun", resolutionScale);
+	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 3, windowSize.y / 4, "Gatling Laser", resolutionScale);
 	
 	CreateUpgradeUI(windowSize.x / 64 + shopUiPositionX * 1, windowSize.y / 3, "Back I", resolutionScale);
 	CreateUpgradeUI(windowSize.x / 64 + shopUiPositionX * 2, windowSize.y / 3, "Chest II", resolutionScale);
@@ -122,6 +122,41 @@ void SceneGame::Init()
 
 	CreatePlayerInfoUI(windowSize.x - shopUiPositionX * 1 - uiPos, windowSize.y / 2, resolutionScale);
 
+	SpriteGo* slide_1 = (SpriteGo*)AddGo(new SpriteGo("graphics/slide_1.png", "slide_1"));
+	slide_1->sortLayer = 200;
+	slide_1->SetOrigin(Origins::TL);
+	slide_1->SetActive(false);
+
+	SpriteGo* slide_2 = (SpriteGo*)AddGo(new SpriteGo("graphics/slide_2.png", "slide_2"));
+	slide_2->sortLayer = 200;
+	slide_2->SetOrigin(Origins::TL);
+	slide_2->SetActive(false);
+
+	SpriteGo* slide_3 = (SpriteGo*)AddGo(new SpriteGo("graphics/slide_3.png", "slide_3"));
+	slide_3->sortLayer = 200;
+	slide_3->SetOrigin(Origins::TL);
+	slide_3->SetActive(false);
+
+	SpriteGo* slide_4 = (SpriteGo*)AddGo(new SpriteGo("graphics/slide_4.png", "slide_4"));
+	slide_4->sortLayer = 200;
+	slide_4->SetOrigin(Origins::TL);
+	slide_4->SetActive(false);
+
+	SpriteGo* slide_5 = (SpriteGo*)AddGo(new SpriteGo("graphics/slide_5.png", "slide_5"));
+	slide_5->sortLayer = 200;
+	slide_5->SetOrigin(Origins::TL);
+	slide_5->SetActive(false);
+
+	SpriteGo* slide_6 = (SpriteGo*)AddGo(new SpriteGo("graphics/slide_6.png", "slide_6"));
+	slide_6->sortLayer = 200;
+	slide_6->SetOrigin(Origins::TL);
+	slide_6->SetActive(false);
+
+	SpriteGo* slide_7 = (SpriteGo*)AddGo(new SpriteGo("graphics/slide_7.png", "slide_7"));
+	slide_7->sortLayer = 200;
+	slide_7->SetOrigin(Origins::TL);
+	slide_7->SetActive(false);
+	//
 
 	sf::Vector2f tileWorldSize   = { 64.0f, 64.0f };
 	sf::Vector2f tileTextureSize = { 64.0f, 64.0f };
@@ -220,6 +255,8 @@ void SceneGame::Update(float dt)
 	
 	currentPlayerPosition = player->GetPosition();
 
+	//////////////////////////////////////////////////////////////////////////////////////////////
+
 	//if (monsterCount >= 3)
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num4)) // Test Code
 	{
@@ -283,6 +320,122 @@ void SceneGame::Update(float dt)
 			infoCreated = false;
 		}
 	}
+
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Z)) // Test Code
+	{
+		isSlide = !isSlide;
+		if (!slideCreated && isSlide)
+		{
+			SpriteGo* slide_1 = (SpriteGo*)FindGo("slide_1");
+			slide_1->SetActive(false);
+			slideCreated = true;
+		}
+		if (slideCreated && !isSlide)
+		{
+			SpriteGo* slide_1 = (SpriteGo*)FindGo("slide_1");
+			slide_1->SetActive(true);
+			slideCreated = false;
+		}
+	}
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::X)) // Test Code
+	{
+		isSlide = !isSlide;
+		if (!slideCreated && isSlide)
+		{
+			SpriteGo* slide_2 = (SpriteGo*)FindGo("slide_2");
+			slide_2->SetActive(false);
+			slideCreated = true;
+		}
+		if (slideCreated && !isSlide)
+		{
+			SpriteGo* slide_2 = (SpriteGo*)FindGo("slide_2");
+			slide_2->SetActive(true);
+			slideCreated = false;
+		}
+	}
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::C)) // Test Code
+	{
+		isSlide = !isSlide;
+		if (!slideCreated && isSlide)
+		{
+			SpriteGo* slide_3 = (SpriteGo*)FindGo("slide_3");
+			slide_3->SetActive(false);
+			slideCreated = true;
+		}
+		if (slideCreated && !isSlide)
+		{
+			SpriteGo* slide_3 = (SpriteGo*)FindGo("slide_3");
+			slide_3->SetActive(true);
+			slideCreated = false;
+		}
+	}
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::V)) // Test Code
+	{
+		isSlide = !isSlide;
+		if (!slideCreated && isSlide)
+		{
+			SpriteGo* slide_4 = (SpriteGo*)FindGo("slide_4");
+			slide_4->SetActive(false);
+			slideCreated = true;
+		}
+		if (slideCreated && !isSlide)
+		{
+			SpriteGo* slide_4 = (SpriteGo*)FindGo("slide_4");
+			slide_4->SetActive(true);
+			slideCreated = false;
+		}
+	}
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::B)) // Test Code
+	{
+		isSlide = !isSlide;
+		if (!slideCreated && isSlide)
+		{
+			SpriteGo* slide_5 = (SpriteGo*)FindGo("slide_5");
+			slide_5->SetActive(false);
+			slideCreated = true;
+		}
+		if (slideCreated && !isSlide)
+		{
+			SpriteGo* slide_5 = (SpriteGo*)FindGo("slide_5");
+			slide_5->SetActive(true);
+			slideCreated = false;
+		}
+	}
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::N)) // Test Code
+	{
+		isSlide = !isSlide;
+		if (!slideCreated && isSlide)
+		{
+			SpriteGo* slide_6 = (SpriteGo*)FindGo("slide_6");
+			slide_6->SetActive(false);
+			slideCreated = true;
+		}
+		if (slideCreated && !isSlide)
+		{
+			SpriteGo* slide_6 = (SpriteGo*)FindGo("slide_6");
+			slide_6->SetActive(true);
+			slideCreated = false;
+		}
+	}
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::M)) // Test Code
+	{
+		isSlide = !isSlide;
+		if (!slideCreated && isSlide)
+		{
+			SpriteGo* slide_7 = (SpriteGo*)FindGo("slide_7");
+			slide_7->SetActive(false);
+			slideCreated = true;
+		}
+		if (slideCreated && !isSlide)
+		{
+			SpriteGo* slide_7 = (SpriteGo*)FindGo("slide_7");
+			slide_7->SetActive(true);
+			slideCreated = false;
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////
+
 	sf::Vector2f halfViewSize = worldView.getSize() * 0.5f;
 
 	float wallEdgeView = 100.0f;
@@ -846,7 +999,7 @@ void SceneGame::CreatePlayerInfoUI(float posiX, float posiY, float scale)
 	SpriteGo* statsMerge = (SpriteGo*)AddGo(new SpriteGo("graphics/game/stats_merge.png", "StatsMerge"));
 	statsMerge->sortLayer = 103;
 	statsMerge->SetPosition(posiX + blank, posiY + thumbSize.y + blank * 2);
-	statsMerge->sprite.setScale(0.25f, 0.25f);
+	statsMerge->sprite.setScale(0.25f * scale, 0.25f * scale);
 	statsMerge->SetActive(false);
 
 	TextGo* boxName = (TextGo*)AddGo(new TextGo("fonts/Kanit-Bold.ttf", "BoxName"));

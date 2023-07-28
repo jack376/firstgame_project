@@ -25,6 +25,9 @@ void Monster::Reset()
 	body.setOrigin(monsterBodyCenter);
 	body.setPosition(0.0f, 0.0f);
 
+
+	monsterCollider = body.getGlobalBounds();
+
 	SetFlipX(false);
 
 	currentHp = maxHp;
@@ -71,13 +74,15 @@ void Monster::Update(float dt)
 		}
 	}
 
-	// Draw view ///////////////////////////////////////////////////////////////////////////////////
-	/*
 	monsterColliderDraw.setPosition(monsterCollider.left, monsterCollider.top);
 	monsterColliderDraw.setSize(sf::Vector2f(monsterCollider.width, monsterCollider.height));
 	monsterColliderDraw.setFillColor(sf::Color::Transparent);
 	monsterColliderDraw.setOutlineColor(sf::Color::Red);
 	monsterColliderDraw.setOutlineThickness(1.0f);
+
+	// Draw view ///////////////////////////////////////////////////////////////////////////////////
+	/*
+	* 
 	*/
 	////////////////////////////////////////////////////////////////////////////////////////////////
 

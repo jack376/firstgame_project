@@ -36,6 +36,9 @@ protected:
 	bool isUpgrade      = false;
 	bool upgradeCreated = false;
 
+	bool isSlide = false;
+	bool slideCreated = false;
+
 	sf::FloatRect wallBounds;
 
 	sf::Vector2f currentPlayerPosition;
