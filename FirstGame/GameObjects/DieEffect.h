@@ -7,6 +7,8 @@ class DieEffect : public SpriteEffect
 protected:
 	ObjectPool<DieEffect>* pool = nullptr;
 
+	float animationScale = 1.0f;
+
 public:
 	std::function<void()> onSpawnEffectComplete;
 
@@ -21,5 +23,6 @@ public:
 	void SetDuration(float duration);
 	void SetPool(ObjectPool<DieEffect>* pool);
 	void SetOnSpawnEffectComplete(std::function<void()> callBack);
+	void SetAnimationScale(float scale);
 };
 

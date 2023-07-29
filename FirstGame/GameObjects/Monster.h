@@ -45,6 +45,7 @@ public:
 
 	void Init() override;
 	void Reset() override;
+
 	void Update(float dt) override;
 	void Draw(sf::RenderWindow& window) override;
 
@@ -63,5 +64,5 @@ public:
 	void SetBulletHitEffect(sf::Vector2f position);
 
 	void SetDieEffectPool(ObjectPool<DieEffect>* pool);
-	void SetDieEffect(sf::Vector2f position);
+	void SetDieEffect(sf::Vector2f position, float scale);
 };

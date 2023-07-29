@@ -19,7 +19,7 @@ void BaseGun::Init()
         bullet->textureId = "graphics/game/bullet.png";
         bullet->pool = &poolBaseBullets;
     };
-    poolBaseBullets.Init(500);
+    poolBaseBullets.Init(256);
 }
 
 void BaseGun::Release()
@@ -35,7 +35,7 @@ void BaseGun::Reset()
     fireRecoilEffect.setTexture(*RESOURCE_MGR.GetTexture("graphics/game/bullet_muzzle_fire.png"));
 
     SetOrigin(sprite.getTexture()->getSize().x / 2 + gunOrigin, sprite.getTexture()->getSize().y / 2);
-    fireRecoilEffect.setOrigin(sprite.getTexture()->getSize().x / 2, sprite.getTexture()->getSize().y / 2);
+    fireRecoilEffect.setOrigin(0.0f, sprite.getTexture()->getSize().y / 2);
 
     for (auto bullet : poolBaseBullets.GetUseList())
     {
@@ -129,6 +129,8 @@ void BaseGun::FireRecoilAnimation(const sf::Vector2f direction, float playSpeed,
 
     sprite.setPosition(position.x -= dir.x, position.y -= dir.y);
     fireRecoilEffect.setPosition(gunMuzzlePosition.x -= dir.x, gunMuzzlePosition.y -= dir.y);
+    fireRecoilEffect.setScale(fireRecoil * 0.1f, fireRecoil * 0.1f);
+
 }
 
 void BaseGun::UpdateFlipAndRotation(bool flip, float angle)

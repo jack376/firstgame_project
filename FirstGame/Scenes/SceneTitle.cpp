@@ -50,13 +50,13 @@ void SceneTitle::Init()
 		}
 	);
 
-	BgSpriteGo("graphics/title/title_logo.png", "TitleLogo", 6, bgScaleX, bgScaleY);
-	BgSpriteGo("graphics/title/title_fade.png", "TitleFade", 5, bgScaleX, bgScaleY);
-	BgSpriteGo("graphics/title/title_splash_front.png", "TitleSplashFront", 4, bgScaleX, bgScaleY);
-	BgSpriteGo("graphics/title/title_character.png", "TitleCharacter", 3, bgScaleX, bgScaleY);
-	BgSpriteGo("graphics/title/title_splash_middle.png", "TitleSplashMiddle", 2, bgScaleX, bgScaleY);
-	BgSpriteGo("graphics/title/title_splash_rear.png", "TitleSplashRear", 1, bgScaleX, bgScaleY);
-	BgSpriteGo("graphics/title/title_bg.png", "TitleBg", 0, bgScaleX, bgScaleY);
+	BgSpriteGo("graphics/title/title_logo.png", "TitleLogo", 56, bgScaleX, bgScaleY);
+	BgSpriteGo("graphics/title/title_fade.png", "TitleFade", 55, bgScaleX, bgScaleY);
+	BgSpriteGo("graphics/title/title_splash_front.png", "TitleSplashFront", 54, bgScaleX, bgScaleY);
+	BgSpriteGo("graphics/title/title_character.png", "TitleCharacter", 53, bgScaleX, bgScaleY);
+	BgSpriteGo("graphics/title/title_splash_middle.png", "TitleSplashMiddle", 52, bgScaleX, bgScaleY);
+	BgSpriteGo("graphics/title/title_splash_rear.png", "TitleSplashRear", 51, bgScaleX, bgScaleY);
+	BgSpriteGo("graphics/title/title_bg.png", "TitleBg", 50, bgScaleX, bgScaleY);
 
 	SpriteGo* titleCharacter = (SpriteGo*)FindGo("TitleCharacter");
 	titleCharacter->SetPosition(0.0f, 200.0f);

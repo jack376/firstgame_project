@@ -122,7 +122,7 @@ void Scene::Update(float dt)
 {
 	for (auto go : gameObjects)
 	{
-		if (go->GetActive())
+		if (go->GetActive() && (!IsPaused() || !go->CanBePaused()))
 		{
 			go->Update(dt);
 		}

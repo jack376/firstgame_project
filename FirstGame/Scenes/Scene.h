@@ -8,6 +8,8 @@ protected:
 	Scene(const Scene&) = delete;
 	Scene& operator=(const Scene&) = delete;
 
+	bool isPaused = false;
+
 	SceneId sceneId;
 
 	std::string resourceListPath;
@@ -45,5 +47,8 @@ public:
 
 	virtual void Update(float dt);
 	virtual void Draw(sf::RenderWindow& window);
+
+	void SetPaused(bool pause) { isPaused = pause; }
+	bool IsPaused() const { return isPaused; }
 };
 

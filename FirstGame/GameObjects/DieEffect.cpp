@@ -24,7 +24,7 @@ void DieEffect::Update(float dt)
 {
 	flowTime += dt;
 
-	sf::Vector2f scaleFx = Utils::Lerp(sf::Vector2f(0.05f, 0.05f), sf::Vector2f(1.35f, 1.35f), (flowTime / (duration / 25)));
+	sf::Vector2f scaleFx = Utils::Lerp(sf::Vector2f(0.01f, 0.01f), sf::Vector2f(0.5f * animationScale, 0.5f * animationScale), (flowTime / (duration / 25)));
 	sprite.setScale(scaleFx);
 
 	UINT8 colorFx = Utils::Lerp(255, 0, (flowTime / duration));
@@ -68,4 +68,11 @@ void DieEffect::SetPool(ObjectPool<DieEffect>* pool)
 void DieEffect::SetOnSpawnEffectComplete(std::function<void()> callBack)
 {
 	onSpawnEffectComplete = callBack;
+}
+
+void DieEffect::SetAnimationScale(float scale)
+{
+	float defaultScale = 1.0f * scale;
+	float scale_factor = 0.33;
+	animationScale = 1.0f + (defaultScale - 1.0f) * scale_factor;
 }

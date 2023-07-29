@@ -16,6 +16,8 @@
 #include "ShopTable.h"
 #include "UpgradeTable.h"
 #include <sstream>
+#include <iomanip>
+
 
 SceneGame::SceneGame() : Scene(SceneId::Game)
 {
@@ -31,9 +33,9 @@ void SceneGame::Init()
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
 	sf::Vector2f centerPos  = windowSize * 0.5f;
 
-	float resolutionScale    = windowSize.x / 1920.0f;
-	float shopUiPositionX    = 375.0f * resolutionScale;
-	float pauseThumbnailSize = 64.0f;
+	float resolutionScale = windowSize.x / 1920.0f;
+	float shopUiPositionX = 375.0f * resolutionScale;
+	float pausedThumbSize = 64.0f;
 
 	player = (Player*)AddGo(new Player("Player"));
 	player->sortLayer = 3;
@@ -44,7 +46,7 @@ void SceneGame::Init()
 
 	BaseUI* PauseButton = (BaseUI*)AddGo(new BaseUI("BackButton", uiType::Thumbnail));
 	PauseButton->sortLayer = 100;
-	PauseButton->SetPosition(defaultResolution.x * resolutionScale - pauseThumbnailSize - 50.0f, 50.0f);
+	PauseButton->SetPosition(defaultResolution.x * resolutionScale - pausedThumbSize - 50.0f, 50.0f);
 	PauseButton->SetColor(0, 0, 0, 192);
 	PauseButton->SetThumbnailColor(255, 255, 255, 192);
 
@@ -63,6 +65,7 @@ void SceneGame::Init()
 	PauseButton->OnClick = [this]()
 	{
 		std::cout << "Click" << std::endl;
+		Reset();
 		SCENE_MGR.ChangeScene(SceneId::Title);
 	};
 
@@ -78,10 +81,10 @@ void SceneGame::Init()
 	CreateBar("graphics/bar_bord.png", "ExpBarBord", uiPos, uiPos * 2, 3);
 
 	CreateBar("graphics/material_icon.png", "MaterialIcon", uiPos - magicNumber * 2, uiPos * 3);
-	CreateBar("graphics/material_bag.png", "MaterialBag", uiPos - magicNumber * 2, uiPos * 4);
+	//CreateBar("graphics/material_bag.png", "MaterialBag", uiPos - magicNumber * 2, uiPos * 4);
 
-	CreateText("WaveCount", "UNLIMITED MODE", windowSize.x * 0.5f, uiPos, 40, true);
-	//CreateText("WaveTimer", "∞", windowSize.x * 0.5f, uiPos * 2, 64, true);
+	CreateText("WaveCount", "Wave 1", windowSize.x * 0.5f, uiPos, 40, true);
+	CreateText("WaveTimer", "30", windowSize.x * 0.5f, uiPos * 2, 64, true);
 
 	CreateText("MaterialCount", "0", uiPos * 2 + magicNumber, uiPos * 3);
 	//CreateText("MaterialKeeps", "33", uiPos * 2 + magicNumber, uiPos * 4);
@@ -121,42 +124,6 @@ void SceneGame::Init()
 	CreateUpgradeUI(windowSize.x / 64 + shopUiPositionX * 3, windowSize.y / 3, "Gun IV", resolutionScale);
 
 	CreatePlayerInfoUI(windowSize.x - shopUiPositionX * 1 - uiPos, windowSize.y / 2, resolutionScale);
-
-	SpriteGo* slide_1 = (SpriteGo*)AddGo(new SpriteGo("graphics/slide_1.png", "slide_1"));
-	slide_1->sortLayer = 200;
-	slide_1->SetOrigin(Origins::TL);
-	slide_1->SetActive(false);
-
-	SpriteGo* slide_2 = (SpriteGo*)AddGo(new SpriteGo("graphics/slide_2.png", "slide_2"));
-	slide_2->sortLayer = 200;
-	slide_2->SetOrigin(Origins::TL);
-	slide_2->SetActive(false);
-
-	SpriteGo* slide_3 = (SpriteGo*)AddGo(new SpriteGo("graphics/slide_3.png", "slide_3"));
-	slide_3->sortLayer = 200;
-	slide_3->SetOrigin(Origins::TL);
-	slide_3->SetActive(false);
-
-	SpriteGo* slide_4 = (SpriteGo*)AddGo(new SpriteGo("graphics/slide_4.png", "slide_4"));
-	slide_4->sortLayer = 200;
-	slide_4->SetOrigin(Origins::TL);
-	slide_4->SetActive(false);
-
-	SpriteGo* slide_5 = (SpriteGo*)AddGo(new SpriteGo("graphics/slide_5.png", "slide_5"));
-	slide_5->sortLayer = 200;
-	slide_5->SetOrigin(Origins::TL);
-	slide_5->SetActive(false);
-
-	SpriteGo* slide_6 = (SpriteGo*)AddGo(new SpriteGo("graphics/slide_6.png", "slide_6"));
-	slide_6->sortLayer = 200;
-	slide_6->SetOrigin(Origins::TL);
-	slide_6->SetActive(false);
-
-	SpriteGo* slide_7 = (SpriteGo*)AddGo(new SpriteGo("graphics/slide_7.png", "slide_7"));
-	slide_7->sortLayer = 200;
-	slide_7->SetOrigin(Origins::TL);
-	slide_7->SetActive(false);
-	//
 
 	sf::Vector2f tileWorldSize   = { 64.0f, 64.0f };
 	sf::Vector2f tileTextureSize = { 64.0f, 64.0f };
@@ -204,8 +171,6 @@ void SceneGame::Reset()
 	ClearObjectPool(bulletHitEffectPool);
 	ClearObjectPool(entityEffectPool);
 
-	isPlaying = true;
-
 	for (auto go : gameObjects)
 	{
 		go->Reset();
@@ -228,19 +193,20 @@ void SceneGame::Enter()
 	uiView.setSize(windowSize);
 	uiView.setCenter(windowSize * 0.5f);
 
+	player->Reset();
 	player->SetPosition(0.0f, 0.0f);
+
+	money = 0;
+	playerLevel = 1;
+	waveCount = 1;
+	waveTimer = 30.0f;
+	lastSpawnTime = 5.0f;
+
+	SetCountUI("MaterialCount", money);
 }
 
 void SceneGame::Exit()
 {
-	ClearObjectPool(monsterPool);
-	ClearObjectPool(dieEffectPool);
-	ClearObjectPool(bulletHitEffectPool);
-	ClearObjectPool(entityEffectPool);
-
-	isPlaying = false;
-	player->Reset();
-
 	Scene::Exit();
 }
 
@@ -252,35 +218,38 @@ void SceneGame::Update(float dt)
 	{
 		return;
 	}
-	
-	currentPlayerPosition = player->GetPosition();
 
-	//////////////////////////////////////////////////////////////////////////////////////////////
-
-	//if (monsterCount >= 3)
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num4)) // Test Code
-	{
-		SpawnMonsters(10, currentPlayerPosition, { 0.0f, 0.0f }, 900.0f);
-	}
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1)) // Test Code
 	{
-		isShop = !isShop;
-		if (!shopCreated && isShop)
-		{
-			SetActiveShopUI("Plasma Rifle", true);
-			SetActiveShopUI("Laser Gun", true);
-			SetActiveShopUI("Gatling Laser", true);
+		SetPaused(!IsPaused());
+	}
 
-			shopCreated = true;
-		}
-		if (shopCreated && !isShop)
-		{
-			SetActiveShopUI("Plasma Rifle", false);
-			SetActiveShopUI("Laser Gun", false);
-			SetActiveShopUI("Gatling Laser", false);
+	if (IsPaused())
+	{
+		return;
+	}
 
-			shopCreated = false;
-		}
+	currentPlayerPosition = player->GetPosition();
+
+	waveTimer -= dt;
+	lastSpawnTime += dt;
+
+	if (waveTimer <= 0.0f)
+	{
+		waveCount++;
+		TextGo* waveCountText = (TextGo*)FindGo("WaveCount");
+		waveCountText->SetString("Wave " + std::to_string(waveCount));
+		waveTimer = 30.0f;
+	}
+	TextGo* waveTimerText = (TextGo*)FindGo("WaveTimer");
+	std::stringstream ss;
+	ss << std::setw(2) << std::setfill('0') << (int)waveTimer;
+	waveTimerText->SetString(ss.str());
+	
+	if (lastSpawnTime >= 5.0f)
+	{
+		SpawnMonsters(waveCount + 5, currentPlayerPosition, { 0.0f, 0.0f }, 900.0f);
+		lastSpawnTime = 0.0f;
 	}
 
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num2)) // Test Code
@@ -321,120 +290,26 @@ void SceneGame::Update(float dt)
 		}
 	}
 
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Z)) // Test Code
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num4)) // Test Code
 	{
-		isSlide = !isSlide;
-		if (!slideCreated && isSlide)
+		isShop = !isShop;
+		if (!shopCreated && isShop)
 		{
-			SpriteGo* slide_1 = (SpriteGo*)FindGo("slide_1");
-			slide_1->SetActive(false);
-			slideCreated = true;
-		}
-		if (slideCreated && !isSlide)
-		{
-			SpriteGo* slide_1 = (SpriteGo*)FindGo("slide_1");
-			slide_1->SetActive(true);
-			slideCreated = false;
-		}
-	}
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::X)) // Test Code
-	{
-		isSlide = !isSlide;
-		if (!slideCreated && isSlide)
-		{
-			SpriteGo* slide_2 = (SpriteGo*)FindGo("slide_2");
-			slide_2->SetActive(false);
-			slideCreated = true;
-		}
-		if (slideCreated && !isSlide)
-		{
-			SpriteGo* slide_2 = (SpriteGo*)FindGo("slide_2");
-			slide_2->SetActive(true);
-			slideCreated = false;
-		}
-	}
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::C)) // Test Code
-	{
-		isSlide = !isSlide;
-		if (!slideCreated && isSlide)
-		{
-			SpriteGo* slide_3 = (SpriteGo*)FindGo("slide_3");
-			slide_3->SetActive(false);
-			slideCreated = true;
-		}
-		if (slideCreated && !isSlide)
-		{
-			SpriteGo* slide_3 = (SpriteGo*)FindGo("slide_3");
-			slide_3->SetActive(true);
-			slideCreated = false;
-		}
-	}
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::V)) // Test Code
-	{
-		isSlide = !isSlide;
-		if (!slideCreated && isSlide)
-		{
-			SpriteGo* slide_4 = (SpriteGo*)FindGo("slide_4");
-			slide_4->SetActive(false);
-			slideCreated = true;
-		}
-		if (slideCreated && !isSlide)
-		{
-			SpriteGo* slide_4 = (SpriteGo*)FindGo("slide_4");
-			slide_4->SetActive(true);
-			slideCreated = false;
-		}
-	}
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::B)) // Test Code
-	{
-		isSlide = !isSlide;
-		if (!slideCreated && isSlide)
-		{
-			SpriteGo* slide_5 = (SpriteGo*)FindGo("slide_5");
-			slide_5->SetActive(false);
-			slideCreated = true;
-		}
-		if (slideCreated && !isSlide)
-		{
-			SpriteGo* slide_5 = (SpriteGo*)FindGo("slide_5");
-			slide_5->SetActive(true);
-			slideCreated = false;
-		}
-	}
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::N)) // Test Code
-	{
-		isSlide = !isSlide;
-		if (!slideCreated && isSlide)
-		{
-			SpriteGo* slide_6 = (SpriteGo*)FindGo("slide_6");
-			slide_6->SetActive(false);
-			slideCreated = true;
-		}
-		if (slideCreated && !isSlide)
-		{
-			SpriteGo* slide_6 = (SpriteGo*)FindGo("slide_6");
-			slide_6->SetActive(true);
-			slideCreated = false;
-		}
-	}
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::M)) // Test Code
-	{
-		isSlide = !isSlide;
-		if (!slideCreated && isSlide)
-		{
-			SpriteGo* slide_7 = (SpriteGo*)FindGo("slide_7");
-			slide_7->SetActive(false);
-			slideCreated = true;
-		}
-		if (slideCreated && !isSlide)
-		{
-			SpriteGo* slide_7 = (SpriteGo*)FindGo("slide_7");
-			slide_7->SetActive(true);
-			slideCreated = false;
-		}
-	}
+			SetActiveShopUI("Plasma Rifle", true);
+			SetActiveShopUI("Laser Gun", true);
+			SetActiveShopUI("Gatling Laser", true);
 
-	//////////////////////////////////////////////////////////////////////////////////////////////
+			shopCreated = true;
+		}
+		if (shopCreated && !isShop)
+		{
+			SetActiveShopUI("Plasma Rifle", false);
+			SetActiveShopUI("Laser Gun", false);
+			SetActiveShopUI("Gatling Laser", false);
+
+			shopCreated = false;
+		}
+	}
 
 	sf::Vector2f halfViewSize = worldView.getSize() * 0.5f;
 
@@ -570,9 +445,10 @@ void SceneGame::OnDieMonster(Monster* monster)
 
 	SetCountUI("MaterialCount", money);
 	//std::cout << monsterPool.GetUseList().size() << std::endl; // 몬스터가 일정 수 이하면 스폰
+	monsterCount = monsterPool.GetUseList().size();
 
 	//sf::Vector2f pos = monster->GetPosition();
-	//monsterCount = monsterPool.GetUseList().size();
+
 	//TextGo* uiMonsterCount = (TextGo*)FindGo("uiMonsterCount");
 	//stringstream ss;
 	//ss << "Zombie : " << zombiecount;

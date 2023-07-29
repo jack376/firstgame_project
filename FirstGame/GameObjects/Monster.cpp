@@ -20,13 +20,14 @@ void Monster::Reset()
 {
 	body.setTexture(*RESOURCE_MGR.GetTexture(textureId));
 
-	monsterBodyCenter.x = body.getTexture()->getSize().x / 2;
-	monsterBodyCenter.y = body.getTexture()->getSize().y / 2;
+	monsterCollider.width  = body.getGlobalBounds().width * 0.75f;
+	monsterCollider.height = body.getGlobalBounds().height * 0.75f;
+
+	monsterBodyCenter.x    = body.getTexture()-> getSize().x / 2;
+	monsterBodyCenter.y    = body.getTexture()-> getSize().y / 2;
+
 	body.setOrigin(monsterBodyCenter);
 	body.setPosition(0.0f, 0.0f);
-
-
-	monsterCollider = body.getGlobalBounds();
 
 	SetFlipX(false);
 
@@ -61,8 +62,8 @@ void Monster::Update(float dt)
 		body.setPosition(position);
 	}
 
-	monsterCollider.left = position.x - monsterBodyCenter.x;
-	monsterCollider.top = position.y - monsterBodyCenter.y;
+	monsterCollider.left = position.x - monsterCollider.width / 2.0f;
+	monsterCollider.top = position.y - monsterCollider.height / 2.0f;
 
 	attackTimer += dt;
 	if (attackTimer > attackRate)
@@ -74,15 +75,13 @@ void Monster::Update(float dt)
 		}
 	}
 
+	// Draw view ///////////////////////////////////////////////////////////////////////////////////
+	/*
 	monsterColliderDraw.setPosition(monsterCollider.left, monsterCollider.top);
 	monsterColliderDraw.setSize(sf::Vector2f(monsterCollider.width, monsterCollider.height));
 	monsterColliderDraw.setFillColor(sf::Color::Transparent);
 	monsterColliderDraw.setOutlineColor(sf::Color::Red);
 	monsterColliderDraw.setOutlineThickness(1.0f);
-
-	// Draw view ///////////////////////////////////////////////////////////////////////////////////
-	/*
-	* 
 	*/
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -102,6 +101,7 @@ void Monster::Update(float dt)
 		status = StatusType::Idle;
 		animationSpeed = 1.0f;
 	}
+
 	BodyAnimation(1.0f, 0.2f, flowTime);
 
 	if (hitColorOverlayDuration > 0)
@@ -153,11 +153,13 @@ void Monster::SetPlayer(Player* player)
 void Monster::OnHitBullet(int bulletDamage)
 {
 	currentHp -= bulletDamage;
-	hitColorOverlayDuration = 0.05f;
-	body.setColor(sf::Color(0, 255, 200, 128));	
+	hitColorOverlayDuration = 0.1f;
+	body.setColor(sf::Color(192, 0, 64, 255));
+
 	if (currentHp <= 0)
 	{
-		SetDieEffect(position);
+		float scale = body.getTexture()->getSize().x / static_cast<float>(100);
+		SetDieEffect(position, scale);
 		Scene* scene = SCENE_MGR.GetCurrentScene();
 		SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
 		if (sceneGame != nullptr)
@@ -207,16 +209,17 @@ void Monster::SetDieEffectPool(ObjectPool<DieEffect>* pool)
 	dieEffectPool = pool;
 }
 
-void Monster::SetDieEffect(sf::Vector2f position)
+void Monster::SetDieEffect(sf::Vector2f position, float scale)
 {
 	DieEffect* dieEffect = dieEffectPool->Get();
-	float randomValue = Utils::RandomRange(1, 8);
+	float randomValue = Utils::RandomRange(-6, 7);
+	float positionFactor = 25.0f * scale;
 
 	dieEffect->SetActive(true);
 	dieEffect->SetOrigin(Origins::MC);
-	dieEffect->SetPosition(position);
-	dieEffect->sprite.setScale(0.8f + randomValue / 12.0f, 0.8f + randomValue / 12.0f);
-	dieEffect->sprite.setRotation(randomValue * 45);
+	dieEffect->SetPosition(position.x, position.y + positionFactor);
+	dieEffect->SetAnimationScale(scale);
+	dieEffect->sprite.setRotation(randomValue * 10);
 
 	SCENE_MGR.GetCurrentScene()->AddGo(dieEffect);
 }

@@ -18,12 +18,12 @@ class SceneGame : public Scene
 protected:	
 	int monsterCount = 0;
 	int monsterKillCount = 0;
+
 	int money = 0;
-
 	int playerLevel = 1;
-
 	int waveCount = 1;
-	int waveTimer = 0;
+	float waveTimer = 30.0f;
+	float lastSpawnTime = 5.0f;
 
 	bool isPlaying   = false;
 
@@ -59,6 +59,7 @@ public:
 	void Reset();
 	virtual void Enter() override;
 	virtual void Exit() override;
+
 	virtual void Update(float dt) override;
 	virtual void Draw(sf::RenderWindow& window) override;
 
@@ -67,10 +68,10 @@ public:
 	Monster* GetNearMonsterSearch();
 	const std::list<Monster*>* GetMonsterList() { return &monsterPool.GetUseList(); }
 	
-	ObjectPool<Monster>         & GetMonsterPool()         { return monsterPool; }
+	ObjectPool<Monster> & GetMonsterPool() { return monsterPool; }
 	ObjectPool<BulletHitEffect> & GetBulletHitEffectPool() { return bulletHitEffectPool; }
-	ObjectPool<DieEffect>       & GetDieEffectPool()       { return dieEffectPool; }
-	ObjectPool<EntityEffect>    & GetEntityEffectPool()    { return entityEffectPool; }
+	ObjectPool<DieEffect> & GetDieEffectPool() { return dieEffectPool; }
+	ObjectPool<EntityEffect> & GetEntityEffectPool() { return entityEffectPool; }
 
 	template <typename T>
 	void ClearObjectPool(ObjectPool<T>& pool);

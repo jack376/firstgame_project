@@ -12,6 +12,33 @@ TextGo::~TextGo()
 {
 }
 
+void TextGo::Init()
+{
+}
+
+void TextGo::Release()
+{
+}
+
+void TextGo::Reset()
+{
+	sf::Font* font = RESOURCE_MGR.GetFont(fontId);
+	if (font != nullptr)
+	{
+		text.setFont(*font);
+	}
+	SetOrigin(origin);
+}
+
+void TextGo::Update(float dt)
+{
+}
+
+void TextGo::Draw(sf::RenderWindow& window)
+{
+	window.draw(text);
+}
+
 void TextGo::SetPosition(const sf::Vector2f& p)
 {
 	position = p;
@@ -66,31 +93,3 @@ void TextGo::SetCharacterSize(const int& fontSize)
 {
 	text.setCharacterSize(fontSize);
 }
-
-void TextGo::Init()
-{
-}
-
-void TextGo::Release()
-{
-}
-
-void TextGo::Reset()
-{
-	sf::Font* font = RESOURCE_MGR.GetFont(fontId);
-	if (font != nullptr)
-	{
-		text.setFont(*font);
-	}
-	SetOrigin(origin);
-}
-
-void TextGo::Update(float dt)
-{
-}
-
-void TextGo::Draw(sf::RenderWindow& window)
-{
-	window.draw(text);
-}
-

@@ -26,6 +26,28 @@ void Player::Reset()
 	legR.setPosition(0.0f, 0.0f);
 
 	SetFlipX(false);
+
+	level = 1;
+
+	currentExp  = 0;
+	maxExp      = 16;
+
+	currentHp   = 20;
+	maxHp       = 20;
+
+	hpRegen     = 0.0f;
+	damage      = 0.0f;
+	attackSpeed = 1.0f;
+	critical    = 0.03f;
+	armor       = 0.0f;
+	dodge       = 0.0f;
+	moveSpeed   = 500.0f;
+
+	Scene* scene = SCENE_MGR.GetCurrentScene();
+	SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
+	sceneGame->SetExpUI((float)currentExp / maxExp);
+	sceneGame->SetHpUI((float)currentHp, maxHp);
+	sceneGame->SetLevelUpUI(level);
 }
 
 void Player::Update(float dt)
@@ -118,7 +140,7 @@ void Player::OnHitted(int damage)
 		return;
 	}
 	currentHp -= std::min(currentHp, damage);
-	hitColorOverlayDuration = 0.05f;
+	hitColorOverlayDuration = 0.1f;
 	body.setColor(sf::Color(255, 0, 0, 255));
 
 	Scene* scene = SCENE_MGR.GetCurrentScene();

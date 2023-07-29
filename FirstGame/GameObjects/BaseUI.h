@@ -50,8 +50,11 @@ public:
 
 	virtual void Init() override;
 	virtual void Reset() override;
+
 	virtual void Update(float dt) override;
 	virtual void Draw(sf::RenderWindow& window) override;
+
+	bool CanBePaused() const override { return false; }
 
 	void SetColor(int red = 0, int green = 0, int blue = 0, int alpha = 255);
 	void SetTextColor(int red = 255, int green = 255, int blue = 255, int alpha = 255);
