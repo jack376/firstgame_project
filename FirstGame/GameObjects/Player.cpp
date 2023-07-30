@@ -14,8 +14,6 @@ void Player::Init()
 void Player::Reset()
 {
 	body.setTexture(*RESOURCE_MGR.GetTexture("graphics/game/potato_body_default.png"));
-	body.setOrigin(body.getTexture()->getSize().x / 2, body.getTexture()->getSize().y / 2);
-	body.setPosition(0.0f, 0.0f);
 
 	legL.setTexture(*RESOURCE_MGR.GetTexture("graphics/game/potato_legs_default.png"));
 	legL.setOrigin(legL.getTexture()->getSize().x / 2, legL.getTexture()->getSize().y / 2);
@@ -26,6 +24,15 @@ void Player::Reset()
 	legR.setPosition(0.0f, 0.0f);
 
 	SetFlipX(false);
+
+	playerCollider.width  = body.getGlobalBounds().width * 0.25f;
+	playerCollider.height = body.getGlobalBounds().height * 0.25f;
+
+	playerBodyCenter.x = body.getTexture()->getSize().x * 0.5f;
+	playerBodyCenter.y = body.getTexture()->getSize().y * 0.5f;
+
+	body.setOrigin(playerBodyCenter);
+	body.setPosition(0.0f, 0.0f);
 
 	level = 1;
 
@@ -77,8 +84,7 @@ void Player::Update(float dt)
 
 	if (magnitude > 0.0f)
 	{
-		status = StatusType::Move;
-
+		state = StateType::Move;
 		animationSpeed = 3.0f;
 
 		if (magnitude > 1.f)
@@ -92,8 +98,7 @@ void Player::Update(float dt)
 	}
 	else
 	{
-		status = StatusType::Idle;
-
+		state = StateType::Idle;
 		animationSpeed = 1.0f;
 
 		body.setPosition(position);
@@ -108,8 +113,18 @@ void Player::Update(float dt)
 	}
 	BodyAnimation(1.0f, 0.2f, flowTime);
 
-	playerCollider.left = position.x - playerBodyCenter.x;
-	playerCollider.top = position.y - playerBodyCenter.y;
+	playerCollider.left = position.x - playerCollider.width * 0.5f;
+	playerCollider.top = position.y - playerCollider.height * 0.5f;
+
+	// Test
+	/*
+	playerColliderDraw.setPosition(playerCollider.left, playerCollider.top);
+	playerColliderDraw.setSize(sf::Vector2f(playerCollider.width, playerCollider.height));
+	playerColliderDraw.setFillColor(sf::Color::Transparent);
+	playerColliderDraw.setOutlineColor(sf::Color::Red);
+	playerColliderDraw.setOutlineThickness(1.0f);
+	*/
+	//
 
 	if (hitColorOverlayDuration > 0)
 	{
@@ -126,6 +141,7 @@ void Player::Draw(sf::RenderWindow& window)
 	window.draw(legR);
 	window.draw(legL);
 	window.draw(body);
+	//window.draw(playerColliderDraw);
 }
 
 sf::FloatRect Player::GetPlayerCollider() const

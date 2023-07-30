@@ -23,9 +23,14 @@ sf::Vector2f Character::GetOrigin() const
 	return body.getOrigin();
 }
 
-Character::StatusType Character::GetStatus() const
+Character::StateType Character::GetState() const
 {
-	return status;
+	return state;
+}
+
+void Character::SetState(StateType state)
+{
+	this->state = state;
 }
 
 void Character::BodyAnimation(float defaultScale, float scaleRange, float flowTimeBySpeed)
@@ -49,7 +54,7 @@ void Character::LegsAnimation(float walkWidth, float flowTimeBySpeed)
 	float normalizedPosition = PositionX / walkWidth;
 	float rotation = -45.0f + normalizedPosition * 45.0f;
 
-	if (GetFlipX()) // ¿ÞÂÊ
+	if (GetFlipX()) // Left
 	{
 		legR.setPosition(position.x - walkWidth, position.y);
 		legR.setScale(1.0f, 1.0f);
@@ -59,7 +64,7 @@ void Character::LegsAnimation(float walkWidth, float flowTimeBySpeed)
 		legL.setScale(1.0f, 1.0f);
 		legL.setRotation(-rotation);
 	}
-	else if (!GetFlipX()) // ¿À¸¥ÂÊ
+	else if (!GetFlipX()) // Right
 	{
 		legR.setPosition(position.x - walkWidth, position.y);
 		legR.setScale(-1.0f, 1.0f);

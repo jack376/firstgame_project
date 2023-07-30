@@ -76,41 +76,49 @@ void BaseGun::Update(float dt)
         }
     }
 
-    if (player->GetStatus() == Character::StatusType::Idle)
+    Monster* nearMonster = sceneGame->GetNearMonsterSearch();
+    if (nearMonster != nullptr)
+    {
+        sf::Vector2f monsterPosition = nearMonster->GetPosition();
+        float distance = std::sqrt(std::pow(monsterPosition.x - position.x, 2) + std::pow(monsterPosition.y - position.y, 2));
+
+        if (nearMonster->GetActive() && distance <= 700.0f)
+        {
+            FireRecoilAnimation(look, fireRecoilAnimationSpeed, flowTime);
+            isFireRecoilEffect = true;
+            fireRecoilEffect.setColor(sf::Color(255, 255, 255, 255));
+
+            bulletTotalCooldown -= dt;
+            if (bulletTotalCooldown <= 0.0f)
+            {
+                bullet = poolBaseBullets.Get();
+                bullet->Init();
+                bullet->Reset();
+                bullet->Fire(gunMuzzlePosition, look, 1500.f);
+                bullet->sortLayer = 3;
+
+                Scene* scene = SCENE_MGR.GetCurrentScene();
+                SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
+                if (sceneGame != nullptr)
+                {
+                    bullet->SetMonsterList(sceneGame->GetMonsterList());
+                }
+                sceneGame->AddGo(bullet);
+                bulletTotalCooldown = bulletCurrentCooldown;
+            }
+        }
+        else
+        {
+            sprite.setPosition(position);
+            isFireRecoilEffect = false;
+            fireRecoilEffect.setColor(sf::Color::Transparent);
+        }
+    }
+    else
     {
         sprite.setPosition(position);
         isFireRecoilEffect = false;
-        isFire = false;
         fireRecoilEffect.setColor(sf::Color::Transparent);
-    }
-    else if (player->GetStatus() == Character::StatusType::Move)
-    {
-        FireRecoilAnimation(look, fireRecoilAnimationSpeed, flowTime);
-        isFireRecoilEffect = true;
-        isFire = true;
-        fireRecoilEffect.setColor(sf::Color(255, 255, 255, 255));
-    }
-
-    if (isFire) // 수정 예정 800 범위 안에 들어올 시
-    {
-        bulletTotalCooldown -= dt;
-        if (bulletTotalCooldown <= 0.0f)
-        {
-            bullet = poolBaseBullets.Get();
-            bullet->Init();
-            bullet->Reset();
-            bullet->Fire(gunMuzzlePosition, look, 1500.f);
-            bullet->sortLayer = 3;
-
-            Scene* scene = SCENE_MGR.GetCurrentScene();
-            SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
-            if (sceneGame != nullptr)
-            {
-                bullet->SetMonsterList(sceneGame->GetMonsterList());
-            }
-            sceneGame->AddGo(bullet);
-            bulletTotalCooldown = bulletCurrentCooldown;
-        }
     }
 }
 

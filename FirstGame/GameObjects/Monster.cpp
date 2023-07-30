@@ -23,8 +23,8 @@ void Monster::Reset()
 	monsterCollider.width  = body.getGlobalBounds().width * 0.75f;
 	monsterCollider.height = body.getGlobalBounds().height * 0.75f;
 
-	monsterBodyCenter.x    = body.getTexture()-> getSize().x / 2;
-	monsterBodyCenter.y    = body.getTexture()-> getSize().y / 2;
+	monsterBodyCenter.x    = body.getTexture()-> getSize().x * 0.5f;
+	monsterBodyCenter.y    = body.getTexture()-> getSize().y * 0.5f;
 
 	body.setOrigin(monsterBodyCenter);
 	body.setPosition(0.0f, 0.0f);
@@ -52,18 +52,18 @@ void Monster::Update(float dt)
 	}
 	else if (direction.x > 0)
 	{
-		SetFlipX(false); 
+		SetFlipX(false);
 	}
 	body.setRotation(Utils::Angle(look));
 
-	if (distance > 25.f)
+	if (distance > 50.f)
 	{
 		position += direction * moveSpeed * dt;
 		body.setPosition(position);
 	}
 
-	monsterCollider.left = position.x - monsterCollider.width / 2.0f;
-	monsterCollider.top = position.y - monsterCollider.height / 2.0f;
+	monsterCollider.left = position.x - monsterCollider.width * 0.5f;
+	monsterCollider.top = position.y - monsterCollider.height * 0.5f;
 
 	attackTimer += dt;
 	if (attackTimer > attackRate)
@@ -88,7 +88,7 @@ void Monster::Update(float dt)
 	float magnitude = Utils::Magnitude(direction);
 	if (magnitude > 0.0f)
 	{
-		status = StatusType::Move;
+		state = StateType::Move;
 		animationSpeed = 2.0f;
 		if (magnitude > 1.f)
 		{
@@ -98,7 +98,7 @@ void Monster::Update(float dt)
 	}
 	else
 	{
-		status = StatusType::Idle;
+		state = StateType::Idle;
 		animationSpeed = 1.0f;
 	}
 
@@ -117,7 +117,7 @@ void Monster::Update(float dt)
 void Monster::Draw(sf::RenderWindow& window)
 {
 	window.draw(body);
-	window.draw(monsterColliderDraw);
+	//window.draw(monsterColliderDraw);
 }
 
 sf::FloatRect Monster::GetMonsterCollider() const

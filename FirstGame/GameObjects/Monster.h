@@ -19,17 +19,22 @@ public:
 	};
 
 protected:
+	Player* player = nullptr;
+
 	int   currentHp = 0;
 	float attackTimer = 0.0f;
 
-	Types       monsterType;
+	Types monsterType; 
 	std::string textureId;
-	float       moveSpeed  = 0.0f;
-	int         maxHp      = 0;
-	int         damage     = 0;
-	float       attackRate = 0.0f;
 
-	Player* player = nullptr;
+	float moveSpeed  = 0.0f;
+	int   maxHp      = 0;
+	int   damage     = 0;
+	float attackRate = 0.0f;
+
+	float skillTime = 1.5f;
+	bool isSkill = false;
+	sf::Vector2f skillDirection;
 
 	sf::Vector2f monsterBodyCenter;
 	sf::FloatRect monsterCollider = sf::FloatRect(0.0f, 0.0f, 100.0f, 100.0f);

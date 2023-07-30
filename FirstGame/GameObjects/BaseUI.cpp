@@ -99,13 +99,13 @@ void BaseUI::Reset()
     //buttonCollider.setOutlineColor(sf::Color::Green); // Collider View Test
     //buttonCollider.setOutlineThickness(2.0f); // Collider View Test
 
-    // body
+    // Body
     body.setSize(bodyRectSize);
     body.setPosition(buttonPosition.x + cornerTextureSize.x, buttonPosition.y + cornerTextureSize.y);
     body.setFillColor(bodyColor);
     body.setOrigin(0.0f, 0.0f);
 
-    //Corner, Side
+    // Corner
     corners.resize(4, corner);
 
     corners[0].setPosition(buttonPosition); // Top-Left
@@ -124,6 +124,7 @@ void BaseUI::Reset()
     corners[3].setRotation(180);
     corners[3].setColor(bodyColor);
 
+    // Side
     sides.resize(4, side);
 
     sides[0].setPosition(buttonPosition.x + cornerTextureSize.x, buttonPosition.y); // Top
@@ -142,7 +143,7 @@ void BaseUI::Reset()
     sides[3].setSize(sideSizeHeight);
     sides[3].setFillColor(bodyColor);
 
-    // Stroke
+    // CornerStroke
     cornerStrokes.resize(4, cornerStroke);
 
     cornerStrokes[0].setPosition(buttonPosition); // Top-Left
@@ -161,6 +162,7 @@ void BaseUI::Reset()
     cornerStrokes[3].setRotation(180);
     cornerStrokes[3].setColor(strokeColor);
 
+    // SideStroke
     sideStrokes.resize(4, sideStroke);
 
     sideStrokes[0].setPosition(buttonPosition.x + cornerTextureSize.x, buttonPosition.y); // Top

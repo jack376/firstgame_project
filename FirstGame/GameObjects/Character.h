@@ -6,15 +6,16 @@ class Player;
 class Character : public GameObject
 {
 public:
-	enum class StatusType
+	enum class StateType
 	{
 		Idle,
 		Move,
-		Attack,
+		Skill,
+		Spawn,
 	};
 
 protected:
-	StatusType status = StatusType::Idle;
+	StateType state = StateType::Idle;
 
 	sf::Sprite body;
 	sf::Vector2f bodyAnimation;
@@ -55,7 +56,9 @@ public:
 	void SetFlipX(bool filp);
 
 	sf::Vector2f GetOrigin() const;
-	StatusType GetStatus() const;
+
+	StateType GetState() const;
+	void SetState(StateType state = StateType::Idle);
 
 	void BodyAnimation(float defaultScale, float scaleRange, float flowTimeBySpeed);
 	void LegsAnimation(float walkWidth, float flowTimeBySpeed);

@@ -246,9 +246,9 @@ void SceneGame::Update(float dt)
 	ss << std::setw(2) << std::setfill('0') << (int)waveTimer;
 	waveTimerText->SetString(ss.str());
 	
-	if (lastSpawnTime >= 5.0f)
+	if (lastSpawnTime >= 3.0f)
 	{
-		SpawnMonsters(waveCount + 5, currentPlayerPosition, { 0.0f, 0.0f }, 900.0f);
+		SpawnMonsters(waveCount + 6, currentPlayerPosition, { 0.0f, 0.0f }, 900.0f);
 		lastSpawnTime = 0.0f;
 	}
 
@@ -419,6 +419,7 @@ void SceneGame::SpawnMonsters(int count, sf::Vector2f playerCenter, sf::Vector2f
 		Monster* monster = monsterPool.Get();
 		sf::Vector2f spawnPosition;
 		monster->SetActive(false);
+		monster->SetState(Character::StateType::Spawn);
 
 		do {
 			spawnPosition = mapCenter + Utils::RandomInCircle(radius);
@@ -428,6 +429,7 @@ void SceneGame::SpawnMonsters(int count, sf::Vector2f playerCenter, sf::Vector2f
 		monster->SetEntityEffect(spawnPosition, [this, monster]() 
 		{
 			monster->SetActive(true);
+			monster->SetState(Character::StateType::Idle);
 			monster->Reset();
 			AddGo(monster);
 		});
@@ -460,13 +462,17 @@ void SceneGame::OnDieMonster(Monster* monster)
 
 Monster* SceneGame::GetNearMonsterSearch()
 {
-	float nearMonsterSearchDistance = 700.0f;
+	float nearMonsterSearchDistance = 1200.0f;
 
 	const std::list<Monster*>* monsterList = GetMonsterList();
 	Monster* nearMonster = nullptr;
 
 	for (Monster* monster : *monsterList)
 	{
+		if (monster->GetState() == Monster::StateType::Spawn)
+		{
+			continue;
+		}
 		float distance = Utils::Distance(player->GetPosition(), monster->GetPosition());
 		if (distance <= nearMonsterSearchDistance)
 		{

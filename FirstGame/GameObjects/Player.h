@@ -21,7 +21,7 @@ protected:
 	float moveSpeed   = 500.0f;
 
 	sf::Vector2f playerBodyCenter;
-	sf::FloatRect playerCollider = sf::FloatRect(0.0f, 0.0f, 50.0f, 50.0f);
+	sf::FloatRect playerCollider;
 	sf::RectangleShape playerColliderDraw;
 
 public:
