@@ -81,13 +81,11 @@ void SceneGame::Init()
 	CreateBar("graphics/bar_bord.png", "ExpBarBord", uiPos, uiPos * 2, 3);
 
 	CreateBar("graphics/material_icon.png", "MaterialIcon", uiPos - magicNumber * 2, uiPos * 3);
-	//CreateBar("graphics/material_bag.png", "MaterialBag", uiPos - magicNumber * 2, uiPos * 4);
 
 	CreateText("WaveCount", "Wave 1", windowSize.x * 0.5f, uiPos, 40, true);
 	CreateText("WaveTimer", "30", windowSize.x * 0.5f, uiPos * 2, 64, true);
 
 	CreateText("MaterialCount", "0", uiPos * 2 + magicNumber, uiPos * 3);
-	//CreateText("MaterialKeeps", "33", uiPos * 2 + magicNumber, uiPos * 4);
 
 	TextGo* hpText = (TextGo*)AddGo(new TextGo("fonts/Chewy-Regular.ttf", "HpText"));
 	hpText->sortLayer = 110;
@@ -119,9 +117,9 @@ void SceneGame::Init()
 	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 2, windowSize.y / 4, "Laser Gun", resolutionScale);
 	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 3, windowSize.y / 4, "Gatling Laser", resolutionScale);
 	
-	CreateUpgradeUI(windowSize.x / 64 + shopUiPositionX * 1, windowSize.y / 3, "Back I", resolutionScale);
-	CreateUpgradeUI(windowSize.x / 64 + shopUiPositionX * 2, windowSize.y / 3, "Chest II", resolutionScale);
-	CreateUpgradeUI(windowSize.x / 64 + shopUiPositionX * 3, windowSize.y / 3, "Gun IV", resolutionScale);
+	CreateUpgradeUI(windowSize.x / 64 + shopUiPositionX * 1, windowSize.y / 3, "Heart I", resolutionScale);
+	CreateUpgradeUI(windowSize.x / 64 + shopUiPositionX * 2, windowSize.y / 3, "Legs I", resolutionScale);
+	CreateUpgradeUI(windowSize.x / 64 + shopUiPositionX * 3, windowSize.y / 3, "Gun I", resolutionScale);
 
 	CreatePlayerInfoUI(windowSize.x - shopUiPositionX * 1 - uiPos, windowSize.y / 2, resolutionScale);
 
@@ -203,6 +201,8 @@ void SceneGame::Enter()
 	lastSpawnTime = 5.0f;
 
 	SetCountUI("MaterialCount", money);
+
+	isPlaying = true;
 }
 
 void SceneGame::Exit()
@@ -219,7 +219,7 @@ void SceneGame::Update(float dt)
 		return;
 	}
 
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1)) // Test Code
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::P))
 	{
 		SetPaused(!IsPaused());
 	}
@@ -248,29 +248,16 @@ void SceneGame::Update(float dt)
 	
 	if (lastSpawnTime >= 3.0f)
 	{
-		SpawnMonsters(waveCount + 6, currentPlayerPosition, { 0.0f, 0.0f }, 900.0f);
+		SpawnMonsters(waveCount + 5, currentPlayerPosition, { 0.0f, 0.0f }, 900.0f);
 		lastSpawnTime = 0.0f;
 	}
-
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num2)) // Test Code
+	
+	//if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num2)) // Test Code
+	if (levelUpPoint >= 1 && !isUpgrade)
 	{
-		isUpgrade = !isUpgrade;
-		if (!upgradeCreated && isUpgrade)
-		{
-			SetActiveUpgradeUI("Back I", true);
-			SetActiveUpgradeUI("Chest II", true);
-			SetActiveUpgradeUI("Gun IV", true);
-
-			upgradeCreated = true;
-		}
-		if (upgradeCreated && !isUpgrade)
-		{
-			SetActiveUpgradeUI("Back I", false);
-			SetActiveUpgradeUI("Chest II", false);
-			SetActiveUpgradeUI("Gun IV", false);
-
-			upgradeCreated = false;
-		}
+		SetActiveUpgradeUI("Heart I", true);
+		SetActiveUpgradeUI("Legs I", true);
+		SetActiveUpgradeUI("Gun I", true);
 	}
 
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num3)) // Test Code
@@ -573,25 +560,54 @@ void SceneGame::CreateUpgradeUI(float posiX, float posiY, std::string name, floa
 	buttonBox->SetSizeAdd(buttonBoxSize.x, buttonBoxSize.y);
 	buttonBox->SetActive(false);
 
+	buttonBox->OnEnter = [buttonBox]()
+	{
+		buttonBox->SetColor(255, 255, 255, 64);
+		std::cout << "Enter" << std::endl;
+	};
+	buttonBox->OnExit = [buttonBox]()
+	{
+		buttonBox->SetColor(255, 255, 255, 32);
+		std::cout << "Exit" << std::endl;
+	};
+	buttonBox->OnClick = [this, name]()
+	{
+		std::cout << "Click" << std::endl;
+		levelUpPoint = 0;
+
+		if (name == "Heart I") 
+		{
+			player->UpgradeStat("maxHp", 10.0f);
+		}
+		else if (name == "Legs I") 
+		{
+			player->UpgradeStat("moveSpeed", 50.0f);
+		}
+		else if (name == "Gun I") 
+		{
+			player->UpgradeStat("damage", 10.0f);
+		}
+
+		SetActiveUpgradeUI("Heart I", false);
+		SetActiveUpgradeUI("Legs I", false);
+		SetActiveUpgradeUI("Gun I", false);
+	};
+
 	std::string amountString = std::to_string(amount);
 
 	TextGo* moneyAmount = (TextGo*)AddGo(new TextGo("fonts/Chewy-Regular.ttf", amountString + name));
 	moneyAmount->sortLayer = 104;
-	moneyAmount->SetOrigin(Origins::TR);
-	moneyAmount->SetCharacterSize(48);
-	moneyAmount->SetPosition(posiX + fullBoxSize.x * 0.5f + blank - 7.0f, posiY + fullBoxSize.y - buttonBoxSize.y - blank);
+	moneyAmount->SetOrigin(Origins::TC);
+	moneyAmount->SetCharacterSize(40);
+	moneyAmount->SetPosition(posiX + fullBoxSize.x * 0.5f + 3.0f, posiY + fullBoxSize.y - buttonBoxSize.y - blank + 4.0f);
 	moneyAmount->SetFillColor(sf::Color(255, 255, 255, 255));
 	moneyAmount->SetScale(scale, scale);
-	moneyAmount->SetString(amountString);
-	moneyAmount->text.setOutlineColor(sf::Color(0, 0, 0, 255));
-	moneyAmount->text.setOutlineThickness(7.0f * scale);
+	//moneyAmount->SetString(amountString);
+	moneyAmount->SetString("SELECT");
+	//moneyAmount->text.setOutlineColor(sf::Color(16, 16, 16, 255));
+	//moneyAmount->text.setOutlineThickness(5.0f * scale);
+	moneyAmount->text.setLetterSpacing(1.15f);
 	moneyAmount->SetActive(false);
-
-	SpriteGo* materialIcon = (SpriteGo*)AddGo(new SpriteGo("graphics/game/material_ui.png", "MaterialIcon" + name));
-	materialIcon->sortLayer = 104;
-	materialIcon->SetOrigin(Origins::TL);
-	materialIcon->SetPosition(posiX + fullBoxSize.x * 0.5f + blank, posiY + fullBoxSize.y - buttonBoxSize.y - blank);
-	materialIcon->SetActive(false);
 
 	TextGo* upgradeName = (TextGo*)AddGo(new TextGo("fonts/Kanit-Bold.ttf", "upgrade_" + name));
 	upgradeName->sortLayer = 105;
@@ -986,15 +1002,14 @@ void SceneGame::SetCountUI(const std::string& name, int count)
 	text->SetActive(true);
 }
 
-
-void SceneGame::SetHpUI(float currentHp, int maxHp)
+void SceneGame::SetHpUI(float currentHp, float maxHp)
 {
 	SpriteGo* hpBar = (SpriteGo*)FindGo("HpBarMain");
 	hpBar->sprite.setOrigin(0.0f, 0.0f);
-	hpBar->sprite.setScale(currentHp / (float)maxHp, 1.0f);
+	hpBar->sprite.setScale(currentHp / maxHp, 1.0f);
 
 	std::string currentHpString = std::to_string((int)currentHp);
-	std::string maxHpString = std::to_string(maxHp);
+	std::string maxHpString = std::to_string((int)maxHp);
 
 	TextGo* hpText = (TextGo*)FindGo("HpText");
 	hpText->SetString(currentHpString + " / " + maxHpString);
@@ -1017,23 +1032,17 @@ void SceneGame::SetLevelUpUI(int level)
 {
 	playerLevel = level;
 
-	/*
-	TextGo* levelText = (TextGo*)AddGo(new TextGo("fonts/Chewy-Regular.ttf", "PlayerLevel"));
-	levelText->sortLayer = 100;
-	levelText->SetOrigin(Origins::TL);
-	levelText->SetPosition(posX + 75.0f, posY);
-	levelText->SetCharacterSize(fontSize);
-	levelText->SetFillColor(sf::Color(255, 255, 255, 255));
-	levelText->SetString(str);
-	levelText->text.setOutlineColor(sf::Color(16, 16, 16, 255));
-	levelText->text.setOutlineThickness(5.0f);
-	*/
-
-	// 웨이브 끝나고 업그레이드 대기
+	if (playerLevel >= 2)
+	{
+		levelUpPoint++;
+		playerLevel--;
+	}
 }
 
 void SceneGame::OnDiePlayer()
 {
 	isPlaying = false;
 	player->Reset();
+
+	SCENE_MGR.ChangeScene(SceneId::Title);
 }

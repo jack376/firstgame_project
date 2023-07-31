@@ -6,6 +6,7 @@
 #include "ResourceMgr.h"
 #include "SceneMgr.h"
 #include "SceneGame.h"
+#include "BaseBullet.h"
 
 void Player::Init()
 {
@@ -50,10 +51,12 @@ void Player::Reset()
 	dodge       = 0.0f;
 	moveSpeed   = 500.0f;
 
+	isAlive = true;
+
 	Scene* scene = SCENE_MGR.GetCurrentScene();
 	SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
 	sceneGame->SetExpUI((float)currentExp / maxExp);
-	sceneGame->SetHpUI((float)currentHp, maxHp);
+	sceneGame->SetHpUI(currentHp, maxHp);
 	sceneGame->SetLevelUpUI(level);
 }
 
@@ -149,7 +152,7 @@ sf::FloatRect Player::GetPlayerCollider() const
 	return playerCollider;
 }
 
-void Player::OnHitted(int damage)
+void Player::OnHitted(float damage)
 {
 	if (!isAlive)
 	{
@@ -161,13 +164,7 @@ void Player::OnHitted(int damage)
 
 	Scene* scene = SCENE_MGR.GetCurrentScene();
 	SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
-	sceneGame->SetHpUI((float)currentHp, maxHp);
-	/*
-	if (currentHp <= 30)
-	{
-		SpriteGo* hitFade = (SpriteGo*)FindGo("title_fade");
-	}
-	*/
+	sceneGame->SetHpUI(currentHp, maxHp);
 
 	if (currentHp <= 0)
 	{
@@ -192,6 +189,10 @@ void Player::OnKilled()
 	{
 		level++;
 		sceneGame->SetLevelUpUI(level);
+		
+		currentHp = maxHp;
+		sceneGame->SetHpUI(currentHp, maxHp);
+
 		currentExp = 0;
 		maxExp = maxExp + maxExp / 8;
 	}
@@ -203,4 +204,28 @@ void Player::OnDie()
 	Scene* scene = SCENE_MGR.GetCurrentScene();
 	SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
 	sceneGame->OnDiePlayer();
+}
+
+void Player::UpgradeStat(const std::string& statName, float increaseAmount)
+{
+	Scene* scene = SCENE_MGR.GetCurrentScene();
+	SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
+
+	if (stats.find(statName) != stats.end())
+	{
+		*stats[statName] += increaseAmount;
+		sceneGame->SetHpUI(currentHp, maxHp);
+
+		//BaseBullet* bullet = 
+		//bullet->SetBulletDamage(this);
+	}
+	else
+	{
+		std::cerr << "Unknown stat: " << statName << std::endl;
+	}
+}
+
+float Player::GetDamage() const
+{
+	return damage;
 }

@@ -10,6 +10,7 @@
 #include "Monster.h"
 #include "SceneGame.h"
 #include "SpriteEffect.h"
+#include "Player.h"
 
 void BaseBullet::Init()
 {
@@ -73,6 +74,8 @@ void BaseBullet::Update(float dt)
 			}
 			if (bulletCollider.intersects(monster->GetMonsterCollider()))
 			{
+				//bulletDamage = SetBulletDamage(player);
+
 				monster->SetBulletHitEffect(position);
 				monster->OnHitBullet(bulletDamage);
 				SetActive(false);
@@ -107,4 +110,19 @@ void BaseBullet::Fire(const sf::Vector2f& pos, const sf::Vector2f& dir, float sp
 void BaseBullet::SetMonsterList(const std::list<Monster*>* list)
 {
 	monsters = list;
+}
+
+void BaseBullet::SetBulletDamage(Player* player)
+{
+	myPlayer = player;
+
+	if (myPlayer != nullptr)
+	{
+		bulletDamage += myPlayer->GetDamage();
+		std::cout << "bulletDamage : " << bulletDamage << std::endl;
+	}
+	else
+	{
+		std::cout << "player nullptr!!!" << std::endl;
+	}
 }

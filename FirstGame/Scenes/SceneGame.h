@@ -21,6 +21,8 @@ protected:
 
 	int money = 0;
 	int playerLevel = 1;
+	int levelUpPoint = 0;
+
 	int waveCount = 1;
 	float waveTimer = 30.0f;
 	float lastSpawnTime = 5.0f;
@@ -97,7 +99,7 @@ public:
 	void CreateText(const std::string& name, const std::string& str, float posX = 0.0f, float posY = 0.0f, int fontSize = 48, bool originMC = false);
 
 	void SetCountUI(const std::string& name, int count);
-	void SetHpUI(float currentHp, int maxHp);
+	void SetHpUI(float currentHp, float maxHp);
 	void SetExpUI(float currentExp);
 	void SetLevelUpUI(int level);
 

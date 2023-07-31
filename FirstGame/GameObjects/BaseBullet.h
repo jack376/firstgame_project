@@ -2,6 +2,7 @@
 #include "SpriteGo.h"
 #include "ObjectPool.h"
 
+class Player;
 class SpriteEffect;
 class BulletHitEffect;
 class DieEffect;
@@ -13,14 +14,14 @@ class BaseBullet : public SpriteGo
 protected:
 	float flowTime = 0.0f;
 
-	BaseGun* baseGun = nullptr;
+	Player* myPlayer = nullptr;
 	const std::list<Monster*>* monsters;
 
 	sf::Vector2f bulletDirection;
 	float bulletSpeed  = 1500.0f;
 	float bulletRange  = 700.0f; // 니어몬스터서치랑 동기화 예정
 	float bulletCooldown;
-	int   bulletDamage = 50;
+	float bulletDamage = 50.0f;
 	//float bulletLife   = 0.05f;
 
 	sf::FloatRect bulletCollider = sf::FloatRect(0.0f, 0.0f, 30.0f, 30.0f);
@@ -42,4 +43,6 @@ public:
 
 	void Fire(const sf::Vector2f& pos, const sf::Vector2f& dir, float speed);
 	void SetMonsterList(const std::list<Monster*>* list);
+
+	void SetBulletDamage(Player* player);
 };
