@@ -4,6 +4,7 @@
 #include "BulletHitEffect.h"
 #include "DieEffect.h"
 #include "EntityEffect.h"
+#include "DamageTextEffect.h"
 
 class Monster;
 class Player;
@@ -16,6 +17,8 @@ class VertexArrayGo;
 class SceneGame : public Scene
 {
 protected:	
+	float flowTime = 0.0f;
+
 	int monsterCount = 0;
 	int monsterKillCount = 0;
 
@@ -49,10 +52,10 @@ protected:
 	Player* player = nullptr;
 
 	ObjectPool<Monster> monsterPool;
-
 	ObjectPool<BulletHitEffect> bulletHitEffectPool;
 	ObjectPool<DieEffect> dieEffectPool;
 	ObjectPool<EntityEffect> entityEffectPool;
+	ObjectPool<DamageTextEffect> damageTextEffectPool;
 
 	sf::Vector2f defaultResolution;
 	sf::Vector2f windowSize;
@@ -63,6 +66,8 @@ protected:
 	std::vector<std::string> upgradeNamesColumn2 = { "Reflexes I", "Reflexes II", "Reflexes III", "Reflexes IV", "Gun I", "Gun II", "Gun III", "Gun IV" };
 	std::vector<std::string> upgradeNamesColumn3 = { "Fingers I", "Fingers II", "Fingers III", "Fingers IV", "Heart I", "Heart II", "Heart III", "Heart IV" };
 	std::vector<std::string> upgradeNamesColumn4 = { "Back I", "Back II", "Back III", "Back IV", "Legs I", "Legs II", "Legs III", "Legs IV" };
+
+	float damageTextDuration = 1.0f;
 
 public:
 	SceneGame();
@@ -82,10 +87,11 @@ public:
 	Monster* GetNearMonsterSearch();
 	const std::list<Monster*>* GetMonsterList() { return &monsterPool.GetUseList(); }
 	
-	ObjectPool<Monster> & GetMonsterPool() { return monsterPool; }
-	ObjectPool<BulletHitEffect> & GetBulletHitEffectPool() { return bulletHitEffectPool; }
-	ObjectPool<DieEffect> & GetDieEffectPool() { return dieEffectPool; }
-	ObjectPool<EntityEffect> & GetEntityEffectPool() { return entityEffectPool; }
+	ObjectPool<Monster>& GetMonsterPool() { return monsterPool; }
+	ObjectPool<BulletHitEffect>& GetBulletHitEffectPool() { return bulletHitEffectPool; }
+	ObjectPool<DieEffect>& GetDieEffectPool() { return dieEffectPool; }
+	ObjectPool<EntityEffect>& GetEntityEffectPool() { return entityEffectPool; }
+	ObjectPool<DamageTextEffect>& GetDamageTextEffectPool() { return damageTextEffectPool; }
 
 	template <typename T>
 	void ClearObjectPool(ObjectPool<T>& pool);
@@ -97,6 +103,7 @@ public:
 	void CreateBulletHitEffect(int count);
 	void CreateDieEffect(int count);
 	void CreateEntityEffect(int count);
+	void CreateDamageTextEffect(int count);
 
 	void CreateUpgradeUI(float posiX, float posiY, std::string name, float scale = 1.0f);
 	void SetActiveUpgradeUI(std::string name, bool active);

@@ -6,7 +6,6 @@
 #include "Utils.h"
 #include "Character.h"
 #include "inputMgr.h"
-#include "Collision.h"
 #include "Monster.h"
 #include "SceneGame.h"
 #include "SpriteEffect.h"
@@ -26,6 +25,8 @@ void BaseBullet::Reset()
     sprite.setPosition(0.0f, 0.0f);
 
 	bulletRange = 700.0f;
+	bulletSpeed = 1500.0f;
+	bulletDamage = 50.0f;
 }
 
 void BaseBullet::Update(float dt)
@@ -74,8 +75,6 @@ void BaseBullet::Update(float dt)
 			}
 			if (bulletCollider.intersects(monster->GetMonsterCollider()))
 			{
-				//bulletDamage = SetBulletDamage(player);
-
 				monster->SetBulletHitEffect(position);
 				monster->OnHitBullet(bulletDamage);
 				SetActive(false);
@@ -115,5 +114,5 @@ void BaseBullet::SetMonsterList(const std::list<Monster*>* list)
 void BaseBullet::IncreaseBulletDamage(float increaseDamage)
 {
 	bulletDamage += increaseDamage;
-	std::cout << "bulletDamage : " << bulletDamage << std::endl;
+	//std::cout << "Current Bullet Damage : " << bulletDamage << std::endl;
 }

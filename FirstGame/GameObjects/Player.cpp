@@ -233,5 +233,6 @@ void Player::UpgradeStat(const std::string& upgradeName, const std::string& stat
 
 float Player::GetDamage() const
 {
+	//std::cout << "Current Damage : " << damage << std::endl;
 	return damage;
 }

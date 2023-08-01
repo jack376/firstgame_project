@@ -6,6 +6,7 @@ class Player;
 class SpriteEffect;
 class BulletHitEffect;
 class DieEffect;
+class DamageTextEffect;
 class Monster;
 class BaseGun;
 

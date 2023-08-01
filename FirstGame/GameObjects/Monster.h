@@ -4,6 +4,7 @@
 #include "BulletHitEffect.h"
 #include "DieEffect.h"
 #include "EntityEffect.h"
+#include "DamageTextEffect.h"
 
 class Player;
 class Monster : public Character
@@ -43,6 +44,7 @@ protected:
 	ObjectPool<BulletHitEffect>* effectPool;
 	ObjectPool<DieEffect>* dieEffectPool;
 	ObjectPool<EntityEffect>* entityEffectPool;
+	ObjectPool<DamageTextEffect>* damageTextEffectPool;
 
 public:
 	Monster(const std::string& n = "") : Character(n) {}
@@ -70,4 +72,7 @@ public:
 
 	void SetDieEffectPool(ObjectPool<DieEffect>* pool);
 	void SetDieEffect(sf::Vector2f position, float scale);
+
+	void SetDamageTextEffectPool(ObjectPool<DamageTextEffect>* pool);
+	void SetDamageTextEffect(sf::Vector2f position, int damage);
 };

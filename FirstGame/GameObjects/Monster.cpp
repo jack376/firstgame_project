@@ -5,7 +5,6 @@
 #include "InputMgr.h"
 #include "Utils.h"
 #include "ResourceMgr.h"
-#include "Collision.h"
 #include "SceneMgr.h"
 #include "SceneGame.h"
 #include "MonsterTable.h"
@@ -153,15 +152,19 @@ void Monster::SetPlayer(Player* player)
 void Monster::OnHitBullet(int bulletDamage)
 {
 	currentHp -= bulletDamage;
+	SetDamageTextEffect(position, bulletDamage);
+
 	hitColorOverlayDuration = 0.1f;
 	body.setColor(sf::Color(192, 0, 64, 255));
 
 	if (currentHp <= 0)
 	{
-		float scale = body.getTexture()->getSize().x / static_cast<float>(100);
-		SetDieEffect(position, scale);
 		Scene* scene = SCENE_MGR.GetCurrentScene();
 		SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
+
+		float scale = body.getTexture()->getSize().x / static_cast<float>(100);
+		SetDieEffect(position, scale);
+
 		if (sceneGame != nullptr)
 		{
 			sceneGame->OnDieMonster(this);
@@ -183,10 +186,9 @@ void Monster::SetEntityEffect(sf::Vector2f position, std::function<void()> onEnt
 	entityEffect->SetOrigin(Origins::MC);
 	entityEffect->SetPosition(position);
 	entityEffect->sprite.setRotation(randomValue * 22.5f);
+	entityEffect->SetOnEntityEffectComplete(onEntityEffectComplete);
 
 	SCENE_MGR.GetCurrentScene()->AddGo(entityEffect);
-
-	entityEffect->SetOnEntityEffectComplete(onEntityEffectComplete);
 }
 
 void Monster::SetBulletHitEffectPool(ObjectPool<BulletHitEffect>* pool)
@@ -222,4 +224,25 @@ void Monster::SetDieEffect(sf::Vector2f position, float scale)
 	dieEffect->sprite.setRotation(randomValue * 10);
 
 	SCENE_MGR.GetCurrentScene()->AddGo(dieEffect);
+}
+
+void Monster::SetDamageTextEffectPool(ObjectPool<DamageTextEffect>* pool)
+{
+	damageTextEffectPool = pool;
+}
+
+void Monster::SetDamageTextEffect(sf::Vector2f position, int damage)
+{
+	DamageTextEffect* damageTextEffect = damageTextEffectPool->Get();
+	std::string damageString = std::to_string(damage);
+	damageTextEffect->SetActive(true);
+	damageTextEffect->SetOrigin(Origins::BC);
+	damageTextEffect->SetPosition(position.x, position.y);
+	damageTextEffect->SetString(damageString);
+	damageTextEffect->SetFillColor(sf::Color::White);
+	damageTextEffect->SetOutlineColor(sf::Color::Black);
+	damageTextEffect->SetOutlineThickness(5.0f);
+	damageTextEffect->SetCharacterSize(48);
+
+	SCENE_MGR.GetCurrentScene()->AddGo(damageTextEffect);
 }

@@ -45,25 +45,23 @@ void SceneGame::Init()
 	BaseUI* PauseButton = (BaseUI*)AddGo(new BaseUI("BackButton", uiType::Thumbnail));
 	PauseButton->sortLayer = 100;
 	PauseButton->SetPosition(defaultResolution.x * resolutionScale - pausedThumbSize - 50.0f, 50.0f);
-	PauseButton->SetColor(0, 0, 0, 192);
+	PauseButton->SetColor(8, 8, 8, 192);
 	PauseButton->SetThumbnailColor(255, 255, 255, 192);
 
 	PauseButton->OnEnter = [PauseButton]()
 	{
 		PauseButton->SetColor(255, 255, 255, 192);
-		PauseButton->SetThumbnailColor(0, 0, 0, 192);
-		std::cout << "Enter" << std::endl;
+		PauseButton->SetThumbnailColor(16, 16, 16, 192);
 	};
 	PauseButton->OnExit = [PauseButton]()
 	{
-		PauseButton->SetColor();
+		PauseButton->SetColor(8, 8, 8, 192);
 		PauseButton->SetThumbnailColor(255, 255, 255, 192);
-		std::cout << "Exit" << std::endl;
 	};
 	PauseButton->OnClick = [PauseButton, this]()
 	{
-		PauseButton->SetColor();
-		std::cout << "Click" << std::endl;
+		PauseButton->SetColor(8, 8, 8, 192);
+		PauseButton->SetThumbnailColor(255, 255, 255, 192);
 		Reset();
 		SCENE_MGR.ChangeScene(SceneId::Title);
 	};
@@ -93,7 +91,6 @@ void SceneGame::Init()
 	hpText->SetOrigin(Origins::TL);
 	hpText->SetPosition(uiPos + magicNumber * 3, uiPos + magicNumber);
 	hpText->SetCharacterSize(24);
-	hpText->SetString("20 / 20");
 
 	TextGo* lvText = (TextGo*)AddGo(new TextGo("fonts/Chewy-Regular.ttf", "LvText"));
 	lvText->sortLayer = 110;
@@ -102,7 +99,14 @@ void SceneGame::Init()
 	lvText->SetOrigin(Origins::TL);
 	lvText->SetPosition(uiPos + magicNumber * 3, uiPos * 2 + magicNumber);
 	lvText->SetCharacterSize(24);
-	lvText->SetString("Lv 1");
+
+	TextGo* damageText = (TextGo*)AddGo(new TextGo("fonts/Chewy-Regular.ttf", "DamageText"));
+	damageText->sortLayer = 10;
+	damageText->text.setOutlineColor(sf::Color(0, 0, 0, 255));
+	damageText->text.setOutlineThickness(3.0f);
+	damageText->SetOrigin(Origins::MC);
+	damageText->SetCharacterSize(24);
+	damageText->SetActive(false);
 
 	SpriteGo* groundOutline = (SpriteGo*)AddGo(new SpriteGo("graphics/game/ground_outline.png", "GroundOutline"));
 	groundOutline->sortLayer = 2;
@@ -118,7 +122,9 @@ void SceneGame::Init()
 	CreateShopUI(windowSize.x / 64 + uiSizeX * 1, windowSize.y / 4, "Plasma Rifle", resolutionScale);
 	CreateShopUI(windowSize.x / 64 + uiSizeX * 2, windowSize.y / 4, "Laser Gun", resolutionScale);
 	CreateShopUI(windowSize.x / 64 + uiSizeX * 3, windowSize.y / 4, "Gatling Laser", resolutionScale);
-	
+
+	CreatePlayerInfoUI(windowSize.x - uiSizeX * 1 - uiPos, windowSize.y / 2, resolutionScale);
+
 	for (int i = 0; i < 8; i++)
 	{
 		CreateUpgradeUI(windowSize.x / 10 + (uiSizeX + uiBlank) * 0, windowSize.y * 0.375f, upgradeNamesColumn1[i], resolutionScale);
@@ -126,8 +132,6 @@ void SceneGame::Init()
 		CreateUpgradeUI(windowSize.x / 10 + (uiSizeX + uiBlank) * 2, windowSize.y * 0.375f, upgradeNamesColumn3[i], resolutionScale);
 		CreateUpgradeUI(windowSize.x / 10 + (uiSizeX + uiBlank) * 3, windowSize.y * 0.375f, upgradeNamesColumn4[i], resolutionScale);
 	}
-
-	CreatePlayerInfoUI(windowSize.x - uiSizeX * 1 - uiPos, windowSize.y / 2, resolutionScale);
 
 	sf::Vector2f tileWorldSize   = { 64.0f, 64.0f };
 	sf::Vector2f tileTextureSize = { 64.0f, 64.0f };
@@ -152,6 +156,7 @@ void SceneGame::Init()
 	CreateDieEffect(256);
 	CreateBulletHitEffect(256);
 	CreateEntityEffect(256);
+	CreateDamageTextEffect(256);
 
 	for (auto go : gameObjects)
 	{
@@ -174,6 +179,10 @@ void SceneGame::Reset()
 	ClearObjectPool(dieEffectPool);
 	ClearObjectPool(bulletHitEffectPool);
 	ClearObjectPool(entityEffectPool);
+	ClearObjectPool(damageTextEffectPool);
+
+	SetActiveAllUpgradeUI(false);
+	SetPaused(false);
 
 	for (auto go : gameObjects)
 	{
@@ -184,10 +193,12 @@ void SceneGame::Reset()
 void SceneGame::Enter()
 {
 	Scene::Enter();
+
 	ClearObjectPool(monsterPool);
 	ClearObjectPool(dieEffectPool);
 	ClearObjectPool(bulletHitEffectPool);
 	ClearObjectPool(entityEffectPool);
+	ClearObjectPool(damageTextEffectPool);
 
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
 	sf::Vector2f centerPos = windowSize * 0.5f;
@@ -209,6 +220,9 @@ void SceneGame::Enter()
 	SetCountUI("MaterialCount", money);
 
 	isPlaying = true;
+
+	TextGo* waveCountText = (TextGo*)FindGo("WaveCount");
+	waveCountText->SetString("Wave " + std::to_string(waveCount));
 }
 
 void SceneGame::Exit()
@@ -235,10 +249,11 @@ void SceneGame::Update(float dt)
 		return;
 	}
 
-	currentPlayerPosition = player->GetPosition();
-
 	waveTimer -= dt;
 	lastSpawnTime += dt;
+	flowTime += dt;
+
+	currentPlayerPosition = player->GetPosition();
 
 	if (waveTimer <= 0.0f)
 	{
@@ -261,10 +276,13 @@ void SceneGame::Update(float dt)
 	if (levelUpPoint >= 1 && !isUpgrade)
 	{
 		isUpgrade = true;
+
 		SetActiveUpgradeUI(upgradeNamesColumn1[Utils::RandomRangeWithWeights({ 60, 25, 10, 5, 60, 25, 10, 5 })], true);
 		SetActiveUpgradeUI(upgradeNamesColumn2[Utils::RandomRangeWithWeights({ 60, 25, 10, 5, 60, 25, 10, 5 })], true);
 		SetActiveUpgradeUI(upgradeNamesColumn3[Utils::RandomRangeWithWeights({ 60, 25, 10, 5, 60, 25, 10, 5 })], true);
 		SetActiveUpgradeUI(upgradeNamesColumn4[Utils::RandomRangeWithWeights({ 60, 25, 10, 5, 60, 25, 10, 5 })], true);
+
+		SetPaused(!IsPaused());
 	}
 
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num3)) // Test Code
@@ -402,6 +420,7 @@ void SceneGame::CreateMonsters(int count)
 		monster->SetBulletHitEffectPool(&bulletHitEffectPool);
 		monster->SetDieEffectPool(&dieEffectPool);
 		monster->SetEntityEffectPool(&entityEffectPool);
+		monster->SetDamageTextEffectPool(&damageTextEffectPool);
 	};
 	monsterPool.Init(count);
 }
@@ -417,7 +436,7 @@ void SceneGame::SpawnMonsters(int count, sf::Vector2f playerCenter, sf::Vector2f
 
 		do {
 			spawnPosition = mapCenter + Utils::RandomInCircle(radius);
-		} while (Utils::Distance(playerCenter, spawnPosition) < 50.0f && Utils::Distance(mapCenter, spawnPosition) < 950.0f);
+		} while (Utils::Distance(playerCenter, spawnPosition) < 200.0f && Utils::Distance(mapCenter, spawnPosition) < 950.0f);
 
 		monster->SetPosition(spawnPosition);
 		monster->SetEntityEffect(spawnPosition, [this, monster]() 
@@ -436,26 +455,24 @@ void SceneGame::OnDieMonster(Monster* monster)
 	RemoveGo(monster);
 	monsterPool.Return(monster);
 	player->OnKilled();
+
 	monsterKillCount++;
 	money++;
 
 	SetCountUI("MaterialCount", money);
-	//std::cout << monsterPool.GetUseList().size() << std::endl; // 몬스터가 일정 수 이하면 스폰
+
 	monsterCount = monsterPool.GetUseList().size();
 
-	//sf::Vector2f pos = monster->GetPosition();
-
-	//TextGo* uiMonsterCount = (TextGo*)FindGo("uiMonsterCount");
-	//stringstream ss;
-	//ss << "Zombie : " << zombiecount;
-	//uiZombieCount->SetString(ss.str());
-
-	//AddScore(1);
 	//SpawnItem(pos);
 }
 
 Monster* SceneGame::GetNearMonsterSearch()
 {
+	if (player == nullptr)
+	{
+		return 0;
+	}
+
 	float nearMonsterSearchDistance = 1200.0f;
 
 	const std::list<Monster*>* monsterList = GetMonsterList();
@@ -522,6 +539,21 @@ void SceneGame::CreateDieEffect(int count)
 	dieEffectPool.Init(count);
 }
 
+void SceneGame::CreateDamageTextEffect(int count)
+{
+	damageTextEffectPool.OnCreate = [this](DamageTextEffect* damageTextEffect)
+	{
+		damageTextEffect->SetName("DamageTextEffect");
+		damageTextEffect->SetDuration(0.3f);
+		damageTextEffect->fontId = "fonts/RoboNoto-Medium.ttf"; // fonts/Chewy-Regular.ttf
+		damageTextEffect->sortLayer = 9;
+		damageTextEffect->sortOrder = 1;
+		damageTextEffect->SetActive(false);
+		damageTextEffect->SetPool(&damageTextEffectPool);
+	};
+	damageTextEffectPool.Init(count);
+}
+
 void SceneGame::CreateUpgradeUI(float posiX, float posiY, std::string name, float scale)
 {
 	const UpgradeInfo& upgradeInfo = DATATABLE_MGR.Get<UpgradeTable>(DataTable::Ids::Upgrade)->Get(name);
@@ -577,10 +609,15 @@ void SceneGame::CreateUpgradeUI(float posiX, float posiY, std::string name, floa
 	};
 	buttonBox->OnClick = [buttonBox, this, name, category, value]()
 	{
+		SetPaused(!IsPaused());
+
 		levelUpPoint = 0;
+		
 		isUpgrade = false;
+
 		SetActiveAllUpgradeUI(false);
 		player->UpgradeStat(name, category, value);
+
 		buttonBox->SetColor(255, 255, 255, 32);
 	};
 
@@ -620,9 +657,10 @@ void SceneGame::CreateUpgradeUI(float posiX, float posiY, std::string name, floa
 	TextGo* upgradeHighlight = (TextGo*)AddGo(new TextGo("fonts/Kanit-Medium.ttf", highlight + name));
 	upgradeHighlight->sortLayer = 106;
 	upgradeHighlight->SetOrigin(Origins::TL);
-	upgradeHighlight->SetCharacterSize(20);
+	upgradeHighlight->SetCharacterSize(21);
 	upgradeHighlight->SetPosition(posiX + blank, posiY + thumbSize.y + blank * 2);
 	upgradeHighlight->SetFillColor(sf::Color(0, 192, 64, 255));
+	upgradeHighlight->text.setOutlineThickness(2.0f);
 	upgradeHighlight->SetScale(0.9f * scale, 1.0f * scale);
 	upgradeHighlight->SetString(highlight);
 	upgradeHighlight->SetActive(false);
@@ -630,34 +668,39 @@ void SceneGame::CreateUpgradeUI(float posiX, float posiY, std::string name, floa
 	TextGo* upgradeTitle = (TextGo*)AddGo(new TextGo("fonts/Kanit-Medium.ttf", title + name));
 	upgradeTitle->sortLayer = 105;
 	upgradeTitle->SetOrigin(Origins::TL);
-	upgradeTitle->SetCharacterSize(20);
+	upgradeTitle->SetCharacterSize(21);
 	upgradeTitle->SetPosition(posiX + blank, posiY + thumbSize.y + blank * 2);
 	upgradeTitle->SetFillColor(sf::Color(255, 255, 255, 255));
 	upgradeTitle->SetScale(0.9f * scale, 1.0f * scale);
 	upgradeTitle->SetString(title);
 	upgradeTitle->SetActive(false);
 
-	switch (tier) // Tier Color
+	switch (tier) // Tier Color, Highlight Color Font Sharpness
 	{
 	case 1:
 		box->SetStrokeColor(0, 0, 0, 0);
 		box->SetColor(0, 0, 0, 255);
+		upgradeHighlight->text.setOutlineColor(sf::Color(0, 0, 0, 255));
 		break;
 	case 2:
 		box->SetStrokeColor(75, 175, 225, 255);
 		box->SetColor(15, 30, 45, 255);
+		upgradeHighlight->text.setOutlineColor(sf::Color(15, 30, 45, 255));
 		break;
 	case 3:
 		box->SetStrokeColor(150, 75, 225, 255);
 		box->SetColor(15, 15, 30, 255);
+		upgradeHighlight->text.setOutlineColor(sf::Color(15, 15, 30, 255));
 		break;
 	case 4:
 		box->SetStrokeColor(225, 50, 50, 255);
 		box->SetColor(30, 15, 15, 255);
+		upgradeHighlight->text.setOutlineColor(sf::Color(30, 15, 15, 255));
 		break;
 	default:
 		box->SetStrokeColor(0, 0, 0, 0);
 		box->SetColor(0, 0, 0, 255);
+		upgradeHighlight->text.setOutlineColor(sf::Color(0, 0, 0, 255));
 		break;
 	}
 }
@@ -978,22 +1021,6 @@ void SceneGame::CreateText(const std::string& name, const std::string& str, floa
 		text->SetPosition(posX, posY + 30.0f);
 	}
 }
-
-//void SceneGame::CreateCount(const std::string& name, int count, float posX, float posY, int fontSize)
-//{
-//	std::string countString = std::to_string(count);
-//
-//	TextGo* text = (TextGo*)AddGo(new TextGo("fonts/Chewy-Regular.ttf", name));
-//	text->sortLayer = 110;
-//	text->SetOrigin(Origins::TL);
-//	text->SetPosition(posX, posY);
-//	text->SetCharacterSize(fontSize);
-//	text->SetFillColor(sf::Color(255, 255, 255, 255));
-//	text->SetString(countString);
-//	text->text.setOutlineColor(sf::Color(0, 0, 0, 255));
-//	text->text.setOutlineThickness(5.0f);
-//	text->SetActive(false);
-//}
 
 void SceneGame::SetCountUI(const std::string& name, int count)
 {
