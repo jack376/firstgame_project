@@ -10,6 +10,12 @@ int Utils::RandomRange(int min, int maxExclude)
 	return dist(gen);
 }
 
+int Utils::RandomRangeWithWeights(const std::vector<int>& weights)
+{
+	std::discrete_distribution<> dist(weights.begin(), weights.end());
+	return dist(gen);
+}
+
 float Utils::RandomRange(float min, float max)
 {
 	std::uniform_real_distribution<> dist(min, max);

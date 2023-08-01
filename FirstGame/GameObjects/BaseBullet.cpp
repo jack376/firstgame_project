@@ -112,17 +112,8 @@ void BaseBullet::SetMonsterList(const std::list<Monster*>* list)
 	monsters = list;
 }
 
-void BaseBullet::SetBulletDamage(Player* player)
+void BaseBullet::IncreaseBulletDamage(float increaseDamage)
 {
-	myPlayer = player;
-
-	if (myPlayer != nullptr)
-	{
-		bulletDamage += myPlayer->GetDamage();
-		std::cout << "bulletDamage : " << bulletDamage << std::endl;
-	}
-	else
-	{
-		std::cout << "player nullptr!!!" << std::endl;
-	}
+	bulletDamage += increaseDamage;
+	std::cout << "bulletDamage : " << bulletDamage << std::endl;
 }

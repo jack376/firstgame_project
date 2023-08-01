@@ -33,7 +33,6 @@ void BaseGun::Reset()
     SpriteGo::Reset();
 
     fireRecoilEffect.setTexture(*RESOURCE_MGR.GetTexture("graphics/game/bullet_muzzle_fire.png"));
-
     SetOrigin(sprite.getTexture()->getSize().x / 2 + gunOrigin, sprite.getTexture()->getSize().y / 2);
     fireRecoilEffect.setOrigin(0.0f, sprite.getTexture()->getSize().y / 2);
 
@@ -94,7 +93,8 @@ void BaseGun::Update(float dt)
                 bullet = poolBaseBullets.Get();
                 bullet->Init();
                 bullet->Reset();
-                bullet->Fire(gunMuzzlePosition, look, 1500.f);
+                bullet->Fire(gunMuzzlePosition, look, gunAttackSpeed);
+                bullet->IncreaseBulletDamage(player->GetDamage());
                 bullet->sortLayer = 3;
 
                 Scene* scene = SCENE_MGR.GetCurrentScene();
@@ -138,7 +138,6 @@ void BaseGun::FireRecoilAnimation(const sf::Vector2f direction, float playSpeed,
     sprite.setPosition(position.x -= dir.x, position.y -= dir.y);
     fireRecoilEffect.setPosition(gunMuzzlePosition.x -= dir.x, gunMuzzlePosition.y -= dir.y);
     fireRecoilEffect.setScale(fireRecoil * 0.1f, fireRecoil * 0.1f);
-
 }
 
 void BaseGun::UpdateFlipAndRotation(bool flip, float angle)
@@ -153,11 +152,6 @@ void BaseGun::UpdateFlipAndRotation(bool flip, float angle)
         fireRecoilEffect.setPosition(position);
         fireRecoilEffect.setRotation(angle);
     }
-}
-
-void BaseGun::SetFire(bool test)
-{
-    isFire = test;
 }
 
 sf::Vector2f BaseGun::GetMuzzlePosition()

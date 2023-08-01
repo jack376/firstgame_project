@@ -17,7 +17,6 @@ protected:
 	sf::Vector2f look;
 	sf::Vector2f direction;
 
-	bool isFire = false;
 	sf::Sprite fireRecoilEffect;
 	bool isFireRecoilEffect = false;
 	float fireRecoilEffectDuration = 0.0f;
@@ -26,9 +25,12 @@ protected:
 	float bulletTotalCooldown = bulletCurrentCooldown;
 	float bulletCurrentCooldown = 0.1f;
 
+	float gunAttackSpeed = 2500.0f;
+
 	float gunOrigin = -60.0f;
 	float gunLength = 90.0f;
 	sf::Vector2f gunMuzzlePosition;
+
 
 
 public:
@@ -45,8 +47,6 @@ public:
 
 	void FireRecoilAnimation(const sf::Vector2f direction, float playSpeed, float flowTime);
 	void UpdateFlipAndRotation(bool flip, float angle);
-
-	void SetFire(bool test);
 
 	sf::Vector2f GetMuzzlePosition();
 };

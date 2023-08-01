@@ -44,5 +44,5 @@ public:
 	void Fire(const sf::Vector2f& pos, const sf::Vector2f& dir, float speed);
 	void SetMonsterList(const std::list<Monster*>* list);
 
-	void SetBulletDamage(Player* player);
+	void IncreaseBulletDamage(float increaseDamage);
 };

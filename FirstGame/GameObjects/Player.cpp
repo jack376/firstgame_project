@@ -6,7 +6,8 @@
 #include "ResourceMgr.h"
 #include "SceneMgr.h"
 #include "SceneGame.h"
-#include "BaseBullet.h"
+#include "DataTableMgr.h"
+#include "UpgradeTable.h"
 
 void Player::Init()
 {
@@ -206,7 +207,7 @@ void Player::OnDie()
 	sceneGame->OnDiePlayer();
 }
 
-void Player::UpgradeStat(const std::string& statName, float increaseAmount)
+void Player::UpgradeStat(const std::string& upgradeName, const std::string& statName, float increaseAmount)
 {
 	Scene* scene = SCENE_MGR.GetCurrentScene();
 	SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
@@ -215,9 +216,6 @@ void Player::UpgradeStat(const std::string& statName, float increaseAmount)
 	{
 		*stats[statName] += increaseAmount;
 		sceneGame->SetHpUI(currentHp, maxHp);
-
-		//BaseBullet* bullet = 
-		//bullet->SetBulletDamage(this);
 	}
 	else
 	{

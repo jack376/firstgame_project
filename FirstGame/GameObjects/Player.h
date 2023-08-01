@@ -1,7 +1,6 @@
 #pragma once
 #include "Character.h"
 
-class BaseBullet;
 class Character;
 class Player : public Character
 {
@@ -55,6 +54,6 @@ public:
 	void OnKilled();
 	void OnDie();
 
-	void UpgradeStat(const std::string& statName, float increaseAmount);
+	void UpgradeStat(const std::string& upgradeName, const std::string& statName, float increaseAmount);
 	float GetDamage() const;
 };

@@ -28,13 +28,11 @@ void SceneGame::Init()
 {
 	Release();
 
-	sf::Vector2f defaultResolution(1920.0f, 1080.0f);
+	defaultResolution = sf::Vector2f(1920.0f, 1080.0f);
+	windowSize = sf::Vector2f(FRAMEWORK.GetWindowSize());
+	centerPos = sf::Vector2f(windowSize * 0.5f);
+	resolutionScale = windowSize.x / 1920.0f;
 
-	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
-	sf::Vector2f centerPos  = windowSize * 0.5f;
-
-	float resolutionScale = windowSize.x / 1920.0f;
-	float shopUiPositionX = 375.0f * resolutionScale;
 	float pausedThumbSize = 64.0f;
 
 	player = (Player*)AddGo(new Player("Player"));
@@ -113,15 +111,23 @@ void SceneGame::Init()
 	ground->sortLayer = 0;
 	ground->SetOrigin(Origins::MC);
 
-	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 1, windowSize.y / 4, "Plasma Rifle", resolutionScale);
-	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 2, windowSize.y / 4, "Laser Gun", resolutionScale);
-	CreateShopUI(windowSize.x / 64 + shopUiPositionX * 3, windowSize.y / 4, "Gatling Laser", resolutionScale);
-	
-	CreateUpgradeUI(windowSize.x / 64 + shopUiPositionX * 1, windowSize.y / 3, "Heart I", resolutionScale);
-	CreateUpgradeUI(windowSize.x / 64 + shopUiPositionX * 2, windowSize.y / 3, "Legs I", resolutionScale);
-	CreateUpgradeUI(windowSize.x / 64 + shopUiPositionX * 3, windowSize.y / 3, "Gun I", resolutionScale);
+	float uiBlank = 24.0f * resolutionScale;
+	float uiSizeX = 360.0f * resolutionScale;
 
-	CreatePlayerInfoUI(windowSize.x - shopUiPositionX * 1 - uiPos, windowSize.y / 2, resolutionScale);
+	CreateShopUI(windowSize.x / 64 + uiSizeX * 1, windowSize.y / 4, "Plasma Rifle", resolutionScale);
+	CreateShopUI(windowSize.x / 64 + uiSizeX * 2, windowSize.y / 4, "Laser Gun", resolutionScale);
+	CreateShopUI(windowSize.x / 64 + uiSizeX * 3, windowSize.y / 4, "Gatling Laser", resolutionScale);
+	
+	int col = 0;
+	for (int i = 0; i < upgradeNames.size(); i++) 
+	{
+		col = i % 4;
+		float xPos = windowSize.x / 10 + (uiSizeX + uiBlank) * col;
+		CreateUpgradeUI(xPos, windowSize.y * 0.375f, upgradeNames[i], resolutionScale);
+	}
+
+
+	CreatePlayerInfoUI(windowSize.x - uiSizeX * 1 - uiPos, windowSize.y / 2, resolutionScale);
 
 	sf::Vector2f tileWorldSize   = { 64.0f, 64.0f };
 	sf::Vector2f tileTextureSize = { 64.0f, 64.0f };
@@ -195,7 +201,7 @@ void SceneGame::Enter()
 	player->SetPosition(0.0f, 0.0f);
 
 	money = 0;
-	playerLevel = 1;
+	currentPlayerLevel = 1;
 	waveCount = 1;
 	waveTimer = 30.0f;
 	lastSpawnTime = 5.0f;
@@ -252,13 +258,34 @@ void SceneGame::Update(float dt)
 		lastSpawnTime = 0.0f;
 	}
 	
-	//if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num2)) // Test Code
 	if (levelUpPoint >= 1 && !isUpgrade)
 	{
-		SetActiveUpgradeUI("Heart I", true);
-		SetActiveUpgradeUI("Legs I", true);
-		SetActiveUpgradeUI("Gun I", true);
+		isUpgrade = true;
+
+		int col = 0;
+		std::vector<int> usedIndices;
+		for (int i = 1; i <= 4; i++)
+		{
+			int randomUpgrade;
+			do {
+				randomUpgrade = Utils::RandomRange(0, 32);
+			} while (std::find(usedIndices.begin(), usedIndices.end(), randomUpgrade) != usedIndices.end());
+			usedIndices.push_back(randomUpgrade);
+
+			SetActiveUpgradeUI(upgradeNames[randomUpgrade], true);
+		}
 	}
+
+	/*
+	if (levelUpPoint >= 1 && !isUpgrade)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			int randomUpgrade = Utils::RandomRange(0, 32);
+			SetActiveUpgradeUI(upgradeNames[randomUpgrade], true);
+		}
+	}
+	*/
 
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num3)) // Test Code
 	{
@@ -563,34 +590,32 @@ void SceneGame::CreateUpgradeUI(float posiX, float posiY, std::string name, floa
 	buttonBox->OnEnter = [buttonBox]()
 	{
 		buttonBox->SetColor(255, 255, 255, 64);
-		std::cout << "Enter" << std::endl;
 	};
 	buttonBox->OnExit = [buttonBox]()
 	{
 		buttonBox->SetColor(255, 255, 255, 32);
-		std::cout << "Exit" << std::endl;
 	};
-	buttonBox->OnClick = [this, name]()
+	buttonBox->OnClick = [buttonBox, this, name, category, value]()
 	{
-		std::cout << "Click" << std::endl;
 		levelUpPoint = 0;
+		isUpgrade = false;
 
-		if (name == "Heart I") 
-		{
-			player->UpgradeStat("maxHp", 10.0f);
-		}
-		else if (name == "Legs I") 
-		{
-			player->UpgradeStat("moveSpeed", 50.0f);
-		}
-		else if (name == "Gun I") 
-		{
-			player->UpgradeStat("damage", 10.0f);
-		}
+		player->UpgradeStat(name, category, value);
+		SetActiveUpgradeUI(name, false);
 
-		SetActiveUpgradeUI("Heart I", false);
-		SetActiveUpgradeUI("Legs I", false);
-		SetActiveUpgradeUI("Gun I", false);
+		buttonBox->SetColor(255, 255, 255, 32);
+
+
+		/*
+		std::vector<int> weights = { 50, 30, 15, 5 };
+		int randomTier = Utils::RandomRangeWithWeights(weights);
+		int randomUpgrade = Utils::RandomRange(1, 9);
+		for (int i = 0; i < 3; i++)
+		{
+			SetActiveUpgradeUI("Back IV", false);
+		}
+		*/
+
 	};
 
 	std::string amountString = std::to_string(amount);
@@ -602,10 +627,7 @@ void SceneGame::CreateUpgradeUI(float posiX, float posiY, std::string name, floa
 	moneyAmount->SetPosition(posiX + fullBoxSize.x * 0.5f + 3.0f, posiY + fullBoxSize.y - buttonBoxSize.y - blank + 4.0f);
 	moneyAmount->SetFillColor(sf::Color(255, 255, 255, 255));
 	moneyAmount->SetScale(scale, scale);
-	//moneyAmount->SetString(amountString);
-	moneyAmount->SetString("SELECT");
-	//moneyAmount->text.setOutlineColor(sf::Color(16, 16, 16, 255));
-	//moneyAmount->text.setOutlineThickness(5.0f * scale);
+	moneyAmount->SetString("SELECT");	//moneyAmount->SetString(amountString);
 	moneyAmount->text.setLetterSpacing(1.15f);
 	moneyAmount->SetActive(false);
 
@@ -626,7 +648,7 @@ void SceneGame::CreateUpgradeUI(float posiX, float posiY, std::string name, floa
 	upgradeCategory->SetPosition(posiX + thumbSize.x + blank * 2, posiY + 60.0f);
 	upgradeCategory->SetFillColor(sf::Color(255, 255, 128, 255));
 	upgradeCategory->SetScale(0.9f * scale, 1.0f * scale);
-	upgradeCategory->SetString(category);
+	upgradeCategory->SetString("Upgrade");
 	upgradeCategory->SetActive(false);
 
 	TextGo* upgradeHighlight = (TextGo*)AddGo(new TextGo("fonts/Kanit-Medium.ttf", highlight + name));
@@ -1022,7 +1044,7 @@ void SceneGame::SetExpUI(float currentExp)
 	expBar->sprite.setScale(1.0f * currentExp, 1.0f);
 	expBar->sprite.setColor(sf::Color(0, 192, 64, 255));
 
-	std::string levelString = std::to_string(playerLevel);
+	std::string levelString = std::to_string(currentPlayerLevel);
 
 	TextGo* expCurrentText = (TextGo*)FindGo("LvText");
 	expCurrentText->SetString("Lv " + levelString);
@@ -1030,12 +1052,12 @@ void SceneGame::SetExpUI(float currentExp)
 
 void SceneGame::SetLevelUpUI(int level)
 {
-	playerLevel = level;
+	currentPlayerLevel = level;
 
-	if (playerLevel >= 2)
+	if (currentPlayerLevel == nextPlayerLevel)
 	{
 		levelUpPoint++;
-		playerLevel--;
+		nextPlayerLevel++;
 	}
 }
 

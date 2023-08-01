@@ -20,7 +20,9 @@ protected:
 	int monsterKillCount = 0;
 
 	int money = 0;
-	int playerLevel = 1;
+	int currentPlayerLevel = 1;
+	int nextPlayerLevel = 2;
+
 	int levelUpPoint = 0;
 
 	int waveCount = 1;
@@ -51,6 +53,20 @@ protected:
 	ObjectPool<BulletHitEffect> bulletHitEffectPool;
 	ObjectPool<DieEffect> dieEffectPool;
 	ObjectPool<EntityEffect> entityEffectPool;
+
+	sf::Vector2f defaultResolution;
+	sf::Vector2f windowSize;
+	sf::Vector2f centerPos;
+	float resolutionScale = 0.0f;
+
+
+	std::vector<std::string> upgradeNames =
+	{
+		"Chest I", "Reflexes I", "Fingers I", "Back I", "Lungs I", "Gun I", "Heart I", "Legs I",
+		"Chest II", "Reflexes II", "Fingers II", "Back II", "Lungs II", "Gun II", "Heart II", "Legs II",
+		"Chest III", "Reflexes III", "Fingers III", "Back III", "Lungs III", "Gun III", "Heart III", "Legs III",
+		"Chest IV", "Reflexes IV", "Fingers IV", "Back IV", "Lungs IV", "Gun IV", "Heart IV", "Legs IV",
+	};
 
 public:
 	SceneGame();
