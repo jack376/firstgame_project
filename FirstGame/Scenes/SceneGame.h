@@ -59,14 +59,10 @@ protected:
 	sf::Vector2f centerPos;
 	float resolutionScale = 0.0f;
 
-
-	std::vector<std::string> upgradeNames =
-	{
-		"Chest I", "Reflexes I", "Fingers I", "Back I", "Lungs I", "Gun I", "Heart I", "Legs I",
-		"Chest II", "Reflexes II", "Fingers II", "Back II", "Lungs II", "Gun II", "Heart II", "Legs II",
-		"Chest III", "Reflexes III", "Fingers III", "Back III", "Lungs III", "Gun III", "Heart III", "Legs III",
-		"Chest IV", "Reflexes IV", "Fingers IV", "Back IV", "Lungs IV", "Gun IV", "Heart IV", "Legs IV",
-	};
+	std::vector<std::string> upgradeNamesColumn1 = { "Chest I", "Chest II", "Chest III", "Chest IV", "Lungs I", "Lungs II", "Lungs III", "Lungs IV" };
+	std::vector<std::string> upgradeNamesColumn2 = { "Reflexes I", "Reflexes II", "Reflexes III", "Reflexes IV", "Gun I", "Gun II", "Gun III", "Gun IV" };
+	std::vector<std::string> upgradeNamesColumn3 = { "Fingers I", "Fingers II", "Fingers III", "Fingers IV", "Heart I", "Heart II", "Heart III", "Heart IV" };
+	std::vector<std::string> upgradeNamesColumn4 = { "Back I", "Back II", "Back III", "Back IV", "Legs I", "Legs II", "Legs III", "Legs IV" };
 
 public:
 	SceneGame();
@@ -104,6 +100,7 @@ public:
 
 	void CreateUpgradeUI(float posiX, float posiY, std::string name, float scale = 1.0f);
 	void SetActiveUpgradeUI(std::string name, bool active);
+	void SetActiveAllUpgradeUI(bool active);
 
 	void CreateShopUI(float posiX, float posiY, std::string name, float scale = 1.0f);
 	void SetActiveShopUI(std::string name, bool active);

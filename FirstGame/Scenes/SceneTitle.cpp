@@ -28,7 +28,6 @@ void SceneTitle::Init()
 	(
 		"ExitButton", "EXIT", buttonPos, windowSize.y - buttonPos - buttonGap * 1.0f, [this]()
 		{
-			std::cout << "EXIT Click" << std::endl;
 			FRAMEWORK.GetWindow().close();
 		}
 	);
@@ -37,7 +36,6 @@ void SceneTitle::Init()
 	(
 		"OptionButton", "OPTION", buttonPos, windowSize.y - buttonPos - buttonGap * 2.0f, [this]()
 		{
-			std::cout << "OPTION Click" << std::endl;
 		}
 	);
 	
@@ -45,7 +43,6 @@ void SceneTitle::Init()
 	(
 		"StartButton", "START", buttonPos, windowSize.y - buttonPos - buttonGap * 3.0f, [this]()
 		{
-			std::cout << "START Click" << std::endl;
 			SCENE_MGR.ChangeScene(SceneId::Game);
 		}
 	);

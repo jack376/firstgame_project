@@ -38,6 +38,8 @@ protected:
 	sf::FloatRect playerCollider;
 	sf::RectangleShape playerColliderDraw;
 
+	sf::Sprite shadow;
+
 public:
 	Player(const std::string& n = "") : Character(n) {}
 	virtual ~Player() override { Release(); }

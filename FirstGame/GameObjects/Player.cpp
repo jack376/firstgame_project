@@ -25,6 +25,8 @@ void Player::Reset()
 	legR.setOrigin(legR.getTexture()->getSize().x / 2, legR.getTexture()->getSize().y / 2);
 	legR.setPosition(0.0f, 0.0f);
 
+	shadow.setTexture(*RESOURCE_MGR.GetTexture("graphics/game/potato_shadow_default.png"));
+
 	SetFlipX(false);
 
 	playerCollider.width  = body.getGlobalBounds().width * 0.25f;
@@ -35,6 +37,9 @@ void Player::Reset()
 
 	body.setOrigin(playerBodyCenter);
 	body.setPosition(0.0f, 0.0f);
+
+	shadow.setOrigin(playerBodyCenter);
+	shadow.setPosition(0.0f, 0.0f);
 
 	level = 1;
 
@@ -97,6 +102,7 @@ void Player::Update(float dt)
 		}
 		position += direction * moveSpeed * dt;
 		body.setPosition(position);
+		shadow.setPosition(position);
 
 		LegsAnimation(legsWalkWidth, flowTime);
 	}
@@ -106,6 +112,7 @@ void Player::Update(float dt)
 		animationSpeed = 1.0f;
 
 		body.setPosition(position);
+		shadow.setPosition(position);
 
 		legR.setPosition(position.x + legsIdleWidth, position.y);
 		legR.setScale(-1.0f, 1.0f);
@@ -142,6 +149,7 @@ void Player::Update(float dt)
 
 void Player::Draw(sf::RenderWindow& window)
 {
+	window.draw(shadow);
 	window.draw(legR);
 	window.draw(legL);
 	window.draw(body);

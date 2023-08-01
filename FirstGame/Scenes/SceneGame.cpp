@@ -60,8 +60,9 @@ void SceneGame::Init()
 		PauseButton->SetThumbnailColor(255, 255, 255, 192);
 		std::cout << "Exit" << std::endl;
 	};
-	PauseButton->OnClick = [this]()
+	PauseButton->OnClick = [PauseButton, this]()
 	{
+		PauseButton->SetColor();
 		std::cout << "Click" << std::endl;
 		Reset();
 		SCENE_MGR.ChangeScene(SceneId::Title);
@@ -118,14 +119,13 @@ void SceneGame::Init()
 	CreateShopUI(windowSize.x / 64 + uiSizeX * 2, windowSize.y / 4, "Laser Gun", resolutionScale);
 	CreateShopUI(windowSize.x / 64 + uiSizeX * 3, windowSize.y / 4, "Gatling Laser", resolutionScale);
 	
-	int col = 0;
-	for (int i = 0; i < upgradeNames.size(); i++) 
+	for (int i = 0; i < 8; i++)
 	{
-		col = i % 4;
-		float xPos = windowSize.x / 10 + (uiSizeX + uiBlank) * col;
-		CreateUpgradeUI(xPos, windowSize.y * 0.375f, upgradeNames[i], resolutionScale);
+		CreateUpgradeUI(windowSize.x / 10 + (uiSizeX + uiBlank) * 0, windowSize.y * 0.375f, upgradeNamesColumn1[i], resolutionScale);
+		CreateUpgradeUI(windowSize.x / 10 + (uiSizeX + uiBlank) * 1, windowSize.y * 0.375f, upgradeNamesColumn2[i], resolutionScale);
+		CreateUpgradeUI(windowSize.x / 10 + (uiSizeX + uiBlank) * 2, windowSize.y * 0.375f, upgradeNamesColumn3[i], resolutionScale);
+		CreateUpgradeUI(windowSize.x / 10 + (uiSizeX + uiBlank) * 3, windowSize.y * 0.375f, upgradeNamesColumn4[i], resolutionScale);
 	}
-
 
 	CreatePlayerInfoUI(windowSize.x - uiSizeX * 1 - uiPos, windowSize.y / 2, resolutionScale);
 
@@ -261,31 +261,11 @@ void SceneGame::Update(float dt)
 	if (levelUpPoint >= 1 && !isUpgrade)
 	{
 		isUpgrade = true;
-
-		int col = 0;
-		std::vector<int> usedIndices;
-		for (int i = 1; i <= 4; i++)
-		{
-			int randomUpgrade;
-			do {
-				randomUpgrade = Utils::RandomRange(0, 32);
-			} while (std::find(usedIndices.begin(), usedIndices.end(), randomUpgrade) != usedIndices.end());
-			usedIndices.push_back(randomUpgrade);
-
-			SetActiveUpgradeUI(upgradeNames[randomUpgrade], true);
-		}
+		SetActiveUpgradeUI(upgradeNamesColumn1[Utils::RandomRangeWithWeights({ 60, 25, 10, 5, 60, 25, 10, 5 })], true);
+		SetActiveUpgradeUI(upgradeNamesColumn2[Utils::RandomRangeWithWeights({ 60, 25, 10, 5, 60, 25, 10, 5 })], true);
+		SetActiveUpgradeUI(upgradeNamesColumn3[Utils::RandomRangeWithWeights({ 60, 25, 10, 5, 60, 25, 10, 5 })], true);
+		SetActiveUpgradeUI(upgradeNamesColumn4[Utils::RandomRangeWithWeights({ 60, 25, 10, 5, 60, 25, 10, 5 })], true);
 	}
-
-	/*
-	if (levelUpPoint >= 1 && !isUpgrade)
-	{
-		for (int i = 0; i < 4; i++)
-		{
-			int randomUpgrade = Utils::RandomRange(0, 32);
-			SetActiveUpgradeUI(upgradeNames[randomUpgrade], true);
-		}
-	}
-	*/
 
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num3)) // Test Code
 	{
@@ -599,23 +579,9 @@ void SceneGame::CreateUpgradeUI(float posiX, float posiY, std::string name, floa
 	{
 		levelUpPoint = 0;
 		isUpgrade = false;
-
+		SetActiveAllUpgradeUI(false);
 		player->UpgradeStat(name, category, value);
-		SetActiveUpgradeUI(name, false);
-
 		buttonBox->SetColor(255, 255, 255, 32);
-
-
-		/*
-		std::vector<int> weights = { 50, 30, 15, 5 };
-		int randomTier = Utils::RandomRangeWithWeights(weights);
-		int randomUpgrade = Utils::RandomRange(1, 9);
-		for (int i = 0; i < 3; i++)
-		{
-			SetActiveUpgradeUI("Back IV", false);
-		}
-		*/
-
 	};
 
 	std::string amountString = std::to_string(amount);
@@ -731,6 +697,20 @@ void SceneGame::SetActiveUpgradeUI(std::string name, bool active)
 		{
 			gameObject->SetActive(active);
 		}
+	}
+}
+
+void SceneGame::SetActiveAllUpgradeUI(bool active)
+{
+	std::vector<std::string> allUpgradeNames;
+	allUpgradeNames.insert(allUpgradeNames.end(), upgradeNamesColumn1.begin(), upgradeNamesColumn1.end());
+	allUpgradeNames.insert(allUpgradeNames.end(), upgradeNamesColumn2.begin(), upgradeNamesColumn2.end());
+	allUpgradeNames.insert(allUpgradeNames.end(), upgradeNamesColumn3.begin(), upgradeNamesColumn3.end());
+	allUpgradeNames.insert(allUpgradeNames.end(), upgradeNamesColumn4.begin(), upgradeNamesColumn4.end());
+
+	for (const std::string& name : allUpgradeNames)
+	{
+		SetActiveUpgradeUI(name, active);
 	}
 }
 
