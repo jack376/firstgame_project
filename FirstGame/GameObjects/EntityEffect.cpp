@@ -69,5 +69,5 @@ void EntityEffect::GlitchAnimation(float range, float flowTimeBySpeed)
 	float defaultOpacity = sin(flowTimeBySpeed * 10.0f * _PI);
 	int changeOpacity = (defaultOpacity + 1.0f) / 2.0f * (255 - range) + range;
 
-	sprite.setColor(sf::Color(255, 0, 0, static_cast<sf::Uint8>(changeOpacity)));
+	sprite.setColor(sf::Color(255, 255, 255, static_cast<sf::Uint8>(changeOpacity)));
 }

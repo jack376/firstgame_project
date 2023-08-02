@@ -11,7 +11,7 @@ bool UpgradeTable::Load()
     std::vector<std::string> category  = doc.GetColumn<std::string>(2);
     std::vector<std::string> highlight = doc.GetColumn<std::string>(3);
     std::vector<std::string> title     = doc.GetColumn<std::string>(4);
-    std::vector<int>         value     = doc.GetColumn<int>(5);
+    std::vector<float>       value     = doc.GetColumn<float>(5);
     std::vector<int>         amount    = doc.GetColumn<int>(6);
     std::vector<int>         tier      = doc.GetColumn<int>(7);
 

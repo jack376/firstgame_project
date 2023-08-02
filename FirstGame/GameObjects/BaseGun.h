@@ -25,13 +25,11 @@ protected:
 	float bulletTotalCooldown = bulletCurrentCooldown;
 	float bulletCurrentCooldown = 0.1f;
 
-	float gunAttackSpeed = 2500.0f;
+	float gunAttackSpeed = 3000.0f;
 
 	float gunOrigin = -60.0f;
 	float gunLength = 90.0f;
 	sf::Vector2f gunMuzzlePosition;
-
-
 
 public:
 	BaseGun(Player* player, const std::string& textureId = "", const std::string& n = "")

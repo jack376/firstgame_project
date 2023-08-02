@@ -25,7 +25,6 @@ protected:
 	int money = 0;
 	int currentPlayerLevel = 1;
 	int nextPlayerLevel = 2;
-
 	int levelUpPoint = 0;
 
 	int waveCount = 1;
@@ -62,10 +61,14 @@ protected:
 	sf::Vector2f centerPos;
 	float resolutionScale = 0.0f;
 
+	std::vector<std::string> shopNames = { "Laser Gun", "Flame Gun", "SMG", "Plasma Rifle", "Rocket Launcher", "Minigun", "Gatling Laser", "Nuclear Launcher", "Chain Gun" };
+
 	std::vector<std::string> upgradeNamesColumn1 = { "Chest I", "Chest II", "Chest III", "Chest IV", "Lungs I", "Lungs II", "Lungs III", "Lungs IV" };
 	std::vector<std::string> upgradeNamesColumn2 = { "Reflexes I", "Reflexes II", "Reflexes III", "Reflexes IV", "Gun I", "Gun II", "Gun III", "Gun IV" };
 	std::vector<std::string> upgradeNamesColumn3 = { "Fingers I", "Fingers II", "Fingers III", "Fingers IV", "Heart I", "Heart II", "Heart III", "Heart IV" };
 	std::vector<std::string> upgradeNamesColumn4 = { "Back I", "Back II", "Back III", "Back IV", "Legs I", "Legs II", "Legs III", "Legs IV" };
+
+	std::vector<int> monsterSpawnWeights = { 70, 50, 30, 15, 10, 10, 5, 5, 5 };
 
 	float damageTextDuration = 1.0f;
 
@@ -111,6 +114,7 @@ public:
 
 	void CreateShopUI(float posiX, float posiY, std::string name, float scale = 1.0f);
 	void SetActiveShopUI(std::string name, bool active);
+	void SetActiveAllShopUI(bool active);
 
 	void CreatePlayerInfoUI(float posiX, float posiY, float scale = 1.0f);
 	void SetActivePlayerInfoUI( bool active);
@@ -124,5 +128,8 @@ public:
 	void SetLevelUpUI(int level);
 
 	void OnDiePlayer();
+
+	std::string FloatToString(float value, int precision = 0);
+	std::string FloatToPercentString(float value);
 };
 

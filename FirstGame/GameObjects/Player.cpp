@@ -187,7 +187,6 @@ void Player::OnKilled()
 	{
 		return;
 	}
-
 	currentExp++;
 
 	Scene* scene = SCENE_MGR.GetCurrentScene();
@@ -196,14 +195,14 @@ void Player::OnKilled()
 
 	if (currentExp >= maxExp)
 	{
-		level++;
-		sceneGame->SetLevelUpUI(level);
-		
+		currentExp = 0;
+		maxExp = maxExp + maxExp / 4;
+
 		currentHp = maxHp;
 		sceneGame->SetHpUI(currentHp, maxHp);
 
-		currentExp = 0;
-		maxExp = maxExp + maxExp / 8;
+		level++;
+		sceneGame->SetLevelUpUI(level);
 	}
 }
 
@@ -228,6 +227,20 @@ void Player::UpgradeStat(const std::string& upgradeName, const std::string& stat
 	else
 	{
 		std::cerr << "Unknown stat: " << statName << std::endl;
+	}
+}
+
+float Player::GetStat(const std::string& statName) const
+{
+	auto it = stats.find(statName);
+	if (it != stats.end())
+	{
+		return *it->second;
+	}
+	else
+	{
+		std::cerr << "Unknown stat: " << statName << std::endl;
+		return 0.0f;
 	}
 }
 

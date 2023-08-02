@@ -113,6 +113,6 @@ void BaseBullet::SetMonsterList(const std::list<Monster*>* list)
 
 void BaseBullet::IncreaseBulletDamage(float increaseDamage)
 {
-	bulletDamage += increaseDamage;
-	//std::cout << "Current Bullet Damage : " << bulletDamage << std::endl;
+	bulletDamage = bulletDamage * (increaseDamage + 1.0f);
+	//std::cout << "increaseDamage : " << increaseDamage << std::endl;
 }

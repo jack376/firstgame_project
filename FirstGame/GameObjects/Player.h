@@ -16,8 +16,8 @@ protected:
 	float maxHp       = 20;
 	float hpRegen     = 0.0f;
 	float damage      = 0.0f;
-	float attackSpeed = 1.0f;
-	float critical    = 0.03f;
+	float attackSpeed = 0.0f;
+	float critical    = 0.0f;
 	float armor       = 0.0f;
 	float dodge       = 0.0f;
 	float moveSpeed   = 500.0f;
@@ -57,5 +57,7 @@ public:
 	void OnDie();
 
 	void UpgradeStat(const std::string& upgradeName, const std::string& statName, float increaseAmount);
+	
+	float GetStat(const std::string& statName) const;
 	float GetDamage() const;
 };

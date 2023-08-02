@@ -12,11 +12,15 @@ class Monster : public Character
 public:
 	enum class Types
 	{
-		Normal   = 0,
-		Faster   = 1,
-		Heavy    = 2,
-		//Range    = 3,
-		//Tentacle = 4,
+		Normal = 0,
+		Fast = 1,
+		Heavy  = 2,
+		Range = 3,
+		Helmet = 4,
+		Hard  = 5,
+		Tentacle = 6,
+		FastElite = 7,
+		HeavyElite  = 8,
 	};
 
 protected:

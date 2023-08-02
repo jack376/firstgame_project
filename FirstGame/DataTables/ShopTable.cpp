@@ -18,7 +18,6 @@ bool ShopTable::Load()
     std::vector<float>       cooldown  = doc.GetColumn<float>(9);
     std::vector<float>       range     = doc.GetColumn<float>(10);
 
-
     for (int i = 0; i < textureId.size(); ++i)
     {
         ShopItemInfo itemInfo;
