@@ -93,7 +93,7 @@ void BaseGun::Update(float dt)
                 bullet = poolBaseBullets.Get();
                 bullet->Init();
                 bullet->Reset();
-                bullet->Fire(gunMuzzlePosition, look, gunAttackSpeed);
+                bullet->Fire(gunMuzzlePosition, look, bulletSpeed);
                 bullet->IncreaseBulletDamage(player->GetDamage());
                 bullet->sortLayer = 3;
 
@@ -136,6 +136,7 @@ void BaseGun::FireRecoilAnimation(const sf::Vector2f direction, float playSpeed,
     sf::Vector2f dir = Utils::Normalize(direction) * fireRecoil;
 
     sprite.setPosition(position.x -= dir.x, position.y -= dir.y);
+
     fireRecoilEffect.setPosition(gunMuzzlePosition.x -= dir.x, gunMuzzlePosition.y -= dir.y);
     fireRecoilEffect.setScale(fireRecoil * 0.1f, fireRecoil * 0.1f);
 }
@@ -152,6 +153,11 @@ void BaseGun::UpdateFlipAndRotation(bool flip, float angle)
         fireRecoilEffect.setPosition(position);
         fireRecoilEffect.setRotation(angle);
     }
+}
+
+void BaseGun::SetGunCooldown(float cooldown)
+{
+    bulletCurrentCooldown = cooldown;
 }
 
 sf::Vector2f BaseGun::GetMuzzlePosition()

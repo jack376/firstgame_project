@@ -19,11 +19,11 @@ protected:
 	const std::list<Monster*>* monsters;
 
 	sf::Vector2f bulletDirection;
-	float bulletSpeed  = 1500.0f;
-	float bulletRange  = 700.0f; // 니어몬스터서치랑 동기화 예정
-	float bulletCooldown;
-	float bulletDamage = 50.0f;
-	//float bulletLife   = 0.05f;
+	float bulletSpeed    = 2500.0f;
+	float bulletRange    = 700.0f;
+	float bulletCooldown = 0.1f;
+	float bulletDamage   = 50.0f;
+	float bulletCritical = 2.0f;
 
 	sf::FloatRect bulletCollider = sf::FloatRect(0.0f, 0.0f, 30.0f, 30.0f);
 	sf::RectangleShape bulletColliderDraw;
@@ -44,6 +44,7 @@ public:
 
 	void Fire(const sf::Vector2f& pos, const sf::Vector2f& dir, float speed);
 	void SetMonsterList(const std::list<Monster*>* list);
+	void SetBulletSpec(float damage, float criticalDamage, float range);
 
 	void IncreaseBulletDamage(float increaseDamage);
 };

@@ -813,16 +813,17 @@ void SceneGame::CreateShopUI(float posiX, float posiY, std::string name, float s
 	{
 		buttonBox->SetColor(255, 255, 255, 32);
 	};
-	buttonBox->OnClick = [buttonBox, this]()
+	buttonBox->OnClick = [buttonBox, this, name, damage, critical, cooldown, range]()
 	{
 		SetPaused(!IsPaused());
 		isShop = false;
 		isPlaying = true;
 
+		SetGun(name, damage, critical, cooldown, range);
+
 		SetActiveShopUI("Taser Gun", false);
 		SetActiveShopUI("Shotgun", false);
 		SetActiveShopUI("Pistol", false);
-
 		SetActiveAllShopUI(false);
 
 		buttonBox->SetColor(255, 255, 255, 32);
@@ -1170,15 +1171,18 @@ void SceneGame::SetCountUI(const std::string& name, int count)
 
 void SceneGame::SetHpUI(float currentHp, float maxHp)
 {
-	SpriteGo* hpBar = (SpriteGo*)FindGo("HpBarMain");
-	hpBar->sprite.setOrigin(0.0f, 0.0f);
-	hpBar->sprite.setScale(currentHp / maxHp, 1.0f);
+	if (currentHp > 0.0f)
+	{
+		SpriteGo* hpBar = (SpriteGo*)FindGo("HpBarMain");
+		hpBar->sprite.setOrigin(0.0f, 0.0f);
+		hpBar->sprite.setScale(currentHp / maxHp, 1.0f);
 
-	std::string currentHpString = std::to_string((int)currentHp);
-	std::string maxHpString = std::to_string((int)maxHp);
+		std::string currentHpString = std::to_string((int)currentHp);
+		std::string maxHpString = std::to_string((int)maxHp);
 
-	TextGo* hpText = (TextGo*)FindGo("HpText");
-	hpText->SetString(currentHpString + " / " + maxHpString);
+		TextGo* hpText = (TextGo*)FindGo("HpText");
+		hpText->SetString(currentHpString + " / " + maxHpString);
+	}
 }
 
 void SceneGame::SetExpUI(float currentExp)
@@ -1203,6 +1207,13 @@ void SceneGame::SetLevelUpUI(int level)
 		levelUpPoint++;
 		nextPlayerLevel++;
 	}
+}
+
+void SceneGame::SetGun(const std::string& name, float damage, float critical, float cooldown, float range)
+{
+	BaseGun* gun = (BaseGun*)FindGo("BaseGun");
+
+	// 미리 로딩하고 불러올지 새로 텍스처를 씌울지..
 }
 
 void SceneGame::OnDiePlayer()

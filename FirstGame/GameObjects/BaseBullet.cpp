@@ -24,8 +24,8 @@ void BaseBullet::Reset()
     sprite.setRotation(0.0f);
     sprite.setPosition(0.0f, 0.0f);
 
-	bulletRange = 700.0f;
-	bulletSpeed = 1500.0f;
+	bulletRange  = 700.0f;
+	bulletSpeed  = 2500.0f;
 	bulletDamage = 50.0f;
 }
 
@@ -109,6 +109,13 @@ void BaseBullet::Fire(const sf::Vector2f& pos, const sf::Vector2f& dir, float sp
 void BaseBullet::SetMonsterList(const std::list<Monster*>* list)
 {
 	monsters = list;
+}
+
+void BaseBullet::SetBulletSpec(float damage, float criticalDamage, float range)
+{
+	bulletDamage   = damage;
+	bulletCritical = criticalDamage;
+	bulletRange    = range;
 }
 
 void BaseBullet::IncreaseBulletDamage(float increaseDamage)

@@ -74,8 +74,8 @@ void BaseUI::Reset()
         sf::FloatRect thumRect = thumbnail.getLocalBounds();
         float blankSize = 0.0f;
 
-        buttonSizeX = thumRect.top + thumRect.width + (cornerTextureSize.x * 2.0f) * blankSize;
-        buttonSizeY = thumRect.top + thumRect.height + (cornerTextureSize.y * 2.0f) * blankSize;
+        buttonSizeX = thumRect.width + (cornerTextureSize.x * 2.0f) * blankSize;
+        buttonSizeY = thumRect.height + (cornerTextureSize.y * 2.0f) * blankSize;
     }
     else if (uiStatus == uiType::Box)
     {

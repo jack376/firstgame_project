@@ -47,7 +47,7 @@ void SceneTitle::Init()
 		}
 	);
 
-	BgSpriteGo("graphics/title/title_logo.png", "TitleLogo", 56, bgScaleX, bgScaleY);
+	BgSpriteGo("graphics/title/title_logo.png", "TitleLogo", 56, bgScaleX, 1.0f);
 	BgSpriteGo("graphics/title/title_fade.png", "TitleFade", 55, bgScaleX, bgScaleY);
 	BgSpriteGo("graphics/title/title_splash_front.png", "TitleSplashFront", 54, bgScaleX, bgScaleY);
 	BgSpriteGo("graphics/title/title_character.png", "TitleCharacter", 53, bgScaleX, bgScaleY);

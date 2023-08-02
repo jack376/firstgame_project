@@ -126,6 +126,7 @@ public:
 	void SetHpUI(float currentHp, float maxHp);
 	void SetExpUI(float currentExp);
 	void SetLevelUpUI(int level);
+	void SetGun(const std::string& name, float damage, float critical, float cooldown, float range);
 
 	void OnDiePlayer();
 

@@ -32,6 +32,9 @@ void Monster::Reset()
 
 	currentHp = maxHp;
 	attackTimer = attackRate;
+
+	hitColorOverlayDuration = 0.1f;
+	body.setColor(sf::Color(255, 255, 255, 255));
 }
 
 void Monster::Update(float dt)
