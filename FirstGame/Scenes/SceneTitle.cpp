@@ -36,6 +36,7 @@ void SceneTitle::Init()
 	(
 		"OptionButton", "OPTION", buttonPos, windowSize.y - buttonPos - buttonGap * 2.0f, [this]()
 		{
+			// Unused
 		}
 	);
 	

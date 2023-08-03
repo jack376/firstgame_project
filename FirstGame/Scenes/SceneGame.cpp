@@ -40,32 +40,94 @@ void SceneGame::Init()
 	baseGun->sortLayer = 4;
 	baseGun->SetPosition(player->GetPosition());
 
-	// Pause Button
+	// Back, Pause, Info Button
 
-	float pausedThumbSize = 64.0f;
-
-	BaseUI* PauseButton = (BaseUI*)AddGo(new BaseUI("BackButton", uiType::Thumbnail));
-	PauseButton->sortLayer = 100;
-	PauseButton->SetPosition(defaultResolution.x * resolutionScale - pausedThumbSize - 50.0f, 50.0f);
-	PauseButton->SetColor(8, 8, 8, 192);
-	PauseButton->SetThumbnailColor(255, 255, 255, 192);
-
-	PauseButton->OnEnter = [PauseButton]()
+	BaseUI* backButton = (BaseUI*)AddGo(new BaseUI("BackButton", uiType::Text));
+	backButton->sortLayer = 100;
+	backButton->SetString("BACK");
+	backButton->SetCharacterSize(40);
+	backButton->SetPosition(windowSize.x - 185.0f + 13.0f, 50.0f);
+	backButton->SetColor(8, 8, 8, 192);
+	backButton->SetTextColor(255, 255, 255, 192);
+	backButton->SetSizeAdd(0.0f, -15.0f);
+	backButton->OnEnter = [backButton]()
 	{
-		PauseButton->SetColor(255, 255, 255, 192);
-		PauseButton->SetThumbnailColor(16, 16, 16, 192);
+		backButton->SetColor(255, 255, 255, 192);
+		backButton->SetTextColor(16, 16, 16, 192);
 	};
-	PauseButton->OnExit = [PauseButton]()
+	backButton->OnExit = [backButton]()
 	{
-		PauseButton->SetColor(8, 8, 8, 192);
-		PauseButton->SetThumbnailColor(255, 255, 255, 192);
+		backButton->SetColor(8, 8, 8, 192);
+		backButton->SetTextColor(255, 255, 255, 192);
 	};
-	PauseButton->OnClick = [PauseButton, this]()
+	backButton->OnClick = [backButton, this]()
 	{
-		PauseButton->SetColor(8, 8, 8, 192);
-		PauseButton->SetThumbnailColor(255, 255, 255, 192);
+		backButton->SetColor(8, 8, 8, 192);
+		backButton->SetTextColor(255, 255, 255, 192);
 		Reset();
 		SCENE_MGR.ChangeScene(SceneId::Title);
+	};
+
+	BaseUI* pauseButton = (BaseUI*)AddGo(new BaseUI("PauseButton", uiType::Text));
+	pauseButton->sortLayer = 100;
+	pauseButton->SetString("PAUSE");
+	pauseButton->SetCharacterSize(40);
+	pauseButton->SetPosition(windowSize.x - 185.0f, 125.0f);
+	pauseButton->SetColor(8, 8, 8, 192);
+	pauseButton->SetTextColor(255, 255, 255, 192);
+	pauseButton->SetSizeAdd(0.0f, -15.0f);
+	pauseButton->OnEnter = [pauseButton]()
+	{
+		pauseButton->SetColor(255, 255, 255, 192);
+		pauseButton->SetTextColor(16, 16, 16, 192);
+	};
+	pauseButton->OnExit = [pauseButton]()
+	{
+		pauseButton->SetColor(8, 8, 8, 192);
+		pauseButton->SetTextColor(255, 255, 255, 192);
+	};
+	pauseButton->OnClick = [pauseButton, this]()
+	{
+		pauseButton->SetColor(8, 8, 8, 192);
+		pauseButton->SetTextColor(255, 255, 255, 192);
+
+		SetPaused(!IsPaused());
+	};
+
+	BaseUI* infoButton = (BaseUI*)AddGo(new BaseUI("InfoButton", uiType::Text));
+	infoButton->sortLayer = 100;
+	infoButton->SetString("INFO");
+	infoButton->SetCharacterSize(40);
+	infoButton->SetPosition(windowSize.x - 185.0f + 19.0f, 200.0f);
+	infoButton->SetColor(8, 8, 8, 192);
+	infoButton->SetTextColor(255, 255, 255, 192);
+	infoButton->SetSizeAdd(0.0f, -15.0f);
+	infoButton->OnEnter = [infoButton]()
+	{
+		infoButton->SetColor(255, 255, 255, 192);
+		infoButton->SetTextColor(16, 16, 16, 192);
+	};
+	infoButton->OnExit = [infoButton]()
+	{
+		infoButton->SetColor(8, 8, 8, 192);
+		infoButton->SetTextColor(255, 255, 255, 192);
+	};
+	infoButton->OnClick = [infoButton, this]()
+	{
+		infoButton->SetColor(8, 8, 8, 192);
+		infoButton->SetTextColor(255, 255, 255, 192);
+
+		isInfo = !isInfo;
+		if (!infoCreated && isInfo)
+		{
+			SetActivePlayerInfoUI(true);
+			infoCreated = true;
+		}
+		if (infoCreated && !isInfo)
+		{
+			SetActivePlayerInfoUI(false);
+			infoCreated = false;
+		}
 	};
 
 	// Hp, Exp HUD
@@ -126,7 +188,7 @@ void SceneGame::Init()
 		CreateUpgradeUI(windowSize.x / 10 + (uiSizeX + uiBlank) * 3, windowSize.y * 0.375f, upgradeNamesColumn4[i], resolutionScale);
 	}
 
-	CreatePlayerInfoUI(windowSize.x - uiSizeX * 1 - uiPos, windowSize.y / 2, resolutionScale);
+	CreatePlayerInfoUI(windowSize.x - uiSizeX - 50.0f, windowSize.y / 2, resolutionScale);
 
 	// World Tile
 
@@ -258,7 +320,7 @@ void SceneGame::Update(float dt)
 		SetActiveShopUI("Shotgun", true);
 		SetActiveShopUI("Pistol", true);
 
-		SetPaused(!IsPaused());
+		SetPaused(true);
 	}
 
 	if (IsPaused())
@@ -293,6 +355,8 @@ void SceneGame::Update(float dt)
 	
 	if (levelUpPoint >= 1 && !isUpgrade)
 	{
+		SetActivePlayerInfoUI(false);
+
 		isUpgrade = true;
 
 		SetActiveUpgradeUI(upgradeNamesColumn1[Utils::RandomRangeWithWeights({ 60, 25, 10, 5, 60, 25, 10, 5 })], true);
@@ -300,24 +364,7 @@ void SceneGame::Update(float dt)
 		SetActiveUpgradeUI(upgradeNamesColumn3[Utils::RandomRangeWithWeights({ 60, 25, 10, 5, 60, 25, 10, 5 })], true);
 		SetActiveUpgradeUI(upgradeNamesColumn4[Utils::RandomRangeWithWeights({ 60, 25, 10, 5, 60, 25, 10, 5 })], true);
 
-		SetPaused(!IsPaused());
-	}
-
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num3)) // Test Code
-	{
-		isInfo = !isInfo;
-		if (!infoCreated && isInfo)
-		{
-			SetActivePlayerInfoUI(true);
-
-			infoCreated = true;
-		}
-		if (infoCreated && !isInfo)
-		{
-			SetActivePlayerInfoUI(false);
-
-			infoCreated = false;
-		}
+		SetPaused(true);
 	}
 
 	sf::Vector2f halfViewSize = worldView.getSize() * 0.5f;
@@ -1061,7 +1108,7 @@ void SceneGame::CreatePlayerInfoUI(float posiX, float posiY, float scale)
 	boxName->SetOrigin(Origins::TC);
 	boxName->SetCharacterSize(40);
 	boxName->SetPosition(posiX + fullBoxSize.x * 0.5f, posiY + thumbSize.y * 0.5f);
-	boxName->SetFillColor(sf::Color(255, 255, 128, 255));
+	boxName->SetFillColor(sf::Color(255, 255, 255, 255));
 	boxName->text.setScale(0.9f * scale, 1.0f * scale);
 	boxName->SetString("Player Info");
 	boxName->SetActive(false);
