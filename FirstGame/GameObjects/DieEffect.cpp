@@ -24,7 +24,11 @@ void DieEffect::Update(float dt)
 {
 	flowTime += dt;
 
-	sf::Vector2f scaleFx = Utils::Lerp(sf::Vector2f(0.01f, 0.01f), sf::Vector2f(0.5f * animationScale, 0.5f * animationScale), (flowTime / (duration / 25)));
+	sf::Vector2f startValue(0.01f, 0.01f);
+	sf::Vector2f endValue(0.5f * animationScale, 0.5f * animationScale);
+	int magicNumber = 25;
+
+	sf::Vector2f scaleFx = Utils::Lerp(startValue, endValue, (flowTime / (duration / magicNumber)));
 	sprite.setScale(scaleFx);
 
 	UINT8 colorFx = Utils::Lerp(255, 0, (flowTime / duration));

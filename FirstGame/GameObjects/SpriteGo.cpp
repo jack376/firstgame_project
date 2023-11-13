@@ -56,6 +56,7 @@ void SpriteGo::Reset()
 	{
 		sprite.setTexture(*tex);
 	}
+
 	SetOrigin(origin);
 }
 

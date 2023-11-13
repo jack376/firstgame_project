@@ -6,14 +6,14 @@ bool UpgradeTable::Load()
 {
     rapidcsv::Document doc("tables/UpgradeTable.csv");
 
-    std::vector<std::string> textureId = doc.GetColumn<std::string>(0);
-    std::vector<std::string> name      = doc.GetColumn<std::string>(1);
-    std::vector<std::string> category  = doc.GetColumn<std::string>(2);
-    std::vector<std::string> highlight = doc.GetColumn<std::string>(3);
-    std::vector<std::string> title     = doc.GetColumn<std::string>(4);
-    std::vector<float>       value     = doc.GetColumn<float>(5);
-    std::vector<int>         amount    = doc.GetColumn<int>(6);
-    std::vector<int>         tier      = doc.GetColumn<int>(7);
+    auto textureId = doc.GetColumn<std::string>(0);
+    auto name      = doc.GetColumn<std::string>(1);
+    auto category  = doc.GetColumn<std::string>(2);
+    auto highlight = doc.GetColumn<std::string>(3);
+    auto title     = doc.GetColumn<std::string>(4);
+    auto value     = doc.GetColumn<float>(5);
+    auto amount    = doc.GetColumn<int>(6);
+    auto tier      = doc.GetColumn<int>(7);
 
     for (int i = 0; i < textureId.size(); ++i)
     {
@@ -30,6 +30,7 @@ bool UpgradeTable::Load()
 
         table[name[i]] = upgradeInfo;
     }
+
     return true;
 }
 
@@ -45,5 +46,6 @@ const UpgradeInfo& UpgradeTable::Get(const std::string& name)
     {
         throw std::runtime_error("ERROR : Undefined Item Name");
     }
+
     return find->second;
 }

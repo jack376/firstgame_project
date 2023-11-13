@@ -19,6 +19,7 @@ protected:
 	const std::list<Monster*>* monsters;
 
 	sf::Vector2f bulletDirection;
+
 	float bulletSpeed    = 2500.0f;
 	float bulletRange    = 700.0f;
 	float bulletCooldown = 0.1f;
@@ -27,7 +28,6 @@ protected:
 
 	sf::FloatRect bulletCollider = sf::FloatRect(0.0f, 0.0f, 30.0f, 30.0f);
 	sf::RectangleShape bulletColliderDraw;
-	
 	bool isBulletColliderDrawView = false;
 	
 public:

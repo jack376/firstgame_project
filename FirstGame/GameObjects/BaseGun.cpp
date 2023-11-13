@@ -19,6 +19,7 @@ void BaseGun::Init()
         bullet->textureId = "graphics/game/bullet.png";
         bullet->pool = &poolBaseBullets;
     };
+
     poolBaseBullets.Init(256);
 }
 
@@ -51,7 +52,7 @@ void BaseGun::Update(float dt)
     position = player->GetPosition();
     gunMuzzlePosition = position + look * gunLength;
 
-    SceneGame* sceneGame = (SceneGame*)SCENE_MGR.GetCurrentScene();
+    auto sceneGame = dynamic_cast<SceneGame*>(SCENE_MGR.GetCurrentScene());
     if (sceneGame != nullptr)
     {
         Monster* nearMonster = sceneGame->GetNearMonsterSearch();
@@ -84,7 +85,9 @@ void BaseGun::Update(float dt)
         if (nearMonster->GetActive() && distance <= 700.0f)
         {
             FireRecoilAnimation(look, fireRecoilAnimationSpeed, flowTime);
+
             isFireRecoilEffect = true;
+
             fireRecoilEffect.setColor(sf::Color(255, 255, 255, 255));
 
             bulletTotalCooldown -= dt;
@@ -103,6 +106,7 @@ void BaseGun::Update(float dt)
                 {
                     bullet->SetMonsterList(sceneGame->GetMonsterList());
                 }
+
                 sceneGame->AddGo(bullet);
                 bulletTotalCooldown = bulletCurrentCooldown;
             }
@@ -111,6 +115,7 @@ void BaseGun::Update(float dt)
         {
             sprite.setPosition(position);
             isFireRecoilEffect = false;
+
             fireRecoilEffect.setColor(sf::Color::Transparent);
         }
     }
@@ -118,6 +123,7 @@ void BaseGun::Update(float dt)
     {
         sprite.setPosition(position);
         isFireRecoilEffect = false;
+
         fireRecoilEffect.setColor(sf::Color::Transparent);
     }
 }

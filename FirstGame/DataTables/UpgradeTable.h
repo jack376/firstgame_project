@@ -8,6 +8,7 @@ struct UpgradeInfo
     std::string category;
     std::string highlight;
     std::string title;
+
     float value;
     int amount;
     int tier;

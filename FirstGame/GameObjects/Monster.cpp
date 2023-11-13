@@ -46,7 +46,6 @@ void Monster::Update(float dt)
 		return;
 	}
 
-	float distance = Utils::Distance(player->GetPosition(), position);
 	direction = Utils::Normalize(player->GetPosition() - position);
 	if (direction.x < 0)
 	{
@@ -56,8 +55,10 @@ void Monster::Update(float dt)
 	{
 		SetFlipX(false);
 	}
+
 	body.setRotation(Utils::Angle(look));
 
+	float distance = Utils::Distance(player->GetPosition(), position);
 	if (distance > 50.f)
 	{
 		position += direction * moveSpeed * dt;
@@ -77,30 +78,24 @@ void Monster::Update(float dt)
 		}
 	}
 
-	// Draw view ///////////////////////////////////////////////////////////////////////////////////
-	/*
-	monsterColliderDraw.setPosition(monsterCollider.left, monsterCollider.top);
-	monsterColliderDraw.setSize(sf::Vector2f(monsterCollider.width, monsterCollider.height));
-	monsterColliderDraw.setFillColor(sf::Color::Transparent);
-	monsterColliderDraw.setOutlineColor(sf::Color::Red);
-	monsterColliderDraw.setOutlineThickness(1.0f);
-	*/
-	////////////////////////////////////////////////////////////////////////////////////////////////
-
 	float magnitude = Utils::Magnitude(direction);
 	if (magnitude > 0.0f)
 	{
 		state = StateType::Move;
+
 		animationSpeed = 2.0f;
+
 		if (magnitude > 1.f)
 		{
 			direction /= magnitude;
 		}
+
 		body.setPosition(position);
 	}
 	else
 	{
 		state = StateType::Idle;
+
 		animationSpeed = 1.0f;
 	}
 
@@ -119,7 +114,6 @@ void Monster::Update(float dt)
 void Monster::Draw(sf::RenderWindow& window)
 {
 	window.draw(body);
-	//window.draw(monsterColliderDraw);
 }
 
 sf::FloatRect Monster::GetMonsterCollider() const
@@ -162,12 +156,11 @@ void Monster::OnHitBullet(int bulletDamage)
 
 	if (currentHp <= 0)
 	{
-		Scene* scene = SCENE_MGR.GetCurrentScene();
-		SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
-
 		float scale = body.getTexture()->getSize().x / static_cast<float>(100);
 		SetDieEffect(position, scale);
 
+		Scene* scene = SCENE_MGR.GetCurrentScene();
+		SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
 		if (sceneGame != nullptr)
 		{
 			sceneGame->OnDieMonster(this);

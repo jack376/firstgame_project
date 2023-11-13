@@ -37,6 +37,7 @@ void SceneMgr::Release()
 		//scene->Release();
 		delete scene;
 	}
+
 	scenes.clear();
 
 	currentSceneId = SceneId::None;

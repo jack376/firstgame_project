@@ -29,5 +29,6 @@ void DataTableMgr::ReleaseAll()
 		//pair.second->Release();
 		delete pair.second;
 	}
+
 	tables.clear();
 }

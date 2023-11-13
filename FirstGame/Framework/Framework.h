@@ -13,8 +13,8 @@ protected:
 	sf::RenderWindow window;
 	sf::Clock clock;
 
-	int screenWidth = 1920;
-	int screenHeight = 960;
+	int screenWidth = 1600;
+	int screenHeight = 900;
 
 	std::string title = "BROTATO SFML EDITION";
 

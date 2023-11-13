@@ -6,12 +6,12 @@ bool MonsterTable::Load()
 {
     rapidcsv::Document doc("tables/MonsterTable.csv");
 
-    std::vector<int>         types       = doc.GetColumn<int>(0);
-    std::vector<std::string> textureIds  = doc.GetColumn<std::string>(1);
-    std::vector<float>       speeds      = doc.GetColumn<float>(2);
-    std::vector<int>         maxHps      = doc.GetColumn<int>(3);
-    std::vector<int>         damages     = doc.GetColumn<int>(4);
-    std::vector<float>       attackRates = doc.GetColumn<float>(5);
+    auto types       = doc.GetColumn<int>(0);
+    auto textureIds  = doc.GetColumn<std::string>(1);
+    auto speeds      = doc.GetColumn<float>(2);
+    auto maxHps      = doc.GetColumn<int>(3);
+    auto damages     = doc.GetColumn<int>(4);
+    auto attackRates = doc.GetColumn<float>(5);
 
     for (int i = 0; i < types.size(); ++i)
     {
@@ -26,6 +26,7 @@ bool MonsterTable::Load()
 
         table[(Monster::Types)types[i]] = info;
     }
+
     return true;
 }
 
@@ -41,6 +42,7 @@ const MonsterInfo& MonsterTable::Get(Monster::Types id)
     {
         throw std::runtime_error("ERROR : Undefined Monster Type");
     }
+
     return find->second;
 }
 

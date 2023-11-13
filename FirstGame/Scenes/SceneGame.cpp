@@ -29,8 +29,10 @@ void SceneGame::Init()
 	Release();
 
 	defaultResolution = sf::Vector2f(1920.0f, 1080.0f);
+
 	windowSize = sf::Vector2f(FRAMEWORK.GetWindowSize());
-	centerPos = sf::Vector2f(windowSize * 0.5f);
+	centerPos  = sf::Vector2f(windowSize * 0.5f);
+
 	resolutionScale = windowSize.x / 1920.0f;
 
 	player = (Player*)AddGo(new Player("Player"));
@@ -40,8 +42,7 @@ void SceneGame::Init()
 	baseGun->sortLayer = 4;
 	baseGun->SetPosition(player->GetPosition());
 
-	// Back, Pause, Info Button
-
+	// Back Button
 	BaseUI* backButton = (BaseUI*)AddGo(new BaseUI("BackButton", uiType::Text));
 	backButton->sortLayer = 100;
 	backButton->SetString("BACK");
@@ -67,7 +68,8 @@ void SceneGame::Init()
 		Reset();
 		SCENE_MGR.ChangeScene(SceneId::Title);
 	};
-
+	
+	// Pause Button
 	BaseUI* pauseButton = (BaseUI*)AddGo(new BaseUI("PauseButton", uiType::Text));
 	pauseButton->sortLayer = 100;
 	pauseButton->SetString("PAUSE");
@@ -94,6 +96,7 @@ void SceneGame::Init()
 		SetPaused(!IsPaused());
 	};
 
+	// Info Button
 	BaseUI* infoButton = (BaseUI*)AddGo(new BaseUI("InfoButton", uiType::Text));
 	infoButton->sortLayer = 100;
 	infoButton->SetString("INFO");
@@ -131,7 +134,6 @@ void SceneGame::Init()
 	};
 
 	// Hp, Exp HUD
-
 	float uiPos = 50.0f;
 	float magicNumber = 5.0f;
 
@@ -167,7 +169,6 @@ void SceneGame::Init()
 	lvText->SetCharacterSize(24);
 
 	// Shop, Upgrade, PlayerInfo UI
-
 	float uiBlank = 24.0f * resolutionScale;
 	float uiSizeX = 360.0f * resolutionScale;
 
@@ -191,7 +192,6 @@ void SceneGame::Init()
 	CreatePlayerInfoUI(windowSize.x - uiSizeX - 50.0f, windowSize.y / 2, resolutionScale);
 
 	// World Tile
-
 	SpriteGo* groundOutline = (SpriteGo*)AddGo(new SpriteGo("graphics/game/ground_outline.png", "GroundOutline"));
 	groundOutline->sortLayer = 2;
 	groundOutline->SetOrigin(Origins::MC);
@@ -476,13 +476,15 @@ void SceneGame::SpawnMonsters(int count, sf::Vector2f playerCenter, sf::Vector2f
 	for (int i = 0; i < count; i++)
 	{
 		Monster* monster = monsterPool.Get();
-		sf::Vector2f spawnPosition;
 		monster->SetActive(false);
 		monster->SetState(Character::StateType::Spawn);
 
-		do {
+		sf::Vector2f spawnPosition;
+		do 
+		{ 
 			spawnPosition = mapCenter + Utils::RandomInCircle(radius);
-		} while (Utils::Distance(playerCenter, spawnPosition) < 200.0f && Utils::Distance(mapCenter, spawnPosition) < 950.0f);
+		} 
+		while (Utils::Distance(playerCenter, spawnPosition) < 200.0f && Utils::Distance(mapCenter, spawnPosition) < 950.0f);
 
 		monster->SetPosition(spawnPosition);
 		monster->SetEntityEffect(spawnPosition, [this, monster]() 
@@ -516,7 +518,7 @@ Monster* SceneGame::GetNearMonsterSearch()
 {
 	if (player == nullptr)
 	{
-		return 0;
+		return nullptr;
 	}
 
 	float nearMonsterSearchDistance = 1200.0f;
@@ -604,18 +606,18 @@ void SceneGame::CreateUpgradeUI(float posiX, float posiY, std::string name, floa
 {
 	const UpgradeInfo& upgradeInfo = DATATABLE_MGR.Get<UpgradeTable>(DataTable::Ids::Upgrade)->Get(name);
 
-	std::string textureId = upgradeInfo.textureId;
-	name                  = upgradeInfo.name;
-	std::string category  = upgradeInfo.category;
-	std::string highlight = upgradeInfo.highlight;
-	std::string title     = upgradeInfo.title;
-	float       value     = upgradeInfo.value;
-	int         amount    = upgradeInfo.amount;
-	int         tier      = upgradeInfo.tier;
+	auto textureId = upgradeInfo.textureId;
+	name           = upgradeInfo.name;
+	auto category  = upgradeInfo.category;
+	auto highlight = upgradeInfo.highlight;
+	auto title     = upgradeInfo.title;
+	auto value     = upgradeInfo.value;
+	auto amount    = upgradeInfo.amount;
+	auto tier      = upgradeInfo.tier;
 
 	float blank = 20.0f * scale;
-	sf::Vector2f thumbSize(100.0f * scale, 100.0f * scale);
 
+	sf::Vector2f thumbSize(100.0f * scale, 100.0f * scale);
 	sf::Vector2f fullBoxSize(360.0f * scale, 270.0f * scale);
 	sf::Vector2f buttonBoxSize(180.0f * scale, 60.0f * scale);
 
@@ -755,15 +757,14 @@ void SceneGame::SetActiveUpgradeUI(std::string name, bool active)
 {
 	const UpgradeInfo& upgradeInfo = DATATABLE_MGR.Get<UpgradeTable>(DataTable::Ids::Upgrade)->Get(name);
 
-	std::string textureId = upgradeInfo.textureId;
-	name                  = upgradeInfo.name;
-	std::string category  = upgradeInfo.category;
-	std::string highlight = upgradeInfo.highlight;
-	std::string title     = upgradeInfo.title;
-	float       value     = upgradeInfo.value;
-	int         amount    = upgradeInfo.amount;
-
-	std::string amountString = std::to_string(amount);
+	auto textureId    = upgradeInfo.textureId;
+	name              = upgradeInfo.name;
+	auto category     = upgradeInfo.category;
+	auto highlight    = upgradeInfo.highlight;
+	auto title        = upgradeInfo.title;
+	auto value        = upgradeInfo.value;
+	auto amount       = upgradeInfo.amount;
+	auto amountString = std::to_string(amount);
 
 	std::vector<std::string> gameObjectNames =
 	{
@@ -807,23 +808,22 @@ void SceneGame::CreateShopUI(float posiX, float posiY, std::string name, float s
 {
 	const ShopItemInfo& itemInfo = DATATABLE_MGR.Get<ShopTable>(DataTable::Ids::Shop)->Get(name);
 
-	std::string path     = itemInfo.textureId;
-	name                 = itemInfo.name;
-	std::string category = itemInfo.category;
-	std::string title    = itemInfo.title;
-	std::string infoText = itemInfo.info;
-	int         amount   = itemInfo.amount;
-	int         tier     = itemInfo.tier;
-	int         damage   = itemInfo.damage;
-	float       critical = itemInfo.critical;
-	float       cooldown = itemInfo.cooldown;
-	float       range    = itemInfo.range;
+	auto path     = itemInfo.textureId;
+	name          = itemInfo.name;
+	auto category = itemInfo.category;
+	auto title    = itemInfo.title;
+	auto infoText = itemInfo.info;
+	auto amount   = itemInfo.amount;
+	auto tier     = itemInfo.tier;
+	auto damage   = itemInfo.damage;
+	auto critical = itemInfo.critical;
+	auto cooldown = itemInfo.cooldown;
+	auto range    = itemInfo.range;
 
 	float blank = 20.0f * scale;
 
 	sf::Vector2f fullBoxSize(360.0f * scale, 480.0f * scale);
 	sf::Vector2f buttonBoxSize(180.0f * scale, 60.0f * scale);
-
 	sf::Vector2f thumbSize(100.0f * scale, 100.0f * scale);
 
 	BaseUI* box = (BaseUI*)AddGo(new BaseUI("Box" + name, uiType::Box));
@@ -1040,24 +1040,24 @@ void SceneGame::SetActiveShopUI(std::string name, bool active)
 {
 	const ShopItemInfo& itemInfo = DATATABLE_MGR.Get<ShopTable>(DataTable::Ids::Shop)->Get(name);
 
-	std::string path     = itemInfo.textureId;
-	name                 = itemInfo.name;
-	std::string category = itemInfo.category;
-	std::string title    = itemInfo.title;
-	std::string infoText = itemInfo.info;
-	int         amount   = itemInfo.amount;
-	int         tier     = itemInfo.tier;
-	int         damage   = itemInfo.damage;
-	float       critical = itemInfo.critical;
-	float       cooldown = itemInfo.cooldown;
-	float       range    = itemInfo.range;
+	auto path     = itemInfo.textureId;
+	name          = itemInfo.name;
+	auto category = itemInfo.category;
+	auto title    = itemInfo.title;
+	auto infoText = itemInfo.info;
+	auto amount   = itemInfo.amount;
+	auto tier     = itemInfo.tier;
+	auto damage   = itemInfo.damage;
+	auto critical = itemInfo.critical;
+	auto cooldown = itemInfo.cooldown;
+	auto range    = itemInfo.range;
 
-	std::string amountString   = std::to_string(amount);
-	std::string tierString     = std::to_string(tier);
-	std::string damageString   = std::to_string(damage);
-	std::string criticalString = FloatToString(critical, 1);
-	std::string cooldownString = FloatToString(cooldown, 2);
-	std::string rangeString    = FloatToString(range, 0);
+	auto amountString   = std::to_string(amount);
+	auto tierString     = std::to_string(tier);
+	auto damageString   = std::to_string(damage);
+	auto criticalString = FloatToString(critical, 1);
+	auto cooldownString = FloatToString(cooldown, 2);
+	auto rangeString    = FloatToString(range, 0);
 
 	std::vector<std::string> gameObjectNames =
 	{
@@ -1218,7 +1218,12 @@ void SceneGame::SetCountUI(const std::string& name, int count)
 
 void SceneGame::SetHpUI(float currentHp, float maxHp)
 {
-	if (currentHp > 0.0f)
+	if (player == nullptr)
+    {
+        return;
+    }
+
+	if (currentHp >= 0.0f)
 	{
 		SpriteGo* hpBar = (SpriteGo*)FindGo("HpBarMain");
 		hpBar->sprite.setOrigin(0.0f, 0.0f);
@@ -1275,6 +1280,7 @@ std::string SceneGame::FloatToString(float value, int precision)
 {
 	std::ostringstream stream;
 	stream << std::fixed << std::setprecision(precision) << value;
+
 	return stream.str();
 }
 
@@ -1282,5 +1288,6 @@ std::string SceneGame::FloatToPercentString(float value)
 {
 	std::ostringstream stream;
 	stream << std::fixed << std::setprecision(0) << (value * 100) << "%";
+
 	return stream.str();
 }

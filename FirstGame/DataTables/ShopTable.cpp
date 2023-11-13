@@ -6,17 +6,17 @@ bool ShopTable::Load()
 {
     rapidcsv::Document doc("tables/ShopTable.csv");
 
-    std::vector<std::string> textureId = doc.GetColumn<std::string>(0);
-    std::vector<std::string> name      = doc.GetColumn<std::string>(1);
-    std::vector<std::string> category  = doc.GetColumn<std::string>(2);
-    std::vector<std::string> title     = doc.GetColumn<std::string>(3);
-    std::vector<std::string> info      = doc.GetColumn<std::string>(4);
-    std::vector<int>         amount    = doc.GetColumn<int>(5);
-    std::vector<int>         tier      = doc.GetColumn<int>(6);
-    std::vector<int>         damage    = doc.GetColumn<int>(7);
-    std::vector<float>       critical  = doc.GetColumn<float>(8);
-    std::vector<float>       cooldown  = doc.GetColumn<float>(9);
-    std::vector<float>       range     = doc.GetColumn<float>(10);
+    auto textureId = doc.GetColumn<std::string>(0);
+    auto name      = doc.GetColumn<std::string>(1);
+    auto category  = doc.GetColumn<std::string>(2);
+    auto title     = doc.GetColumn<std::string>(3);
+    auto info      = doc.GetColumn<std::string>(4);
+    auto amount    = doc.GetColumn<int>(5);
+    auto tier      = doc.GetColumn<int>(6);
+    auto damage    = doc.GetColumn<int>(7);
+    auto critical  = doc.GetColumn<float>(8);
+    auto cooldown  = doc.GetColumn<float>(9);
+    auto range     = doc.GetColumn<float>(10);
 
     for (int i = 0; i < textureId.size(); ++i)
     {
@@ -51,6 +51,7 @@ const ShopItemInfo& ShopTable::Get(const std::string& name)
     {
         throw std::runtime_error("ERROR : Undefined Item Name");
     }
+
     return find->second;
 }
 
@@ -62,5 +63,6 @@ std::string ShopTable::replaceAll(std::string str, const std::string& from, cons
         str.replace(startPos, from.length(), to);
         startPos += to.length();
     }
+
     return str;
 }

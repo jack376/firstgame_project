@@ -58,13 +58,13 @@ void BaseUI::Reset()
 
     if (uiStatus == uiType::Text)
     {
-        sf::Vector2f textOriginTuning(-6.0f, 0.0f);
         sf::FloatRect textRect = text.getLocalBounds();
-        textHeight = (fontSize * 1.8) + buttonModifySize.y;
+        float textHeight = (fontSize * 1.8) + buttonModifySize.y;
 
         buttonSizeX = textRect.top + textRect.width + cornerTextureSize.x * 2.0f;
         buttonSizeY = textHeight;
 
+        sf::Vector2f textOriginTuning(-6.0f, 0.0f);
         text.setOrigin(textOriginTuning.x, textOriginTuning.y + (textRect.top + textRect.height * 0.5f));
         text.setPosition(buttonModifyPosition.x + cornerTextureSize.x, buttonModifyPosition.y + textHeight * 0.5f);
         text.setFillColor(textColor);
@@ -96,8 +96,6 @@ void BaseUI::Reset()
     buttonCollider.setSize(buttonSize);
     buttonCollider.setPosition(buttonPosition);
     buttonCollider.setFillColor(sf::Color::Transparent);
-    //buttonCollider.setOutlineColor(sf::Color::Green); // Collider View Test
-    //buttonCollider.setOutlineThickness(2.0f); // Collider View Test
 
     // Body
     body.setSize(bodyRectSize);
@@ -108,19 +106,19 @@ void BaseUI::Reset()
     // Corner
     corners.resize(4, corner);
 
-    corners[0].setPosition(buttonPosition); // Top-Left
+    corners[0].setPosition(buttonPosition); // TL
     corners[0].setRotation(0);
     corners[0].setColor(bodyColor);
 
-    corners[1].setPosition(buttonPosition.x + buttonSize.x, buttonPosition.y); // Top-Right
+    corners[1].setPosition(buttonPosition.x + buttonSize.x, buttonPosition.y); // TR
     corners[1].setRotation(90);
     corners[1].setColor(bodyColor);
 
-    corners[2].setPosition(buttonPosition.x, buttonPosition.y + buttonSize.y); // Bottom-Left
+    corners[2].setPosition(buttonPosition.x, buttonPosition.y + buttonSize.y); // BL
     corners[2].setRotation(270);
     corners[2].setColor(bodyColor);
 
-    corners[3].setPosition(buttonPosition + buttonSize); // Bottom-Right
+    corners[3].setPosition(buttonPosition + buttonSize); // BR
     corners[3].setRotation(180);
     corners[3].setColor(bodyColor);
 
@@ -146,19 +144,19 @@ void BaseUI::Reset()
     // CornerStroke
     cornerStrokes.resize(4, cornerStroke);
 
-    cornerStrokes[0].setPosition(buttonPosition); // Top-Left
+    cornerStrokes[0].setPosition(buttonPosition); // TL
     cornerStrokes[0].setRotation(0);
     cornerStrokes[0].setColor(strokeColor);
 
-    cornerStrokes[1].setPosition(buttonPosition.x + buttonSize.x, buttonPosition.y); // Top-Right
+    cornerStrokes[1].setPosition(buttonPosition.x + buttonSize.x, buttonPosition.y); // TR
     cornerStrokes[1].setRotation(90);
     cornerStrokes[1].setColor(strokeColor);
 
-    cornerStrokes[2].setPosition(buttonPosition.x, buttonPosition.y + buttonSize.y); // Bottom-Left
+    cornerStrokes[2].setPosition(buttonPosition.x, buttonPosition.y + buttonSize.y); // BL
     cornerStrokes[2].setRotation(270);
     cornerStrokes[2].setColor(strokeColor);
 
-    cornerStrokes[3].setPosition(buttonPosition + buttonSize); // Bottom-Right
+    cornerStrokes[3].setPosition(buttonPosition + buttonSize); // BR
     cornerStrokes[3].setRotation(180);
     cornerStrokes[3].setColor(strokeColor);
 
@@ -249,6 +247,7 @@ void BaseUI::Draw(sf::RenderWindow& window)
     case uiType::Box:
         break;
     }
+
     window.draw(buttonCollider);
 }
 
@@ -300,6 +299,7 @@ void BaseUI::SetString(const std::string& string)
 {
     std::string utf8String = string;
     sf::String unicodeString = sf::String::fromUtf8(utf8String.begin(), utf8String.end());
+
     text.setString(unicodeString);
 }
 

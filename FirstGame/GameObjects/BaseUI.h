@@ -11,7 +11,6 @@ protected:
 
 	float buttonSizeX = 0.0f;
 	float buttonSizeY = 0.0f;
-	float textHeight  = 0.0f;
 
 	sf::Sprite thumbnail;
 

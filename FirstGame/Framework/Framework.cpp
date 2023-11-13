@@ -44,9 +44,10 @@ void Framework::Run()
     Init(screenWidth, screenHeight, title);
     clock.restart();
 
-    TextGo fpsViewer("fonts/RoboNoto-Medium.ttf", "fpsViewer");
     sf::Font systemFont;
     systemFont.loadFromFile("fonts/RoboNoto-Medium.ttf");
+
+    TextGo fpsViewer("fonts/RoboNoto-Medium.ttf", "fpsViewer");
     fpsViewer.SetFont(systemFont);
     fpsViewer.SetCharacterSize(20);
     fpsViewer.SetOrigin(Origins::TL);
@@ -55,8 +56,8 @@ void Framework::Run()
 
     while (window.isOpen())
     {
-        sf::Time deltaTime = clock.restart();
-        float dt = deltaTime.asSeconds();
+        auto deltaTime = clock.restart();
+        auto dt = deltaTime.asSeconds();
 
         INPUT_MGR.Update(dt);
 
@@ -84,6 +85,7 @@ void Framework::Run()
             {
                 fpsViewer.SetActive(!fpsViewer.GetActive());
             }
+
             if (fpsDelay <= 0.0f && fpsViewer.GetActive())
             {
                 std::stringstream ss;
@@ -96,6 +98,7 @@ void Framework::Run()
 
             window.clear();
             Draw();
+
             if (fpsViewer.GetActive())
             {
                 fpsViewer.Draw(window);

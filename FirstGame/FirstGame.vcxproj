@@ -153,8 +153,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Animation\AnimationClip.cpp" />
-    <ClCompile Include="Animation\AnimationController.cpp" />
     <ClCompile Include="GameObjects\DamageTextEffect.cpp" />
     <ClCompile Include="GameObjects\EntityEffect.cpp" />
     <ClCompile Include="GameObjects\BulletHitEffect.cpp" />
@@ -194,8 +192,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rd\rapidcsv.h" />
-    <ClInclude Include="Animation\AnimationController.h" />
-    <ClInclude Include="Animation\AnimationClip.h" />
     <ClInclude Include="GameObjects\DamageTextEffect.h" />
     <ClInclude Include="GameObjects\EntityEffect.h" />
     <ClInclude Include="GameObjects\BulletHitEffect.h" />

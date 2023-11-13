@@ -31,7 +31,6 @@ void DamageTextEffect::Update(float dt)
 	UINT8 colorFx = Utils::Lerp(255, 0, (flowTime / duration));
 	text.setFillColor({ 255, 200, 0, colorFx });
 	text.setOutlineColor({ 0, 0, 0, colorFx });
-	//ScaleAnimation(10.0f, 0.9f, flowTime);
 
 	if (flowTime > duration)
 	{
@@ -39,8 +38,6 @@ void DamageTextEffect::Update(float dt)
 		{
 			SCENE_MGR.GetCurrentScene()->RemoveGo(this);
 			pool->Return(this);
-
-			//std::cout << "Return Count : " << pool->GetUseList().size() << std::endl;
 		}
 		else
 		{

@@ -24,14 +24,14 @@ protected:
 
 	std::map<std::string, float*> stats = 
 	{
-		{"maxHp", &maxHp},
-		{"hpRegen", &hpRegen},
-		{"damage", &damage},
-		{"attackSpeed", &attackSpeed},
-		{"critical", &critical},
-		{"armor", &armor},
-		{"dodge", &dodge},
-		{"moveSpeed", &moveSpeed}
+		{ "maxHp",       &maxHp       },
+		{ "hpRegen",     &hpRegen     },
+		{ "damage",      &damage      },
+		{ "attackSpeed", &attackSpeed },
+		{ "critical",    &critical    },
+		{ "armor",       &armor       },
+		{ "dodge",       &dodge       },
+		{ "moveSpeed",   &moveSpeed   }
 	};
 
 	sf::Vector2f playerBodyCenter;

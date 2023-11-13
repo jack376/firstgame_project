@@ -6,7 +6,6 @@ class DieEffect : public SpriteEffect
 {
 protected:
 	ObjectPool<DieEffect>* pool = nullptr;
-
 	float animationScale = 1.0f;
 
 public:

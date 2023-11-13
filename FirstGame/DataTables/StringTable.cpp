@@ -10,6 +10,7 @@ const std::string& StringTable::Get(const std::string& id, Languages lang) const
 	{
 		return "ERR: Undefined ID";
 	}
+
 	return find->second;
 }
 
@@ -33,10 +34,10 @@ bool StringTable::Load()
 
 		for (int j = 0; j < ids.size(); ++j)
 		{
-			//std::cout << ids[i] << " " << values[i] << std::endl;
 			tables[i].insert({ ids[j], values[j] });
 		}
 	}
+
 	return true;
 }
 
@@ -46,5 +47,4 @@ void StringTable::Release()
 	{
 		table.clear();
 	}
-	//tables.clear();
 }

@@ -47,5 +47,3 @@ enum class uiType
 	Thumbnail,
 	Box,
 };
-
-#include "AnimationClip.h"

@@ -74,7 +74,6 @@ void Player::Update(float dt)
 	direction.y = INPUT_MGR.GetAxis(Axis::Vertical);
 
 	float fixDirectionX = INPUT_MGR.GetAxisRaw(Axis::Horizontal);
-
 	if (fixDirectionX < 0)
 	{
 		SetFlipX(true);
@@ -90,7 +89,6 @@ void Player::Update(float dt)
 	}
 
 	float magnitude = Utils::Magnitude(direction);
-
 	if (magnitude > 0.0f)
 	{
 		state = StateType::Move;
@@ -100,7 +98,9 @@ void Player::Update(float dt)
 		{
 			direction /= magnitude;
 		}
+
 		position += direction * moveSpeed * dt;
+
 		body.setPosition(position);
 		shadow.setPosition(position);
 
@@ -122,20 +122,11 @@ void Player::Update(float dt)
 		legL.setScale(1.0f, 1.0f);
 		legL.setRotation(0.0f);
 	}
+
 	BodyAnimation(1.0f, 0.2f, flowTime);
 
 	playerCollider.left = position.x - playerCollider.width * 0.5f;
 	playerCollider.top = position.y - playerCollider.height * 0.5f;
-
-	// Test
-	/*
-	playerColliderDraw.setPosition(playerCollider.left, playerCollider.top);
-	playerColliderDraw.setSize(sf::Vector2f(playerCollider.width, playerCollider.height));
-	playerColliderDraw.setFillColor(sf::Color::Transparent);
-	playerColliderDraw.setOutlineColor(sf::Color::Red);
-	playerColliderDraw.setOutlineThickness(1.0f);
-	*/
-	//
 
 	if (hitColorOverlayDuration > 0)
 	{
@@ -153,7 +144,6 @@ void Player::Draw(sf::RenderWindow& window)
 	window.draw(legR);
 	window.draw(legL);
 	window.draw(body);
-	//window.draw(playerColliderDraw);
 }
 
 sf::FloatRect Player::GetPlayerCollider() const
@@ -167,7 +157,9 @@ void Player::OnHitted(float damage)
 	{
 		return;
 	}
+
 	currentHp -= std::min(currentHp, damage);
+
 	hitColorOverlayDuration = 0.1f;
 	body.setColor(sf::Color(255, 0, 0, 255));
 
@@ -187,6 +179,7 @@ void Player::OnKilled()
 	{
 		return;
 	}
+
 	currentExp++;
 
 	Scene* scene = SCENE_MGR.GetCurrentScene();
@@ -209,6 +202,7 @@ void Player::OnKilled()
 void Player::OnDie()
 {
 	isAlive = false;
+
 	Scene* scene = SCENE_MGR.GetCurrentScene();
 	SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
 	sceneGame->OnDiePlayer();
@@ -246,6 +240,5 @@ float Player::GetStat(const std::string& statName) const
 
 float Player::GetDamage() const
 {
-	//std::cout << "Current Damage : " << damage << std::endl;
 	return damage;
 }

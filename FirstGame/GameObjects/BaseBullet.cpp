@@ -41,6 +41,7 @@ void BaseBullet::Update(float dt)
 		SetActive(false);
 		SCENE_MGR.GetCurrentScene()->RemoveGo(this);
 		pool->Return(this);
+
 		return;
 	}
 
@@ -60,14 +61,12 @@ void BaseBullet::Update(float dt)
 		bulletColliderDraw.setOutlineThickness(1.0f);
 	}
 	
-	SceneGame* sceneGame = (SceneGame*)SCENE_MGR.GetCurrentScene();
+	SceneGame* sceneGame = dynamic_cast<SceneGame*>(SCENE_MGR.GetCurrentScene());
 	Monster* targetMonster = sceneGame->GetNearMonsterSearch();
-
-	sf::FloatRect bulletReturnArea(-960.0f, -960.0f, 1920.0f, 1920.0f);
 
 	if (targetMonster != nullptr && monsters != nullptr)
 	{
-		for (Monster* monster : *monsters)
+		for (auto monster : *monsters)
 		{
 			if (!monster->GetActive())
 			{
@@ -84,6 +83,8 @@ void BaseBullet::Update(float dt)
 			}
 		}
 	}
+
+	sf::FloatRect bulletReturnArea(-960.0f, -960.0f, 1920.0f, 1920.0f);
 	if (!bulletReturnArea.contains(position.x, position.y))
 	{
 		SetActive(false);

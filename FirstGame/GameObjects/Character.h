@@ -3,6 +3,7 @@
 
 class GameObject;
 class Player;
+
 class Character : public GameObject
 {
 public:

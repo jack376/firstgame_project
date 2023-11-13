@@ -31,24 +31,23 @@ protected:
 	float waveTimer = 30.0f;
 	float lastSpawnTime = 5.0f;
 
-	bool isPlaying   = false;
+	bool isShop         = false;
+	bool shopCreated    = false;
 
-	bool isShop      = false;
-	bool shopCreated = false;
-
-	bool isInfo      = false;
-	bool infoCreated = false;
+	bool isInfo         = false;
+	bool infoCreated    = false;
 
 	bool isUpgrade      = false;
 	bool upgradeCreated = false;
 
-	bool isSlide = false;
-	bool slideCreated = false;
+	bool isSlide        = false;
+	bool slideCreated   = false;
+
+	bool isPlaying = false;
+	Player* player = nullptr;
+	sf::Vector2f currentPlayerPosition;
 
 	sf::FloatRect wallBounds;
-
-	sf::Vector2f currentPlayerPosition;
-	Player* player = nullptr;
 
 	ObjectPool<Monster> monsterPool;
 	ObjectPool<BulletHitEffect> bulletHitEffectPool;
@@ -63,10 +62,10 @@ protected:
 
 	std::vector<std::string> shopNames = { "Laser Gun", "Flame Gun", "SMG", "Plasma Rifle", "Rocket Launcher", "Minigun", "Gatling Laser", "Nuclear Launcher", "Chain Gun" };
 
-	std::vector<std::string> upgradeNamesColumn1 = { "Chest I", "Chest II", "Chest III", "Chest IV", "Lungs I", "Lungs II", "Lungs III", "Lungs IV" };
-	std::vector<std::string> upgradeNamesColumn2 = { "Reflexes I", "Reflexes II", "Reflexes III", "Reflexes IV", "Gun I", "Gun II", "Gun III", "Gun IV" };
-	std::vector<std::string> upgradeNamesColumn3 = { "Fingers I", "Fingers II", "Fingers III", "Fingers IV", "Heart I", "Heart II", "Heart III", "Heart IV" };
-	std::vector<std::string> upgradeNamesColumn4 = { "Back I", "Back II", "Back III", "Back IV", "Legs I", "Legs II", "Legs III", "Legs IV" };
+	std::vector<std::string> upgradeNamesColumn1 = { "Chest I",    "Chest II",    "Chest III",    "Chest IV",    "Lungs I", "Lungs II", "Lungs III", "Lungs IV" };
+	std::vector<std::string> upgradeNamesColumn2 = { "Reflexes I", "Reflexes II", "Reflexes III", "Reflexes IV", "Gun I",   "Gun II",	"Gun III",   "Gun IV"   };
+	std::vector<std::string> upgradeNamesColumn3 = { "Fingers I",  "Fingers II",  "Fingers III",  "Fingers IV",  "Heart I", "Heart II", "Heart III", "Heart IV" };
+	std::vector<std::string> upgradeNamesColumn4 = { "Back I",     "Back II",     "Back III",     "Back IV",     "Legs I",  "Legs II",  "Legs III",  "Legs IV"  };
 
 	std::vector<int> monsterSpawnWeights = { 70, 50, 30, 15, 10, 10, 5, 5, 5 };
 
