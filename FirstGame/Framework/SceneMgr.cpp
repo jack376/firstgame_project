@@ -12,7 +12,7 @@ void SceneMgr::Init()
 		Release();
 	}
 
-	//scenes.push_back(new SceneTitle());
+	scenes.push_back(new SceneTitle());
 	scenes.push_back(new SceneGame());
 
 	for (auto scene : scenes)
@@ -37,6 +37,7 @@ void SceneMgr::Release()
 		//scene->Release();
 		delete scene;
 	}
+
 	scenes.clear();
 
 	currentSceneId = SceneId::None;

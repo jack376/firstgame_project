@@ -33,11 +33,13 @@ void InputMgr::Update(float dt)
 	for (auto& it : axisInfoMap)
 	{
 		auto& axisInfo = it.second;
+
 		float raw = GetAxisRaw(axisInfo.axis);	// -1.0, 0, 1.0
 		if (raw == 0.f && axisInfo.value != 0.f)
 		{
 			raw = axisInfo.value > 0.f ? -1.f : 1.f;
 		}
+
 		float diff = axisInfo.sensi * dt;
 		axisInfo.value = Utils::Clamp(axisInfo.value + raw * diff, -1.0f, 1.0f);
 		if (abs(axisInfo.value) < diff * 0.5f)
@@ -51,36 +53,36 @@ void InputMgr::Update(const sf::Event& ev)
 {
 	switch (ev.type)
 	{
-	case sf::Event::KeyPressed:
-		if (std::find(ingList.begin(), ingList.end(), ev.key.code) == ingList.end())
-		{
-			downList.push_back(ev.key.code);
-			ingList.push_back(ev.key.code);
-		}
-		break;
+		case sf::Event::KeyPressed:
+			if (std::find(ingList.begin(), ingList.end(), ev.key.code) == ingList.end())
+			{
+				downList.push_back(ev.key.code);
+				ingList.push_back(ev.key.code);
+			}
+			break;
 
-	case sf::Event::KeyReleased:
-		ingList.remove(ev.key.code);
-		upList.push_back(ev.key.code);
-		break;
+		case sf::Event::KeyReleased:
+			ingList.remove(ev.key.code);
+			upList.push_back(ev.key.code);
+			break;
 
-	case sf::Event::MouseButtonPressed:
-	{
-		int code = sf::Keyboard::KeyCount + ev.mouseButton.button;
-		if (std::find(ingList.begin(), ingList.end(), code) == ingList.end())
+		case sf::Event::MouseButtonPressed:
 		{
-			downList.push_back(code);
-			ingList.push_back(code);
+			int code = sf::Keyboard::KeyCount + ev.mouseButton.button;
+			if (std::find(ingList.begin(), ingList.end(), code) == ingList.end())
+			{
+				downList.push_back(code);
+				ingList.push_back(code);
+			}
+			break;
 		}
-		break;
-	}
-	case sf::Event::MouseButtonReleased:
-	{
-		int code = sf::Keyboard::KeyCount + ev.mouseButton.button;
-		ingList.remove(code);
-		upList.push_back(code);
-		break;
-	}
+		case sf::Event::MouseButtonReleased:
+		{
+			int code = sf::Keyboard::KeyCount + ev.mouseButton.button;
+			ingList.remove(code);
+			upList.push_back(code);
+			break;
+		}
 	}
 	mousePos = (sf::Vector2f)sf::Mouse::getPosition(FRAMEWORK.GetWindow());
 }
@@ -130,6 +132,7 @@ float InputMgr::GetAxis(Axis axis)
 	{
 		return 0.0f;
 	}
+
 	return it->second.value;
 }
 
@@ -140,6 +143,7 @@ float InputMgr::GetAxisRaw(Axis axis)
 	{
 		return 0.0f;
 	}
+
 	const AxisInfo& info = it->second;
 	auto rit = ingList.rbegin();
 	while (rit != ingList.rend())
@@ -155,5 +159,6 @@ float InputMgr::GetAxisRaw(Axis axis)
 		}
 		++rit;
 	}
+
 	return 0.0f;
 }

@@ -13,10 +13,12 @@ protected:
 	sf::RenderWindow window;
 	sf::Clock clock;
 
-	int screenWidth = 1280;
-	int screenHeight = 720;
+	int screenWidth = 1920;
+	int screenHeight = 960;
 
-	std::string title = "SFML Works!";
+	std::string title = "BROTATO SFML EDITION";
+
+	float fpsDelay = 0.5f;
 
 public:
 	virtual void Init(int width, int height, const std::string& title);
@@ -32,3 +34,5 @@ public:
 };
 
 #define FRAMEWORK (Framework::Instance())
+
+

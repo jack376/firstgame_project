@@ -3,18 +3,20 @@
 
 class GameObject;
 class Player;
+
 class Character : public GameObject
 {
 public:
-	enum class StatusType
+	enum class StateType
 	{
 		Idle,
 		Move,
-		Attack,
+		Skill,
+		Spawn,
 	};
 
 protected:
-	StatusType status = StatusType::Idle;
+	StateType state = StateType::Idle;
 
 	sf::Sprite body;
 	sf::Vector2f bodyAnimation;
@@ -24,34 +26,30 @@ protected:
 	sf::Vector2f legsAnimation;
 
 	sf::Vector2f look;
-
-	//sf::Sprite equipGun;
-	//sf::Vector2f gunAnimation;
-
 	sf::Vector2f direction;
 
-	float moveSpeed = 500.f;
 	float flowTime = 0.0f;
+	float deltaTime = 0.0f;
 
 	float animationSpeed = 2.0f;
-	float legsIdleWidth = 15.0f;
-	float legsWalkWidth = 2.0f;
+	float legsIdleWidth  = 15.0f;
+	float legsWalkWidth  = 2.0f;
 
 	sf::FloatRect wallBounds;
-
-
-	bool filpX = false;
-
-public:
 	sf::Vector2f wallBoundsLT;
 	sf::Vector2f wallBoundsRB;
 
+	bool filpX = false;
 
+	float hitColorOverlayDuration = 0.1f;
+
+public:
 	Character(const std::string& n = "") : GameObject(n) {}
 	virtual ~Character() override { Release(); }
 
 	virtual void Init() override = 0;
 	virtual void Reset() override = 0;
+
 	virtual void Update(float dt) override = 0;
 	virtual void Draw(sf::RenderWindow& window) override = 0;
 
@@ -59,7 +57,9 @@ public:
 	void SetFlipX(bool filp);
 
 	sf::Vector2f GetOrigin() const;
-	StatusType GetStatus() const;
+
+	StateType GetState() const;
+	void SetState(StateType state = StateType::Idle);
 
 	void BodyAnimation(float defaultScale, float scaleRange, float flowTimeBySpeed);
 	void LegsAnimation(float walkWidth, float flowTimeBySpeed);

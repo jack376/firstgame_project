@@ -5,21 +5,24 @@
 class SpriteEffect : public SpriteGo
 {
 protected:
-	float duration = 0.f;
-	float timer = 0.f;
+	float inverseDuration = 0.0f;
+	float duration = 0.0f;
+	float flowTime = 0.0f;
 
 	ObjectPool<SpriteEffect>* pool = nullptr;
 
 public:
-	SpriteEffect(const std::string& textureId, const std::string& n);
-	virtual ~SpriteEffect() override { };
-
-	void SetDuration(float duration) { this->duration = duration; }
-	void SetPool(ObjectPool<SpriteEffect>* pool) { this->pool = pool; }
+	SpriteEffect(const float& flowTime = 0.0f, const std::string& textureId = "", const std::string& n = "");
+	virtual ~SpriteEffect() override {};
 
 	virtual void Init() override;
 	virtual void Reset() override;
 
 	virtual void Update(float dt) override;
+	virtual void Draw(sf::RenderWindow& window) override;
+
+	void SetDuration(float duration);
+	void SetPool(ObjectPool<SpriteEffect>* pool);
+	void ScaleAnimation(float defaultScale, float scaleRange, float flowTimeBySpeed);
 };
 

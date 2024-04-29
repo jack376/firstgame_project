@@ -8,13 +8,13 @@ protected:
 	std::list<T*> pool;
 	std::list<T*> useList;
 
-	void CreateObjs(int count = 1000);
+	void CreateObjs(int count = 256);
 
 public:
 	ObjectPool() = default;
 	~ObjectPool();
 
-	void Init(int cacheSize = 1000);
+	void Init(int cacheSize = 256);
 	void Release(); 
 	void Clear();	// pool로 전부 회수
 
@@ -43,7 +43,9 @@ inline void ObjectPool<T>::CreateObjs(int count)
 		{
 			OnCreate(obj);
 		}
+
 		obj->Init();
+
 		pool.push_back(obj);
 	}
 }
@@ -63,6 +65,7 @@ inline void ObjectPool<T>::Release()
 	{
 		delete obj;
 	}
+
 	pool.clear();
 }
 
@@ -74,6 +77,7 @@ inline void ObjectPool<T>::Clear()
 		obj->SetActive(false);
 		pool.push_back(obj);
 	}
+
 	useList.clear();
 }
 
@@ -92,6 +96,7 @@ inline T* ObjectPool<T>::Get()
 	obj->Reset();
 
 	useList.push_back(obj);
+
 	return obj;
 }
 
@@ -103,8 +108,10 @@ inline void ObjectPool<T>::Return(T* obj)
 		std::cout << "Return Error!!!" << std::endl;
 		return;
 	}
+
 	useList.remove(obj);
 	obj->SetActive(false);
+
 	pool.push_back(obj);
 }
 

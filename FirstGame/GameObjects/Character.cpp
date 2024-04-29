@@ -23,22 +23,24 @@ sf::Vector2f Character::GetOrigin() const
 	return body.getOrigin();
 }
 
-Character::StatusType Character::GetStatus() const
+Character::StateType Character::GetState() const
 {
-	return status;
+	return state;
+}
+
+void Character::SetState(StateType state)
+{
+	this->state = state;
 }
 
 void Character::BodyAnimation(float defaultScale, float scaleRange, float flowTimeBySpeed)
 {
-	bodyAnimation.x = -sin(flowTimeBySpeed * 2.0f * M_PI); // -1 ~ 1
+	bodyAnimation.x = -sin(flowTimeBySpeed * 2.0f * _PI);
 	float scaleX = defaultScale + ((bodyAnimation.x + 1.0f) / 2.0f) * scaleRange; 
-	//                 100%       +       0 ~ 2      /       1    *    0.2f)
-
-	//std::cout << "TEST : " << scaleX << std::endl;
 
 	scaleX = GetFlipX() ? -abs(scaleX) : abs(scaleX);
 
-	bodyAnimation.y = sin(flowTimeBySpeed * 2.0f * M_PI);
+	bodyAnimation.y = sin(flowTimeBySpeed * 2.0f * _PI);
 	float scaleY = defaultScale + ((bodyAnimation.y + 1.0f) / 2.0f) * scaleRange;
 
 	body.setScale(scaleX, scaleY);
@@ -46,13 +48,13 @@ void Character::BodyAnimation(float defaultScale, float scaleRange, float flowTi
 
 void Character::LegsAnimation(float walkWidth, float flowTimeBySpeed)
 {
-	legsAnimation.x = sin(flowTimeBySpeed * 1.25f * M_PI);
+	legsAnimation.x = sin(flowTimeBySpeed * 1.25f * _PI);
 	float PositionX = (legsAnimation.x + 1.0f) * walkWidth;
 
 	float normalizedPosition = PositionX / walkWidth;
 	float rotation = -45.0f + normalizedPosition * 45.0f;
 
-	if (GetFlipX()) // ¿ÞÂÊ
+	if (GetFlipX()) // Left
 	{
 		legR.setPosition(position.x - walkWidth, position.y);
 		legR.setScale(1.0f, 1.0f);
@@ -62,7 +64,7 @@ void Character::LegsAnimation(float walkWidth, float flowTimeBySpeed)
 		legL.setScale(1.0f, 1.0f);
 		legL.setRotation(-rotation);
 	}
-	else if (!GetFlipX()) // ¿À¸¥ÂÊ
+	else if (!GetFlipX()) // Right
 	{
 		legR.setPosition(position.x - walkWidth, position.y);
 		legR.setScale(-1.0f, 1.0f);
@@ -72,15 +74,16 @@ void Character::LegsAnimation(float walkWidth, float flowTimeBySpeed)
 		legL.setScale(-1.0f, 1.0f);
 		legL.setRotation(-rotation);
 	}
-
-	//std::cout << "TEST : " << PositionX << std::endl;
 }
 
 void Character::SetWallBounds(const sf::FloatRect& bounds)
 {
-	wallBounds = bounds;
+	wallBounds   = bounds;
 	wallBoundsLT = { bounds.left, bounds.top };
 	wallBoundsRB = { bounds.left + bounds.width, bounds.top + bounds.height };
+
+	std::cout << "World Position : " << wallBoundsLT.x << ", " << wallBoundsLT.y << std::endl;
+	std::cout << "World Size : "     << wallBoundsRB.x << ", " << wallBoundsRB.y << std::endl;
 }
 
 sf::FloatRect Character::GetWallBounds()

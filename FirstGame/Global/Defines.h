@@ -1,6 +1,7 @@
 #pragma once
 
 #define _USE_MATH_DEFINES
+#define _PI 3.141592
 
 enum class Languages
 {
@@ -35,9 +36,14 @@ enum class ResourceTypes
 enum class SceneId
 {
 	None = -1,
-	Game,
 	Title,
+	Game,
 	Count,
 };
 
-#include "AnimationClip.h"
+enum class uiType
+{
+	Text,
+	Thumbnail,
+	Box,
+};

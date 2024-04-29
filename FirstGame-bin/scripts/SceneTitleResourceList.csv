@@ -1,0 +1,8 @@
+"RESOURCE_TYPES (0:TEXTURE, 1:FONT, 2:SOUND, 3:ANIMATION)",RESOURCE_PATH
+0,graphics/title/title_bg.png
+0,graphics/title/title_character.png
+0,graphics/title/title_fade.png
+0,graphics/title/title_logo.png
+0,graphics/title/title_splash_front.png
+0,graphics/title/title_splash_middle.png
+0,graphics/title/title_splash_rear.png

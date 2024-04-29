@@ -8,7 +8,9 @@ private:
 
 public:
 	static int RandomRange(int min, int maxExclude);
+	static int RandomRangeWithWeights(const std::vector<int>& weights);
 	static float RandomRange(float min, float max);
+
 	static sf::Vector2f RandomOnCircle(float radius);
 	static sf::Vector2f RandomInCircle(float radius);
 	static float RandomValue();

@@ -16,8 +16,10 @@ public:
 	GameObject(const std::string& n);
 	virtual ~GameObject();
 
-	bool GetActive() const;
-	void SetActive(bool active);
+	virtual bool CanBePaused() const { return true; }
+
+	bool GetActive() const { return isActive; }
+	void SetActive(bool active) { isActive = active; }
 
 	const std::string& GetName();
 	virtual void SetName(const std::string& n);

@@ -12,7 +12,6 @@ protected:
 	std::map<std::string, std::tuple<sf::Texture*, bool>> mapTexture;
 	std::map<std::string, std::tuple<sf::Font*, bool>> mapFont;
 	std::map<std::string, std::tuple<sf::SoundBuffer*, bool>> mapSoundBuffer;
-	std::map<std::string, std::tuple<AnimationClip*, bool>> mapAnimationClip;
 
 public:
 	void Init();
@@ -27,7 +26,6 @@ public:
 	sf::Texture* GetTexture(const std::string& id);
 	sf::Font* GetFont(const std::string& id);
 	sf::SoundBuffer* GetSoundBuffer(const std::string& id);
-	AnimationClip* GetAnimationClip(const std::string& id);
 };
 
 #define RESOURCE_MGR (ResourceMgr::Instance())

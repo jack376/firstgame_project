@@ -11,16 +11,6 @@ GameObject::~GameObject()
 	Release();
 }
 
-bool GameObject::GetActive() const
-{
-	return isActive;
-}
-
-void GameObject::SetActive(bool active)
-{
-	isActive = active;
-}
-
 const std::string& GameObject::GetName()
 {
 	return name;

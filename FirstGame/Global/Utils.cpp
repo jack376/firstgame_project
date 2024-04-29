@@ -10,6 +10,12 @@ int Utils::RandomRange(int min, int maxExclude)
 	return dist(gen);
 }
 
+int Utils::RandomRangeWithWeights(const std::vector<int>& weights)
+{
+	std::discrete_distribution<> dist(weights.begin(), weights.end());
+	return dist(gen);
+}
+
 float Utils::RandomRange(float min, float max)
 {
 	std::uniform_real_distribution<> dist(min, max);
@@ -53,6 +59,8 @@ void Utils::SetOrigin(sf::Transformable& obj, Origins origin, const sf::FloatRec
 	sf::Vector2f originPos(rect.width, rect.height);
 	originPos.x *= ((int)origin % 3) * 0.5f;
 	originPos.y *= ((int)origin / 3) * 0.5f;
+
+
 	obj.setOrigin(originPos);
 }
 

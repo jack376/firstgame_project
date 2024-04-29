@@ -1,4 +1,10 @@
 MonsterType,TextureId,Speed,MaxHP,Damage,AttackRate
-0,graphics/monster1.png,30.0,60,6,1.5
-1,graphics/monster2.png,50.5,40,4,2.0
-2,graphics/monster3.png,20.0,90,9,1.0
+0,graphics/game/monster/normal.png,250,75,5,2
+1,graphics/game/monster/fast.png,350,50,3,2
+2,graphics/game/monster/heavy.png,200,225,7,2
+3,graphics/game/monster/range.png,200,50,3,2
+4,graphics/game/monster/helmet.png,250,150,7,2
+5,graphics/game/monster/hard.png,175,450,5,2
+6,graphics/game/monster/tentacle.png,250,150,9,2
+7,graphics/game/monster/fast_elite.png,400,100,5,2
+8,graphics/game/monster/heavy_elite.png,200,300,9,2

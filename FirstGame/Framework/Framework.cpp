@@ -44,9 +44,10 @@ void Framework::Run()
     Init(screenWidth, screenHeight, title);
     clock.restart();
 
-    TextGo fpsViewer("fonts/NanumGothic.ttf", "fpsViewer");
     sf::Font systemFont;
-    systemFont.loadFromFile("fonts/NanumGothic.ttf");
+    systemFont.loadFromFile("fonts/RoboNoto-Medium.ttf");
+
+    TextGo fpsViewer("fonts/RoboNoto-Medium.ttf", "fpsViewer");
     fpsViewer.SetFont(systemFont);
     fpsViewer.SetCharacterSize(20);
     fpsViewer.SetOrigin(Origins::TL);
@@ -55,8 +56,8 @@ void Framework::Run()
 
     while (window.isOpen())
     {
-        sf::Time deltaTime = clock.restart();
-        float dt = deltaTime.asSeconds();
+        auto deltaTime = clock.restart();
+        auto dt = deltaTime.asSeconds();
 
         INPUT_MGR.Update(dt);
 
@@ -78,21 +79,26 @@ void Framework::Run()
 
         if (window.isOpen())
         {
+            fpsDelay -= dt;
+
             if (INPUT_MGR.GetKeyDown(sf::Keyboard::Tilde))
             {
                 fpsViewer.SetActive(!fpsViewer.GetActive());
             }
-            if (fpsViewer.GetActive())
+
+            if (fpsDelay <= 0.0f && fpsViewer.GetActive())
             {
                 std::stringstream ss;
                 ss << 1.0f / dt;
                 fpsViewer.SetString(ss.str());
+                fpsDelay = 1.0f;
             }
 
             Update(dt);
 
             window.clear();
             Draw();
+
             if (fpsViewer.GetActive())
             {
                 fpsViewer.Draw(window);

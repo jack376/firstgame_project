@@ -5,9 +5,12 @@ class DataTable
 public:
 	enum class Ids
 	{
-		None = -1,
-		String = 0,
-		Monster = 1,
+		None       = -1,
+		String     = 0,
+		Monster    = 1,
+		Shop       = 2,
+		Upgrade    = 3,
+		PlayerInfo = 4,
 	};
 
 	DataTable(const DataTable& other) = delete;

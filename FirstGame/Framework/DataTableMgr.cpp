@@ -2,11 +2,15 @@
 #include "DataTableMgr.h"
 #include "StringTable.h"
 #include "MonsterTable.h"
+#include "ShopTable.h"
+#include "UpgradeTable.h"
 
 void DataTableMgr::LoadAll()
 {
 	tables.insert({ DataTable::Ids::String, new StringTable() });
 	tables.insert({ DataTable::Ids::Monster, new MonsterTable() });
+	tables.insert({ DataTable::Ids::Shop, new ShopTable() });
+	tables.insert({ DataTable::Ids::Upgrade, new UpgradeTable() });
 
 	for (auto pair : tables)
 	{
@@ -25,5 +29,6 @@ void DataTableMgr::ReleaseAll()
 		//pair.second->Release();
 		delete pair.second;
 	}
+
 	tables.clear();
 }

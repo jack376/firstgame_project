@@ -2,33 +2,28 @@
 #include "Utils.h"
 #include "SceneMgr.h"
 #include "SpriteEffect.h"
+#include "ResourceMgr.h"
 
-
-SpriteEffect::SpriteEffect(const std::string& textureId = "", const std::string& n = "")
-	: SpriteGo(textureId, n)
+SpriteEffect::SpriteEffect(const float& flowTime, const std::string& textureId, const std::string& n)
+	: SpriteGo(textureId, n), flowTime(flowTime)
 {
 }
 
 void SpriteEffect::Init()
 {
 	SpriteGo::Init();
-	SetOrigin(Origins::MC);
 }
 
 void SpriteEffect::Reset()
 {
 	SpriteGo::Reset();
-	timer = 0.f;
-	sprite.setColor({ 255, 255, 255, 255 });
+	flowTime = 0.0f;
 }
 
 void SpriteEffect::Update(float dt)
 {
-	timer += dt;
-	//UINT8 a = Utils::Lerp(255, 0, (timer / duration));
-	//sprite.setColor({ 255, 255, 255, a });
-
-	if (timer > duration)
+	flowTime += dt;
+	if (flowTime > duration)
 	{
 		if (pool != nullptr)
 		{
@@ -40,4 +35,18 @@ void SpriteEffect::Update(float dt)
 			SetActive(false);
 		}
 	}
+}
+
+void SpriteEffect::Draw(sf::RenderWindow& window)
+{
+}
+
+void SpriteEffect::SetDuration(float duration)
+{
+	this->duration = duration; 
+}
+
+void SpriteEffect::SetPool(ObjectPool<SpriteEffect>* pool)
+{
+	this->pool = pool;
 }
